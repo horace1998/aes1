@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
-import GlassButton from '@/components/ui/GlassButton';
 import { X, Upload, Sparkles, Crop, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { removeBackground } from '@imgly/background-removal';
@@ -10,16 +9,29 @@ import CropTool from './CropTool';
 /**
  * HeroUploadModal — pick image, choose AI auto-cutout or manual crop,
  * returns final image URL (uploaded) via onSave.
+ *
+ * Credit-saving flow: the original picked file stays LOCAL (object URL).
+ * We only upload the FINAL processed result (cutout or crop) — 1 upload per save.
  */
 export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero' }) {
   const [step, setStep] = useState('pick'); // pick | choose | crop | processing
-  const [sourceUrl, setSourceUrl] = useState(null);
+  const [localFile, setLocalFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState(null);
   const fileRef = useRef(null);
 
+  // Cleanup local object URL when it changes / unmounts
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   const reset = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setStep('pick');
-    setSourceUrl(null);
+    setLocalFile(null);
+    setPreviewUrl(null);
     setError(null);
   };
 
@@ -28,27 +40,22 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
     onClose();
   };
 
-  const handleFile = async (e) => {
+  const handleFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setError(null);
-    setStep('processing');
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setSourceUrl(file_url);
-      setStep('choose');
-    } catch (err) {
-      setError('Upload failed');
-      setStep('pick');
-    }
+    const url = URL.createObjectURL(file);
+    setLocalFile(file);
+    setPreviewUrl(url);
+    setStep('choose');
   };
 
   const handleAutoCutout = async () => {
     setStep('processing');
     setError(null);
     try {
-      // Run pixel-perfect background removal in the browser — preserves subject exactly
-      const blob = await removeBackground(sourceUrl, { output: { format: 'image/png' } });
+      // Run pixel-perfect background removal locally — operates on the local file directly
+      const blob = await removeBackground(localFile, { output: { format: 'image/png' } });
       const file = new File([blob], 'cutout.png', { type: 'image/png' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onSave(file_url);
@@ -114,9 +121,9 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
                 </div>
               )}
 
-              {step === 'choose' && sourceUrl && (
+              {step === 'choose' && previewUrl && (
                 <div className="space-y-3">
-                  <img src={sourceUrl} alt="" className="w-full h-48 object-cover rounded-2xl" />
+                  <img src={previewUrl} alt="" className="w-full h-48 object-cover rounded-2xl" />
                   <p className="text-xs text-muted-foreground text-center">
                     How would you like to process it?
                   </p>
@@ -148,9 +155,9 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
                 </div>
               )}
 
-              {step === 'crop' && sourceUrl && (
+              {step === 'crop' && previewUrl && (
                 <CropTool
-                  imageUrl={sourceUrl}
+                  imageUrl={previewUrl}
                   onCancel={() => setStep('choose')}
                   onComplete={handleCropComplete}
                 />
