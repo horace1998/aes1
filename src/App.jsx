@@ -1,10 +1,12 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import PageTransition from '@/components/PageTransition';
 
 import Dashboard from '@/pages/Dashboard';
 import Onboarding from '@/pages/Onboarding';
@@ -13,6 +15,24 @@ import Profile from '@/pages/Profile';
 import MilestoneGallery from '@/pages/MilestoneGallery';
 import Feed from '@/pages/Feed';
 import Tasks from '@/pages/Tasks';
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+        <Route path="/onboarding" element={<PageTransition><Onboarding /></PageTransition>} />
+        <Route path="/goals" element={<PageTransition><Goals /></PageTransition>} />
+        <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+        <Route path="/gallery" element={<PageTransition><MilestoneGallery /></PageTransition>} />
+        <Route path="/feed" element={<PageTransition><Feed /></PageTransition>} />
+        <Route path="/tasks" element={<PageTransition><Tasks /></PageTransition>} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -37,18 +57,7 @@ const AuthenticatedApp = () => {
     }
   }
 
-  return (
-    <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/onboarding" element={<Onboarding />} />
-      <Route path="/goals" element={<Goals />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/gallery" element={<MilestoneGallery />} />
-      <Route path="/feed" element={<Feed />} />
-      <Route path="/tasks" element={<Tasks />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
-  );
+  return <AnimatedRoutes />;
 };
 
 function App() {

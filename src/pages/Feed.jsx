@@ -13,13 +13,14 @@ import { Radio, Share2, Waves } from 'lucide-react';
 
 export default function Feed() {
   const queryClient = useQueryClient();
-  const [user, setUser] = useState(null);
   const [showShare, setShowShare] = useState(false);
   const [filterIdol, setFilterIdol] = useState('all');
 
-  useEffect(() => {
-    base44.auth.me().then(setUser);
-  }, []);
+  const { data: user } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['feedposts'],
@@ -42,6 +43,7 @@ export default function Feed() {
   const unsaredMilestones = userMilestones.filter(m => !sharedIds.has(m.id));
 
   const handleShareMilestone = async (milestone) => {
+    if (!user) return;
     const totalCheckins = goals.reduce((s, g) => s + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
     const rank = getFanRank(totalCheckins, userMilestones.length);
     await base44.entities.FeedPost.create({
@@ -63,8 +65,6 @@ export default function Feed() {
 
   const idols = ['all', ...new Set(posts.map(p => p.idol_name).filter(Boolean))];
   const filtered = filterIdol === 'all' ? posts : posts.filter(p => p.idol_name === filterIdol);
-
-  if (!user) return null;
 
   return (
     <div className="min-h-screen relative pb-28">
@@ -137,7 +137,7 @@ export default function Feed() {
         ) : (
           <div>
             {filtered.map((post, i) => (
-              <FeedPostCard key={post.id} post={post} userEmail={user.email} index={i} />
+              <FeedPostCard key={post.id} post={post} userEmail={user?.email} index={i} />
             ))}
           </div>
         )}

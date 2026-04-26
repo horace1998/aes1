@@ -19,17 +19,16 @@ import { format } from 'date-fns';
 export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [user, setUser] = useState(null);
+
+  const { data: user } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
-    base44.auth.me().then(u => {
-      setUser(u);
-      // Only redirect if explicitly set to false, not just undefined (first-time users handled gracefully)
-      if (u.onboarded === false) {
-        navigate('/onboarding');
-      }
-    });
-  }, [navigate]);
+    if (user?.onboarded === false) navigate('/onboarding');
+  }, [user, navigate]);
 
   const { data: goals = [], isLoading } = useQuery({
     queryKey: ['goals'],
@@ -62,8 +61,6 @@ export default function Dashboard() {
     return 'Good Evening';
   };
 
-  if (!user) return null;
-
   return (
     <div className="min-h-screen relative pb-28">
       <PageShell goals={goals} user={user}>
@@ -81,11 +78,11 @@ export default function Dashboard() {
             <div>
               <p className="text-sm text-muted-foreground">{greeting()}</p>
               <h1 className="font-display text-4xl tracking-wide uppercase text-foreground">
-                {user.full_name?.split(' ')[0] || 'Station'}
+                {user?.full_name?.split(' ')[0] || 'Station'}
               </h1>
             </div>
             <div className="flex items-center gap-2">
-              <NotificationBell userEmail={user.email} />
+              <NotificationBell userEmail={user?.email} />
               <Link
                 to="/profile"
                 className="w-10 h-10 rounded-full glass-strong flex items-center justify-center ring-2 ring-violet-300/40 hover:ring-violet-400 transition"
