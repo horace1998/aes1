@@ -10,7 +10,7 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
   const streamRef = useRef(null);
   const [captured, setCaptured] = useState(null);
   const [selectedGoal, setSelectedGoal] = useState(goals[0] || null);
-  const [facingMode, setFacingMode] = useState('user');
+  const [facingMode, setFacingMode] = useState('environment');
   const [uploading, setUploading] = useState(false);
 
   const activeGoals = goals.filter(g => g.status === 'active');
