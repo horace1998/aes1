@@ -8,6 +8,7 @@ import GlassButton from '@/components/ui/GlassButton';
 import PageShell from '@/components/PageShell';
 import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp } from 'lucide-react';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
+import HeroImageManager from '@/components/profile/HeroImageManager';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -80,6 +81,9 @@ export default function Profile() {
             </GlassCard>
           ))}
         </div>
+
+        {/* Hero Image manager */}
+        <HeroImageManager />
 
         {/* Station ID */}
         <GlassCard variant="strong" className="p-5 mb-6 text-center">

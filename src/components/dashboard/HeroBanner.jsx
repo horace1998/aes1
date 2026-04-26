@@ -84,18 +84,8 @@ export default function HeroBanner({ user }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 25 }}
       >
-        {/* Top labels */}
-        <div className="absolute top-4 left-5 right-5 flex justify-between z-20">
-          <span className="font-heading text-[10px] tracking-[0.2em] text-white/80 uppercase">
-            Daily Drive
-          </span>
-          <span className="font-heading text-[10px] tracking-[0.2em] text-white/80 uppercase">
-            By {user?.full_name?.split(' ')[0] || 'You'}
-          </span>
-        </div>
-
-        {/* Big editorial title */}
-        <div className="absolute inset-x-0 top-12 z-10 px-5 pointer-events-none">
+        {/* Big editorial title — sits ABOVE the image (z-20) */}
+        <div className="absolute inset-x-0 top-8 z-20 px-5 pointer-events-none">
           <h1 className="font-display text-white leading-[0.85] tracking-tight text-[clamp(56px,16vw,120px)]">
             {idolName.split(' ')[0]?.slice(0, 6) || 'ALL'}
           </h1>
@@ -131,7 +121,7 @@ export default function HeroBanner({ user }) {
             <img
               src={hero.image_url}
               alt="hero"
-              className="absolute inset-0 w-full h-full object-contain object-bottom z-[15]"
+              className="absolute inset-0 w-full h-full object-contain object-bottom z-[10]"
               style={{
                 filter: `
                   drop-shadow(0 0 ${blur * 0.6}px rgba(255,255,255,${blur / 200}))
@@ -149,13 +139,6 @@ export default function HeroBanner({ user }) {
               onBlurChange={handleBlurChange}
               onGlowChange={handleGlowChange}
             />
-            <button
-              onClick={() => openUpload('hero')}
-              className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/25 transition"
-              style={{ top: 36 }}
-            >
-              <ImagePlus className="w-4 h-4 text-white" />
-            </button>
           </>
         ) : (
           <button

@@ -1,0 +1,93 @@
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { ImagePlus, Trash2 } from 'lucide-react';
+import GlassCard from '@/components/ui/GlassCard';
+import GlassButton from '@/components/ui/GlassButton';
+import HeroUploadModal from '@/components/dashboard/HeroUploadModal';
+
+/**
+ * HeroImageManager — lets the user upload / replace / remove
+ * the dashboard hero image from the Profile page.
+ */
+export default function HeroImageManager() {
+  const queryClient = useQueryClient();
+  const [showUpload, setShowUpload] = useState(false);
+
+  const { data: assets = [] } = useQuery({
+    queryKey: ['heroAssets'],
+    queryFn: () => base44.entities.HeroAsset.list('order'),
+  });
+
+  const hero = assets.find(a => a.role === 'hero');
+
+  const saveMutation = useMutation({
+    mutationFn: async (url) => {
+      if (hero) return base44.entities.HeroAsset.update(hero.id, { image_url: url });
+      return base44.entities.HeroAsset.create({ image_url: url, role: 'hero', order: 0 });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => base44.entities.HeroAsset.delete(hero.id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
+  });
+
+  return (
+    <>
+      <GlassCard variant="strong" className="p-5 mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-violet-200 to-indigo-200 flex items-center justify-center">
+            {hero ? (
+              <img src={hero.image_url} alt="hero" className="w-full h-full object-cover" />
+            ) : (
+              <ImagePlus className="w-5 h-5 text-violet-500" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1">
+              Hero Image
+            </p>
+            <p className="font-heading text-sm font-semibold">
+              {hero ? 'Your dashboard idol' : 'No image set'}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Shown behind the editorial title on home.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <GlassButton
+            variant="primary"
+            className="flex-1 flex items-center justify-center gap-2 py-2 text-xs"
+            onClick={() => setShowUpload(true)}
+          >
+            <ImagePlus className="w-3.5 h-3.5" />
+            {hero ? 'Replace' : 'Upload'}
+          </GlassButton>
+          {hero && (
+            <GlassButton
+              variant="ghost"
+              className="flex items-center justify-center gap-2 py-2 px-4 text-xs text-rose-500"
+              onClick={() => deleteMutation.mutate()}
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Remove
+            </GlassButton>
+          )}
+        </div>
+      </GlassCard>
+
+      <HeroUploadModal
+        isOpen={showUpload}
+        onClose={() => setShowUpload(false)}
+        role="hero"
+        onSave={(url) => {
+          saveMutation.mutate(url);
+          setShowUpload(false);
+        }}
+      />
+    </>
+  );
+}
