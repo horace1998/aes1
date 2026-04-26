@@ -9,7 +9,6 @@ const MENU_ITEMS = [
     icon: Target,
     angle: -150,
     gradient: 'from-purple-500 to-blue-500',
-    shadow: 'shadow-purple-500/40',
   },
   {
     id: 'milestone',
@@ -17,7 +16,6 @@ const MENU_ITEMS = [
     icon: Camera,
     angle: -90,
     gradient: 'from-teal-400 to-emerald-500',
-    shadow: 'shadow-teal-400/40',
   },
   {
     id: 'task',
@@ -25,12 +23,11 @@ const MENU_ITEMS = [
     icon: CheckSquare,
     angle: -30,
     gradient: 'from-pink-400 to-rose-500',
-    shadow: 'shadow-pink-400/40',
   },
 ];
 
 const RADIUS = 88;
-const HOLD_MS = 350;
+const HOLD_MS = 380;
 
 export default function FABMenu({ onSelect }) {
   const [open, setOpen] = useState(false);
@@ -38,16 +35,11 @@ export default function FABMenu({ onSelect }) {
   const [fabPos, setFabPos] = useState({ x: 0, y: 0 });
   const holdTimer = useRef(null);
   const fabRef = useRef(null);
-  const didOpen = useRef(false);
 
   const openMenu = useCallback(() => {
     if (!fabRef.current) return;
     const rect = fabRef.current.getBoundingClientRect();
-    setFabPos({
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-    });
-    didOpen.current = true;
+    setFabPos({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
     setOpen(true);
     setPressing(false);
   }, []);
@@ -55,12 +47,10 @@ export default function FABMenu({ onSelect }) {
   const closeMenu = useCallback(() => {
     setOpen(false);
     setPressing(false);
-    didOpen.current = false;
   }, []);
 
   const handlePointerDown = (e) => {
     e.preventDefault();
-    didOpen.current = false;
     setPressing(true);
     holdTimer.current = setTimeout(openMenu, HOLD_MS);
   };
@@ -68,17 +58,11 @@ export default function FABMenu({ onSelect }) {
   const handlePointerUp = () => {
     clearTimeout(holdTimer.current);
     setPressing(false);
-    // short tap — do nothing, only hold opens the menu
   };
 
   const handlePointerLeave = () => {
     clearTimeout(holdTimer.current);
     setPressing(false);
-  };
-
-  const handleSelect = (id) => {
-    closeMenu();
-    onSelect(id);
   };
 
   return (
@@ -92,12 +76,12 @@ export default function FABMenu({ onSelect }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeMenu}
-            style={{ background: 'rgba(0,0,0,0.22)', backdropFilter: 'blur(5px)' }}
+            style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)' }}
           />
         )}
       </AnimatePresence>
 
-      {/* Radial menu items — anchored to measured FAB center */}
+      {/* Radial menu items — anchored to FAB center */}
       <AnimatePresence>
         {open && MENU_ITEMS.map((item, i) => {
           const rad = (item.angle * Math.PI) / 180;
@@ -106,22 +90,30 @@ export default function FABMenu({ onSelect }) {
           return (
             <motion.div
               key={item.id}
-              className="fixed z-50 flex flex-col items-center"
+              className="fixed z-50 flex flex-col items-center gap-1"
               style={{ left: x, top: y, transform: 'translate(-50%, -50%)' }}
               initial={{ opacity: 0, scale: 0.3 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.3 }}
-              transition={{ type: 'spring', stiffness: 420, damping: 28, delay: i * 0.04 }}
+              transition={{ type: 'spring', stiffness: 440, damping: 30, delay: i * 0.04 }}
             >
               <button
-                className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg ${item.shadow} mb-1`}
+                className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-xl`}
+                style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.25)' }}
                 onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => handleSelect(item.id)}
+                onClick={() => { closeMenu(); onSelect(item.id); }}
               >
                 <item.icon className="w-5 h-5 text-white" />
               </button>
-              <span className="text-[10px] font-heading font-semibold text-white drop-shadow-md whitespace-nowrap"
-                style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              <span
+                className="text-[10px] font-heading font-bold whitespace-nowrap px-2 py-0.5 rounded-full"
+                style={{
+                  background: 'rgba(0,0,0,0.45)',
+                  color: '#fff',
+                  backdropFilter: 'blur(4px)',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 {item.label}
               </span>
             </motion.div>
@@ -129,61 +121,49 @@ export default function FABMenu({ onSelect }) {
         })}
       </AnimatePresence>
 
-      {/* FAB button */}
-      <div className="relative flex items-center justify-center" ref={fabRef}>
-        {/* Pulse ring hint — visible when not open */}
-        <AnimatePresence>
-          {!open && (
-            <motion.div
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{ border: '2px solid rgba(167,139,250,0.5)' }}
-              animate={{ scale: [1, 1.55, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          )}
-        </AnimatePresence>
+      {/* FAB */}
+      <div ref={fabRef} className="relative flex items-center justify-center" style={{ width: 56, height: 56, marginTop: -28 }}>
+        {/* Subtle idle ripple — stays inside nav, doesn't overlay button */}
+        {!open && !pressing && (
+          <motion.span
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{ background: 'rgba(167,139,250,0.35)' }}
+            animate={{ scale: [1, 1.6], opacity: [0.5, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+          />
+        )}
 
-        {/* Press progress ring */}
-        <AnimatePresence>
-          {pressing && (
-            <motion.div
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{
-                border: '3px solid rgba(167,139,250,0.9)',
-                boxShadow: '0 0 12px rgba(167,139,250,0.6)',
-              }}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1.25, opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: HOLD_MS / 1000, ease: 'linear' }}
-            />
-          )}
-        </AnimatePresence>
+        {/* Hold-progress ring */}
+        {pressing && (
+          <motion.span
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{ border: '2.5px solid rgba(255,255,255,0.8)' }}
+            initial={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1.4, opacity: 0 }}
+            transition={{ duration: HOLD_MS / 1000, ease: 'linear' }}
+          />
+        )}
 
         <motion.button
-          className="relative w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-xl shadow-purple-500/35 z-50 -mt-7 select-none"
-          animate={{ rotate: open ? 45 : 0, scale: pressing ? 0.92 : 1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="relative w-14 h-14 rounded-full flex items-center justify-center select-none z-50"
+          style={{
+            background: 'linear-gradient(135deg, #a78bfa 0%, #6366f1 50%, #3b82f6 100%)',
+            boxShadow: open
+              ? '0 0 0 3px rgba(167,139,250,0.5), 0 12px 32px rgba(99,102,241,0.45)'
+              : '0 6px 20px rgba(99,102,241,0.4)',
+            touchAction: 'none',
+          }}
+          animate={{ rotate: open ? 45 : 0, scale: pressing ? 0.9 : 1 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 22 }}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerLeave}
-          style={{ touchAction: 'none' }}
         >
-          <Plus className="w-6 h-6 text-white" />
-          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+          {/* Inner highlight */}
+          <span className="absolute inset-0 rounded-full pointer-events-none"
+            style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.28) 0%, transparent 60%)' }} />
+          <Plus className="w-6 h-6 text-white relative z-10" strokeWidth={2.5} />
         </motion.button>
-
-        {/* "Hold" hint label */}
-        {!open && (
-          <motion.span
-            className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-heading font-semibold text-muted-foreground whitespace-nowrap pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            hold
-          </motion.span>
-        )}
       </div>
     </>
   );
