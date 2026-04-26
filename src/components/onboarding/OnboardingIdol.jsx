@@ -1,37 +1,33 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import { Search, Check, ChevronRight } from 'lucide-react';
-
-const IDOL_DATA = [
-  { name: 'Jungkook', group: 'BTS', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop' },
-  { name: 'Lisa', group: 'BLACKPINK', img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop' },
-  { name: 'Felix', group: 'Stray Kids', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop' },
-  { name: 'Wonyoung', group: 'IVE', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop' },
-  { name: 'Taehyung', group: 'BTS', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop' },
-  { name: 'Jennie', group: 'BLACKPINK', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop' },
-  { name: 'Hyunjin', group: 'Stray Kids', img: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&h=200&fit=crop' },
-  { name: 'Karina', group: 'aespa', img: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop' },
-];
+import { ChevronRight, Heart, Sparkles } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { KPOP_GROUPS } from '@/lib/kpopGroups';
 
 export default function OnboardingIdol({ onNext, onBack }) {
-  const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState(null);
-  const [customName, setCustomName] = useState('');
+  const [mode, setMode] = useState('list'); // 'list' | 'custom'
+  const [groupName, setGroupName] = useState('');
+  const [memberName, setMemberName] = useState('');
   const [customGroup, setCustomGroup] = useState('');
+  const [customName, setCustomName] = useState('');
 
-  const filtered = IDOL_DATA.filter(idol =>
-    idol.name.toLowerCase().includes(search.toLowerCase()) ||
-    idol.group.toLowerCase().includes(search.toLowerCase())
+  const selectedGroup = useMemo(
+    () => KPOP_GROUPS.find((g) => g.name === groupName),
+    [groupName]
   );
 
+  const idolName = mode === 'list' ? memberName : customName.trim();
+  const idolGroup = mode === 'list' ? groupName : customGroup.trim();
+  const canContinue = !!idolName;
+
   const handleContinue = () => {
-    if (selected) {
-      onNext({ idol_name: selected.name, idol_group: selected.group });
-    } else if (customName.trim()) {
-      onNext({ idol_name: customName.trim(), idol_group: customGroup.trim() || 'Unknown' });
-    }
+    if (!canContinue) return;
+    onNext({
+      idol_name: idolName,
+      idol_group: idolGroup || 'Unknown',
+    });
   };
 
   return (
@@ -52,76 +48,126 @@ export default function OnboardingIdol({ onNext, onBack }) {
         <p className="text-muted-foreground text-sm mb-6">Who inspires you to be your best self?</p>
       </motion.div>
 
-      <GlassCard className="flex items-center gap-3 px-4 py-3 mb-6" animate={false}>
-        <Search className="w-4 h-4 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Search idols or groups..."
-          className="bg-transparent flex-1 outline-none text-sm text-foreground placeholder:text-muted-foreground/50"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </GlassCard>
-
-      <div className="grid grid-cols-2 gap-3 mb-6 max-h-[340px] overflow-y-auto no-scrollbar">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((idol, i) => (
-            <motion.div
-              key={idol.name}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 25, delay: i * 0.05 }}
-            >
-              <div
-                className={`glass rounded-2xl p-4 cursor-pointer transition-all duration-300 ${
-                  selected?.name === idol.name
-                    ? 'ring-2 ring-violet-400 bg-white/60'
-                    : 'hover:bg-white/50'
-                }`}
-                onClick={() => { setSelected(idol); setCustomName(''); setCustomGroup(''); }}
-              >
-                <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-3 ring-2 ring-white/30">
-                  <img src={idol.img} alt={idol.name} className="w-full h-full object-cover" />
-                </div>
-                <p className="font-heading font-semibold text-sm text-center">{idol.name}</p>
-                <p className="text-xs text-muted-foreground text-center">{idol.group}</p>
-                {selected?.name === idol.name && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="flex justify-center mt-2"
-                  >
-                    <div className="w-5 h-5 rounded-full bg-violet-400 flex items-center justify-center">
-                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      {/* Mode toggle */}
+      <div className="flex gap-2 mb-5">
+        <button
+          onClick={() => setMode('list')}
+          className={`flex-1 rounded-xl px-3 py-2 text-xs font-heading uppercase tracking-wider transition ${
+            mode === 'list' ? 'bg-violet-400 text-white shadow' : 'glass-subtle text-muted-foreground'
+          }`}
+        >
+          Browse Groups
+        </button>
+        <button
+          onClick={() => setMode('custom')}
+          className={`flex-1 rounded-xl px-3 py-2 text-xs font-heading uppercase tracking-wider transition ${
+            mode === 'custom' ? 'bg-violet-400 text-white shadow' : 'glass-subtle text-muted-foreground'
+          }`}
+        >
+          Custom
+        </button>
       </div>
 
-      <GlassCard className="p-4 mb-6" animate={false}>
-        <p className="text-xs text-muted-foreground mb-3 font-heading uppercase tracking-wider">Or enter custom idol</p>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Idol name"
-            className="glass-subtle rounded-xl px-3 py-2 flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
-            value={customName}
-            onChange={(e) => { setCustomName(e.target.value); setSelected(null); }}
-          />
-          <input
-            type="text"
-            placeholder="Group"
-            className="glass-subtle rounded-xl px-3 py-2 w-28 text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
-            value={customGroup}
-            onChange={(e) => setCustomGroup(e.target.value)}
-          />
+      {/* List mode — cascading dropdowns */}
+      {mode === 'list' && (
+        <GlassCard className="p-5 mb-6 space-y-4" animate={false}>
+          <div>
+            <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5 block">
+              K-pop Group
+            </label>
+            <Select
+              value={groupName}
+              onValueChange={(v) => { setGroupName(v); setMemberName(''); }}
+            >
+              <SelectTrigger className="w-full bg-white/60 border-white/70 rounded-xl">
+                <SelectValue placeholder="Select a group..." />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {KPOP_GROUPS.map((g) => (
+                  <SelectItem key={g.name} value={g.name}>{g.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5 block">
+              Member
+            </label>
+            <Select
+              value={memberName}
+              onValueChange={setMemberName}
+              disabled={!selectedGroup}
+            >
+              <SelectTrigger className="w-full bg-white/60 border-white/70 rounded-xl disabled:opacity-50">
+                <SelectValue placeholder={selectedGroup ? 'Select a member...' : 'Pick a group first'} />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {selectedGroup?.members.map((m) => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </GlassCard>
+      )}
+
+      {/* Custom mode */}
+      {mode === 'custom' && (
+        <GlassCard className="p-5 mb-6 space-y-3" animate={false}>
+          <div>
+            <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5 block">
+              Idol Name
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Bang Chan"
+              className="glass-subtle rounded-xl px-3 py-2 w-full text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5 block">
+              Group
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Stray Kids"
+              className="glass-subtle rounded-xl px-3 py-2 w-full text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
+              value={customGroup}
+              onChange={(e) => setCustomGroup(e.target.value)}
+            />
+          </div>
+        </GlassCard>
+      )}
+
+      {/* Live preview of "Your idol" */}
+      <GlassCard variant="strong" className="p-5 mb-6 text-center" animate={false}>
+        <div className="flex items-center justify-center gap-1.5 mb-2">
+          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+          <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading">Your Idol</p>
         </div>
+        {idolName ? (
+          <motion.div
+            key={idolName + idolGroup}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+          >
+            <p className="font-display text-3xl tracking-wide uppercase bg-gradient-to-r from-violet-500 to-pink-400 bg-clip-text text-transparent">
+              {idolName}
+            </p>
+            {idolGroup && (
+              <div className="flex items-center justify-center gap-1.5 mt-1">
+                <Heart className="w-3 h-3 text-pink-400 fill-pink-400" />
+                <p className="text-xs text-muted-foreground font-heading">{idolGroup}</p>
+              </div>
+            )}
+          </motion.div>
+        ) : (
+          <p className="text-sm text-muted-foreground/60 italic">Pick someone to see their name here</p>
+        )}
       </GlassCard>
 
       <div className="flex gap-3">
@@ -129,7 +175,7 @@ export default function OnboardingIdol({ onNext, onBack }) {
         <GlassButton
           variant="primary"
           onClick={handleContinue}
-          disabled={!selected && !customName.trim()}
+          disabled={!canContinue}
           className="flex-1 flex items-center justify-center gap-2"
         >
           Continue <ChevronRight className="w-4 h-4" />
