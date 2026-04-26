@@ -14,6 +14,8 @@ import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
 import HeroBanner from '@/components/dashboard/HeroBanner';
+import LevelUpModal from '@/components/LevelUpModal';
+import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
@@ -35,13 +37,24 @@ export default function Dashboard() {
     queryFn: () => base44.entities.Goal.list('-created_date'),
   });
 
+  const [levelUpRank, setLevelUpRank] = useState(null);
+
   const checkinMutation = useMutation({
-    mutationFn: (goal) => {
+    mutationFn: ({ goal, prevRankId }) => {
       const today = format(new Date(), 'yyyy-MM-dd');
       const checkins = [...(goal.daily_checkins || []), { date: today, completed: true, note: '' }];
-      return base44.entities.Goal.update(goal.id, { daily_checkins: checkins });
+      return base44.entities.Goal.update(goal.id, { daily_checkins: checkins })
+        .then(() => prevRankId);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+    onSuccess: (prevRankId) => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      // Detect rank-up: recompute with one extra check-in
+      const newCheckins = totalCheckins + 1;
+      const newRank = getFanRank(newCheckins, milestoneCount);
+      if (newRank.id !== prevRankId) {
+        setLevelUpRank(newRank);
+      }
+    },
   });
 
   const { data: milestones = [] } = useQuery({
@@ -53,6 +66,28 @@ export default function Dashboard() {
   const completedCount = goals.filter(g => g.status === 'completed').length;
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
   const milestoneCount = milestones.length;
+  const currentRank = getFanRank(totalCheckins, milestoneCount);
+
+  const handleCheckin = (goal) => {
+    checkinMutation.mutate({ goal, prevRankId: currentRank.id });
+  };
+
+  const handleShareLevelUp = async () => {
+    if (!user || !levelUpRank) return;
+    await base44.entities.FeedPost.create({
+      user_email: user.email,
+      user_name: user.full_name || user.email.split('@')[0],
+      idol_name: user.favorite_idol || 'Fan',
+      idol_group: user.favorite_group || '',
+      goal_title: `Reached ${levelUpRank.label} rank!`,
+      caption: `Just leveled up to ${levelUpRank.label} — ${levelUpRank.description} ✨`,
+      fan_rank: levelUpRank.label,
+      cheers: [],
+    });
+    queryClient.invalidateQueries({ queryKey: ['feedPosts'] });
+    setLevelUpRank(null);
+    navigate('/feed');
+  };
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -149,7 +184,7 @@ export default function Dashboard() {
                 key={goal.id}
                 goal={goal}
                 index={i}
-                onCheckin={(g) => checkinMutation.mutate(g)}
+                onCheckin={handleCheckin}
               />
             ))
           )}
@@ -157,6 +192,14 @@ export default function Dashboard() {
       </div>
 
       </PageShell>
+
+      <LevelUpModal
+        isOpen={!!levelUpRank}
+        rank={levelUpRank}
+        score={getRankScore(totalCheckins, milestoneCount)}
+        onClose={() => setLevelUpRank(null)}
+        onShare={handleShareLevelUp}
+      />
     </div>
   );
 }

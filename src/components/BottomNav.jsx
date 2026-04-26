@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Target, CalendarCheck, Radio, Plus, X, Trophy, Camera, CheckSquare } from 'lucide-react';
@@ -70,8 +71,8 @@ export default function BottomNav({ onSelect }) {
     );
   };
 
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-5" style={ns}>
+  const content = (
+    <div className="fixed bottom-0 left-0 right-0 z-[60] px-4 pb-5" style={ns}>
 
       {/* ── BACKDROP to close ── */}
       <AnimatePresence>
@@ -198,4 +199,7 @@ export default function BottomNav({ onSelect }) {
       </div>
     </div>
   );
+
+  if (typeof document === 'undefined') return null;
+  return createPortal(content, document.body);
 }
