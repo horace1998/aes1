@@ -15,10 +15,16 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
     saturation = 100,
     shadow = 50,
     text_color = '#ffffff',
+    title_line1,
+    title_line2,
   } = settings || {};
 
   const upperIdol = (idolName || 'YOUR IDOL').toUpperCase();
   const upperGroup = (groupName || 'SYNKIFY').toUpperCase();
+
+  // Default: line1 = group, line2 = idol. User can override either via editor.
+  const line1 = (title_line1?.trim() || upperGroup).toUpperCase();
+  const line2 = (title_line2?.trim() || upperIdol).toUpperCase();
 
   return (
     <div
@@ -28,22 +34,22 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
       {/* Editorial title */}
       <div className="absolute inset-x-0 top-8 z-20 px-5 pointer-events-none">
         <h1
-          className="font-display leading-[0.85] tracking-tight"
+          className="font-display leading-[0.85] tracking-tight break-words"
           style={{
             color: text_color,
             fontSize: compact ? 'clamp(40px,12vw,80px)' : 'clamp(56px,16vw,120px)',
           }}
         >
-          {upperIdol.split(' ')[0]?.slice(0, 6) || 'ALL'}
+          {line1}
         </h1>
         <h1
-          className="font-display leading-[0.85] tracking-tight"
+          className="font-display leading-[0.85] tracking-tight break-words"
           style={{
             color: text_color,
             fontSize: compact ? 'clamp(40px,12vw,80px)' : 'clamp(56px,16vw,120px)',
           }}
         >
-          {(upperIdol.split(' ')[1] || upperGroup).slice(0, 7)}
+          {line2}
         </h1>
       </div>
 
@@ -57,7 +63,7 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
             fontSize: compact ? 'clamp(50px,15vw,90px)' : 'clamp(70px,20vw,140px)',
           }}
         >
-          {upperGroup.slice(0, 6)}
+          {line1.slice(0, 7)}
         </h2>
       </div>
 
