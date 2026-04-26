@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, CalendarCheck, Radio, Plus, X, Sparkles, Camera, CheckSquare, ArrowRight } from 'lucide-react';
+import { Home, Target, CalendarCheck, Radio, Plus, X, Sparkles, Camera, CheckSquare } from 'lucide-react';
 
-const NAV_ITEMS_LEFT  = [
-  { path: '/',      icon: Home,           label: 'Home'  },
-  { path: '/goals', icon: Target,         label: 'Goals' },
+const NAV_ITEMS_LEFT = [
+  { path: '/',      icon: Home,          label: 'Home'  },
+  { path: '/goals', icon: Target,        label: 'Goals' },
 ];
 const NAV_ITEMS_RIGHT = [
-  { path: '/tasks', icon: CalendarCheck,  label: 'Tasks' },
-  { path: '/feed',  icon: Radio,          label: 'Feed'  },
+  { path: '/tasks', icon: CalendarCheck, label: 'Tasks' },
+  { path: '/feed',  icon: Radio,         label: 'Feed'  },
 ];
 
 const ACTIONS = [
-  { id: 'goal',      label: 'New Goal',      icon: Sparkles,    color: '#a78bfa', bg: 'linear-gradient(135deg,#a78bfa,#6366f1)' },
-  { id: 'milestone', label: 'New Milestone', icon: Camera,      color: '#34d399', bg: 'linear-gradient(135deg,#34d399,#0ea5e9)' },
-  { id: 'task',      label: 'New Task',      icon: CheckSquare, color: '#f472b6', bg: 'linear-gradient(135deg,#f472b6,#fb7185)' },
+  { id: 'goal',      label: 'Goal',      icon: Sparkles,    bg: 'linear-gradient(135deg,#a78bfa,#6366f1)', shadow: 'rgba(167,139,250,0.45)' },
+  { id: 'milestone', label: 'Milestone', icon: Camera,      bg: 'linear-gradient(135deg,#34d399,#0ea5e9)', shadow: 'rgba(52,211,153,0.45)' },
+  { id: 'task',      label: 'Task',      icon: CheckSquare, bg: 'linear-gradient(135deg,#f472b6,#fb923c)', shadow: 'rgba(244,114,182,0.45)' },
 ];
 
 const ns = {
@@ -27,35 +27,14 @@ const ns = {
 };
 
 export default function BottomNav({ onSelect }) {
-  const [active, setActive] = useState(null);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  const current = active !== null ? ACTIONS[active] : null;
-  const Icon = current?.icon;
-
-  const handleDialTap = (e) => {
+  const handleAction = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    if (active === null) {
-      setActive(0);
-    } else {
-      setActive((v) => (v + 1) % ACTIONS.length);
-    }
-  };
-
-  const handleConfirm = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (current) {
-      onSelect(current.id);
-      setActive(null);
-    }
-  };
-
-  const handleCancel = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActive(null);
+    setOpen(false);
+    onSelect(id);
   };
 
   const renderNavItem = (item) => {
@@ -94,121 +73,74 @@ export default function BottomNav({ onSelect }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-5" style={ns}>
 
-      {/* ── FLOATING SELECTOR — appears above nav bar ── */}
+      {/* ── BACKDROP to close ── */}
       <AnimatePresence>
-        {active !== null && (
+        {open && (
           <motion.div
-            key="selector"
-            initial={{ opacity: 0, y: 20, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.92 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-            className="flex items-center justify-center mb-3"
-            style={ns}
-          >
-            <div
-              className="flex items-center gap-4 px-5 py-3.5 rounded-2xl"
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(32px) saturate(200%)',
-                WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-                border: '1px solid rgba(255,255,255,0.38)',
-                boxShadow: '0 16px 48px rgba(80,40,140,0.18), inset 0 1.5px 0 rgba(255,255,255,0.55)',
-              }}
-            >
-              {/* Cancel */}
-              <motion.button
-                onClick={handleCancel}
-                whileTap={{ scale: 0.85 }}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  background: 'rgba(0,0,0,0.07)',
-                  border: '1px solid rgba(0,0,0,0.08)',
-                  cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  ...ns,
-                }}
-              >
-                <X style={{ width: 14, height: 14, color: 'rgba(80,60,120,0.6)', pointerEvents: 'none' }} />
-              </motion.button>
+            key="backdrop"
+            className="fixed inset-0 z-30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+            style={{ background: 'rgba(0,0,0,0.08)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
+          />
+        )}
+      </AnimatePresence>
 
-              {/* Spinning icon button + label */}
-              <div className="flex flex-col items-center gap-1.5" style={ns}>
+      {/* ── POPUP OPTIONS ── */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="popup"
+            className="flex items-end justify-center gap-4 mb-4"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            style={{ zIndex: 50, position: 'relative' }}
+          >
+            {ACTIONS.map((action, i) => {
+              const Icon = action.icon;
+              return (
                 <motion.button
-                  onClick={handleDialTap}
+                  key={action.id}
+                  onClick={(e) => handleAction(e, action.id)}
+                  initial={{ opacity: 0, y: 20, scale: 0.85 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 12, scale: 0.85 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 28, delay: i * 0.05 }}
                   whileTap={{ scale: 0.88 }}
                   style={{
-                    width: 56, height: 56, borderRadius: 18,
-                    background: current?.bg,
-                    boxShadow: `0 8px 24px ${current?.color}55`,
-                    border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    position: 'relative', overflow: 'hidden',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                    cursor: 'pointer', background: 'none', border: 'none',
                     ...ns,
                   }}
                 >
-                  <span style={{
-                    position: 'absolute', inset: 0, borderRadius: 18, pointerEvents: 'none',
-                    background: 'linear-gradient(160deg,rgba(255,255,255,0.28) 0%,transparent 55%)',
-                  }} />
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={active}
-                      initial={{ rotate: -60, opacity: 0, scale: 0.5 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: 60, opacity: 0, scale: 0.5 }}
-                      transition={{ type: 'spring', stiffness: 460, damping: 24 }}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      {Icon && <Icon style={{ width: 24, height: 24, color: '#fff', pointerEvents: 'none' }} />}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.button>
-
-                {/* Label */}
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={current?.id}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="font-heading font-bold text-[11px] whitespace-nowrap pointer-events-none"
-                    style={{ color: current?.color, letterSpacing: '0.06em' }}
+                  <div
+                    style={{
+                      width: 60, height: 60, borderRadius: 20,
+                      background: action.bg,
+                      boxShadow: `0 10px 28px ${action.shadow}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      position: 'relative', overflow: 'hidden',
+                    }}
                   >
-                    {current?.label}
-                  </motion.span>
-                </AnimatePresence>
-
-                {/* Step dots */}
-                <div className="flex gap-1" style={ns}>
-                  {ACTIONS.map((a, i) => (
-                    <motion.div
-                      key={a.id}
-                      animate={{ width: active === i ? 16 : 4, background: active === i ? a.color : 'rgba(160,140,200,0.3)' }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                      style={{ height: 4, borderRadius: 4 }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Confirm */}
-              <motion.button
-                onClick={handleConfirm}
-                whileTap={{ scale: 0.85 }}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%',
-                  background: current?.bg,
-                  border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 4px 14px ${current?.color}55`,
-                  ...ns,
-                }}
-              >
-                <ArrowRight style={{ width: 16, height: 16, color: '#fff', pointerEvents: 'none' }} />
-              </motion.button>
-            </div>
+                    <span style={{
+                      position: 'absolute', inset: 0, borderRadius: 20, pointerEvents: 'none',
+                      background: 'linear-gradient(160deg,rgba(255,255,255,0.3) 0%,transparent 55%)',
+                    }} />
+                    <Icon style={{ width: 26, height: 26, color: '#fff', pointerEvents: 'none' }} />
+                  </div>
+                  <span
+                    className="font-heading font-semibold text-[11px]"
+                    style={{ color: '#4b3a7a', letterSpacing: '0.04em', pointerEvents: 'none' }}
+                  >
+                    {action.label}
+                  </span>
+                </motion.button>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -217,7 +149,7 @@ export default function BottomNav({ onSelect }) {
       <div
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
-          height: 64,
+          height: 64, position: 'relative', zIndex: 50,
           background: 'rgba(255,255,255,0.18)',
           backdropFilter: 'blur(32px) saturate(200%)',
           WebkitBackdropFilter: 'blur(32px) saturate(200%)',
@@ -226,23 +158,24 @@ export default function BottomNav({ onSelect }) {
           boxShadow: '0 12px 40px rgba(80,40,140,0.12), inset 0 1.5px 0 rgba(255,255,255,0.55)',
         }}
       >
-        {/* Left */}
         <div className="flex flex-1 items-center h-full">
           {NAV_ITEMS_LEFT.map(renderNavItem)}
         </div>
 
-        {/* Center + button (clean, just the pill) */}
+        {/* Center + button */}
         <div className="flex items-center justify-center px-2" style={{ flexShrink: 0, ...ns }}>
           <motion.button
-            onClick={handleDialTap}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(v => !v); }}
             whileTap={{ scale: 0.88 }}
+            animate={{ rotate: open ? 45 : 0 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 26 }}
             style={{
               width: 48, height: 48, borderRadius: 15,
-              background: current
-                ? current.bg
+              background: open
+                ? 'linear-gradient(135deg,#f87171,#ef4444)'
                 : 'linear-gradient(135deg,#a78bfa 0%,#6366f1 55%,#3b82f6 100%)',
-              boxShadow: current
-                ? `0 6px 20px ${current.color}55`
+              boxShadow: open
+                ? '0 6px 20px rgba(239,68,68,0.4)'
                 : '0 6px 20px rgba(99,102,241,0.4)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -259,7 +192,6 @@ export default function BottomNav({ onSelect }) {
           </motion.button>
         </div>
 
-        {/* Right */}
         <div className="flex flex-1 items-center h-full">
           {NAV_ITEMS_RIGHT.map(renderNavItem)}
         </div>
