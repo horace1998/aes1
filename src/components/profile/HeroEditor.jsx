@@ -182,24 +182,24 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
                 <Slider label="Saturation"  value={draft.saturation} min={0}   max={200} onChange={(v) => update('saturation', v)} />
                 <Slider label="Shadow"      value={draft.shadow}     min={0}   max={100} onChange={(v) => update('shadow', v)} />
               </div>
-            </div>
-          </div>
 
-          {/* Sticky footer — guaranteed tappable, respects safe area */}
-          <div
-            className="flex-shrink-0 glass-strong border-t border-white/40 px-3 pt-2 flex gap-2"
-            style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
-          >
-            <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
-            <GlassButton
-              variant="primary"
-              onClick={() => saveMutation.mutate()}
-              disabled={!draftImage || saveMutation.isPending}
-              className="flex-1 flex items-center justify-center gap-2"
-            >
-              <Check className="w-4 h-4" />
-              {saveMutation.isPending ? 'Saving...' : 'Apply'}
-            </GlassButton>
+              {/* Cancel / Apply — placed directly below Shadow slider */}
+              <div
+                className="flex gap-2 mt-5"
+                style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+              >
+                <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
+                <GlassButton
+                  variant="primary"
+                  onClick={() => saveMutation.mutate()}
+                  disabled={!draftImage || saveMutation.isPending}
+                  className="flex-1 flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  {saveMutation.isPending ? 'Saving...' : 'Apply'}
+                </GlassButton>
+              </div>
+            </div>
           </div>
 
           <HeroUploadModal
