@@ -9,6 +9,7 @@ import PageShell from '@/components/PageShell';
 import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp } from 'lucide-react';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
+import ReminderSettings from '@/components/profile/ReminderSettings';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -84,6 +85,9 @@ export default function Profile() {
 
         {/* Hero Image manager */}
         <HeroImageManager user={user} />
+
+        {/* Daily reminder */}
+        <ReminderSettings />
 
         {/* Station ID */}
         <GlassCard variant="strong" className="p-5 mb-6 text-center">

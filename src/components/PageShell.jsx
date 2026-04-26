@@ -1,15 +1,18 @@
 /**
- * PageShell — wraps a page with BottomNav + FAB modals (NewGoal, Camera, Task)
- * Usage: <PageShell goals={goals} user={user}>{content}</PageShell>
+ * PageShell — wraps a page with FAB modals (NewGoal, Camera, Task).
+ * The BottomNav itself is rendered ONCE at the App root (App.jsx) so it
+ * doesn't unmount/remount on route changes. PageShell registers a handler
+ * with NavActionContext so the global FAB knows which modals to open
+ * for the current page (with the right `goals` / `user` context).
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BottomNav from '@/components/BottomNav';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import TaskModal from '@/components/TaskModal';
 import MilestoneCamera from '@/components/MilestoneCamera';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavAction } from '@/lib/NavActionContext';
 
 export default function PageShell({ children, goals = [], user }) {
   const [showGoal, setShowGoal] = useState(false);
@@ -17,12 +20,15 @@ export default function PageShell({ children, goals = [], user }) {
   const [showTask, setShowTask] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { registerHandler } = useNavAction();
 
-  const handleSelect = (id) => {
-    if (id === 'goal') setShowGoal(true);
-    else if (id === 'milestone') setShowCamera(true);
-    else if (id === 'task') setShowTask(true);
-  };
+  useEffect(() => {
+    registerHandler((id) => {
+      if (id === 'goal') setShowGoal(true);
+      else if (id === 'milestone') setShowCamera(true);
+      else if (id === 'task') setShowTask(true);
+    });
+  }, [registerHandler]);
 
   const handleCameraClose = async (fileUrl, goal) => {
     setShowCamera(false);
@@ -44,7 +50,6 @@ export default function PageShell({ children, goals = [], user }) {
   return (
     <>
       {children}
-      <BottomNav onSelect={handleSelect} />
 
       <NewGoalModal
         isOpen={showGoal}

@@ -7,6 +7,8 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PageTransition from '@/components/PageTransition';
+import { NavActionProvider } from '@/lib/NavActionContext';
+import RootChrome from '@/components/RootChrome';
 
 import Dashboard from '@/pages/Dashboard';
 import Onboarding from '@/pages/Onboarding';
@@ -57,17 +59,24 @@ const AuthenticatedApp = () => {
     }
   }
 
-  return <AnimatedRoutes />;
+  return (
+    <>
+      <AnimatedRoutes />
+      <RootChrome />
+    </>
+  );
 };
 
 function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
+        <NavActionProvider>
+          <Router>
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </NavActionProvider>
       </QueryClientProvider>
     </AuthProvider>
   )
