@@ -147,10 +147,21 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Prevent text selection on interactive elements */
-button, a, [role="tab"], [role="button"] {
+/* Prevent text/icon selection globally */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body, button, a, span, p, h1, h2, h3, h4, h5, h6, svg, img,
+[role="tab"], [role="button"], [role="navigation"], nav, header, footer {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
+}
+
+/* Re-enable selection only on explicit text inputs */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
 }
