@@ -26,8 +26,9 @@ export default function Onboarding() {
       daily_checkins: [],
     });
 
-    // Save onboarding data on user
-    await base44.auth.updateMe({
+    // Save onboarding data on user via User entity
+    const me = await base44.auth.me();
+    await base44.entities.User.update(me.id, {
       onboarded: true,
       favorite_idol: goalData.idol_name,
       favorite_group: goalData.idol_group,

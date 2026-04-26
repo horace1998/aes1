@@ -19,10 +19,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     base44.auth.me().then(u => {
-      if (!u.onboarded) {
+      setUser(u);
+      // Only redirect if explicitly set to false, not just undefined (first-time users handled gracefully)
+      if (u.onboarded === false) {
         navigate('/onboarding');
       }
-      setUser(u);
     });
   }, [navigate]);
 
