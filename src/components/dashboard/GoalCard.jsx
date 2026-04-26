@@ -57,10 +57,9 @@ export default function GoalCard({ goal, onCheckin, index = 0 }) {
           <span>{progress}% complete</span>
           <span>{daysLeft}d left</span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(180,160,220,0.18)', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)' }}>
+        <div className="h-2 rounded-full bg-white/30 overflow-hidden">
           <motion.div
-            className="h-full rounded-full relative"
-            style={{ background: 'linear-gradient(90deg, #a855f7 0%, #6366f1 50%, #2dd4bf 100%)', boxShadow: '0 0 8px rgba(167,85,247,0.5), inset 0 1px 0 rgba(255,255,255,0.35)' }}
+            className="h-full rounded-full bg-gradient-to-r from-purple-500 to-teal-400"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 + index * 0.1 }}
