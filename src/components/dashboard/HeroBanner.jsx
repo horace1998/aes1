@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Plus, ImagePlus, Trash2 } from 'lucide-react';
 import HeroUploadModal from './HeroUploadModal';
+import HeroEffectControls from './HeroEffectControls';
+import { debounce } from 'lodash';
 
 /**
  * HeroBanner — editorial-style hero with bold display headline,
@@ -13,6 +15,7 @@ export default function HeroBanner({ user }) {
   const queryClient = useQueryClient();
   const [showUpload, setShowUpload] = useState(false);
   const [uploadRole, setUploadRole] = useState('hero');
+  const [showControls, setShowControls] = useState(false);
 
   const { data: assets = [] } = useQuery({
     queryKey: ['heroAssets'],
@@ -21,6 +24,31 @@ export default function HeroBanner({ user }) {
 
   const hero = assets.find(a => a.role === 'hero');
   const filmstrip = assets.filter(a => a.role === 'filmstrip');
+
+  // Local state for live slider feedback (debounced persist)
+  const [glow, setGlow] = useState(50);
+  const [blur, setBlur] = useState(0);
+
+  useEffect(() => {
+    if (hero) {
+      setGlow(hero.glow ?? 50);
+      setBlur(hero.blur ?? 0);
+    }
+  }, [hero?.id]);
+
+  const persistEffects = React.useMemo(
+    () => debounce((id, data) => base44.entities.HeroAsset.update(id, data), 400),
+    []
+  );
+
+  const handleGlowChange = (v) => {
+    setGlow(v);
+    if (hero) persistEffects(hero.id, { glow: v });
+  };
+  const handleBlurChange = (v) => {
+    setBlur(v);
+    if (hero) persistEffects(hero.id, { blur: v });
+  };
 
   const saveMutation = useMutation({
     mutationFn: async ({ url, role }) => {
@@ -98,11 +126,12 @@ export default function HeroBanner({ user }) {
         {/* Hero subject image with glow */}
         {hero ? (
           <>
+            {/* Glow halo behind subject — scales 0-100 */}
             <div
-              className="absolute inset-0 z-[8] pointer-events-none"
+              className="absolute inset-0 z-[8] pointer-events-none transition-opacity"
               style={{
-                background: 'radial-gradient(circle at 50% 55%, rgba(196,181,253,0.35) 0%, rgba(186,230,253,0.18) 30%, transparent 60%)',
-                filter: 'blur(20px)',
+                background: `radial-gradient(circle at 50% 55%, rgba(196,181,253,${0.6 * (glow / 100)}) 0%, rgba(186,230,253,${0.3 * (glow / 100)}) 30%, transparent 60%)`,
+                filter: `blur(${20 + glow * 0.4}px)`,
               }}
             />
             <img
@@ -110,8 +139,21 @@ export default function HeroBanner({ user }) {
               alt="hero"
               className="absolute inset-0 w-full h-full object-contain object-bottom z-[15]"
               style={{
-                filter: 'drop-shadow(0 0 30px rgba(196,181,253,0.5)) drop-shadow(0 10px 40px rgba(0,0,0,0.6))',
+                filter: `
+                  drop-shadow(0 0 ${blur * 0.6}px rgba(255,255,255,${blur / 200}))
+                  drop-shadow(0 0 ${10 + glow * 0.6}px rgba(196,181,253,${0.3 + glow / 200}))
+                  drop-shadow(0 0 ${glow * 0.4}px rgba(186,230,253,${glow / 250}))
+                  drop-shadow(0 10px 40px rgba(0,0,0,0.6))
+                `,
               }}
+            />
+            <HeroEffectControls
+              open={showControls}
+              onToggle={() => setShowControls(v => !v)}
+              blur={blur}
+              glow={glow}
+              onBlurChange={handleBlurChange}
+              onGlowChange={handleGlowChange}
             />
             <button
               onClick={() => openUpload('hero')}

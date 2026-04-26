@@ -23,6 +23,16 @@
       "type": "number",
       "default": 0,
       "description": "Order in the filmstrip"
+    },
+    "glow": {
+      "type": "number",
+      "default": 50,
+      "description": "Glow intensity 0-100"
+    },
+    "blur": {
+      "type": "number",
+      "default": 0,
+      "description": "Outline blur intensity 0-100"
     }
   },
   "required": [

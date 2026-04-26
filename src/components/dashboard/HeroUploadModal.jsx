@@ -4,6 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import { X, Upload, Sparkles, Crop, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { removeBackground } from '@imgly/background-removal';
 import CropTool from './CropTool';
 
 /**
@@ -46,12 +47,14 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
     setStep('processing');
     setError(null);
     try {
-      const res = await base44.functions.invoke('removeBackground', { image_url: sourceUrl });
-      const cutoutUrl = res.data?.url;
-      if (!cutoutUrl) throw new Error('No image returned');
-      onSave(cutoutUrl);
+      // Run pixel-perfect background removal in the browser — preserves subject exactly
+      const blob = await removeBackground(sourceUrl, { output: { format: 'image/png' } });
+      const file = new File([blob], 'cutout.png', { type: 'image/png' });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      onSave(file_url);
       reset();
     } catch (err) {
+      console.error(err);
       setError('AI cutout failed. Try Quick Crop.');
       setStep('choose');
     }
@@ -156,8 +159,8 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
               {step === 'processing' && (
                 <div className="flex flex-col items-center gap-3 py-12">
                   <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
-                  <p className="font-heading text-sm">Processing...</p>
-                  <p className="text-[11px] text-muted-foreground">This may take a few seconds</p>
+                  <p className="font-heading text-sm">Removing background...</p>
+                  <p className="text-[11px] text-muted-foreground text-center">First time may take ~20s to load the AI model</p>
                 </div>
               )}
             </GlassCard>
