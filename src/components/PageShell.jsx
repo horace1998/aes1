@@ -9,7 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import TaskModal from '@/components/TaskModal';
-import MilestoneCamera from '@/components/MilestoneCamera';
+import MilestoneNativeCapture from '@/components/MilestoneNativeCapture';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavAction } from '@/lib/NavActionContext';
@@ -62,7 +62,7 @@ export default function PageShell({ children, goals = [], user }) {
         defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
       />
 
-      <MilestoneCamera
+      <MilestoneNativeCapture
         isOpen={showCamera}
         onClose={handleCameraClose}
         goals={goals}
