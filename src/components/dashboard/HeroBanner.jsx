@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { ImagePlus } from 'lucide-react';
-import HeroUploadModal from './HeroUploadModal';
-import HeroEffectControls from './HeroEffectControls';
-import { debounce } from 'lodash';
+import HeroPreview from '@/components/profile/HeroPreview';
+import { Link } from 'react-router-dom';
 
 /**
- * HeroBanner — editorial-style hero with bold display headline,
- * subject cutout with glow, and a filmstrip of idol photos below.
+ * HeroBanner — editorial-style hero. Pure display.
+ * All editing now lives in the Profile page.
  */
 export default function HeroBanner({ user }) {
-  const queryClient = useQueryClient();
-  const [showUpload, setShowUpload] = useState(false);
-  const [uploadRole, setUploadRole] = useState('hero');
-  const [showControls, setShowControls] = useState(false);
-
   const { data: assets = [] } = useQuery({
     queryKey: ['heroAssets'],
     queryFn: () => base44.entities.HeroAsset.list('order'),
@@ -24,147 +18,34 @@ export default function HeroBanner({ user }) {
 
   const hero = assets.find(a => a.role === 'hero');
 
-  // Local state for live slider feedback (debounced persist)
-  const [glow, setGlow] = useState(50);
-  const [blur, setBlur] = useState(0);
-
-  useEffect(() => {
-    if (hero) {
-      setGlow(hero.glow ?? 50);
-      setBlur(hero.blur ?? 0);
-    }
-  }, [hero?.id]);
-
-  const persistEffects = React.useMemo(
-    () => debounce((id, data) => base44.entities.HeroAsset.update(id, data), 400),
-    []
-  );
-
-  const handleGlowChange = (v) => {
-    setGlow(v);
-    if (hero) persistEffects(hero.id, { glow: v });
-  };
-  const handleBlurChange = (v) => {
-    setBlur(v);
-    if (hero) persistEffects(hero.id, { blur: v });
-  };
-
-  const saveMutation = useMutation({
-    mutationFn: async ({ url, role }) => {
-      // For hero: replace existing
-      if (role === 'hero' && hero) {
-        return base44.entities.HeroAsset.update(hero.id, { image_url: url });
-      }
-      return base44.entities.HeroAsset.create({
-        image_url: url,
-        role,
-        order: 0,
-      });
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
-  });
-
-  const openUpload = (role) => {
-    setUploadRole(role);
-    setShowUpload(true);
-  };
-
-  const idolName = (user?.favorite_idol || 'YOUR IDOL').toUpperCase();
-  const groupName = (user?.favorite_group || 'SYNKIFY').toUpperCase();
-
   return (
-    <div className="mb-8">
-      {/* Main hero */}
-      <motion.div
-        className="relative rounded-3xl overflow-hidden aspect-[4/5] mb-3"
-        style={{
-          background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)',
-        }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-      >
-        {/* Big editorial title — sits ABOVE the image (z-20) */}
-        <div className="absolute inset-x-0 top-8 z-20 px-5 pointer-events-none">
-          <h1 className="font-display text-white leading-[0.85] tracking-tight text-[clamp(56px,16vw,120px)]">
-            {idolName.split(' ')[0]?.slice(0, 6) || 'ALL'}
-          </h1>
-          <h1 className="font-display text-white leading-[0.85] tracking-tight text-[clamp(56px,16vw,120px)]">
-            {(idolName.split(' ')[1] || groupName).slice(0, 7)}
-          </h1>
-        </div>
-
-        {/* Ghost/echo word behind */}
-        <div className="absolute inset-x-0 bottom-16 z-[5] px-5 pointer-events-none overflow-hidden">
-          <h2
-            className="font-display leading-[0.85] tracking-tight text-[clamp(70px,20vw,140px)]"
-            style={{
-              color: 'transparent',
-              WebkitTextStroke: '1px rgba(255,255,255,0.18)',
-            }}
-          >
-            {groupName.slice(0, 6)}
-          </h2>
-        </div>
-
-        {/* Hero subject image with glow */}
-        {hero ? (
-          <>
-            {/* Glow halo behind subject — scales 0-100 */}
-            <div
-              className="absolute inset-0 z-[8] pointer-events-none transition-opacity"
-              style={{
-                background: `radial-gradient(circle at 50% 55%, rgba(196,181,253,${0.6 * (glow / 100)}) 0%, rgba(186,230,253,${0.3 * (glow / 100)}) 30%, transparent 60%)`,
-                filter: `blur(${20 + glow * 0.4}px)`,
-              }}
-            />
-            <img
-              src={hero.image_url}
-              alt="hero"
-              className="absolute inset-0 w-full h-full object-contain object-bottom z-[10]"
-              style={{
-                filter: `
-                  drop-shadow(0 0 ${blur * 0.6}px rgba(255,255,255,${blur / 200}))
-                  drop-shadow(0 0 ${10 + glow * 0.6}px rgba(196,181,253,${0.3 + glow / 200}))
-                  drop-shadow(0 0 ${glow * 0.4}px rgba(186,230,253,${glow / 250}))
-                  drop-shadow(0 10px 40px rgba(0,0,0,0.6))
-                `,
-              }}
-            />
-            <HeroEffectControls
-              open={showControls}
-              onToggle={() => setShowControls(v => !v)}
-              blur={blur}
-              glow={glow}
-              onBlurChange={handleBlurChange}
-              onGlowChange={handleGlowChange}
-            />
-          </>
-        ) : (
-          <button
-            onClick={() => openUpload('hero')}
-            className="absolute inset-x-8 bottom-8 z-20 glass-subtle rounded-2xl py-4 px-5 flex items-center justify-center gap-2 text-white border border-white/20 hover:bg-white/10 transition"
+    <motion.div
+      className="mb-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+    >
+      {hero ? (
+        <HeroPreview
+          imageUrl={hero.image_url}
+          settings={hero}
+          idolName={user?.favorite_idol}
+          groupName={user?.favorite_group}
+        />
+      ) : (
+        <div
+          className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center"
+          style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
+        >
+          <Link
+            to="/profile"
+            className="glass-subtle rounded-2xl py-4 px-5 flex items-center gap-2 text-white border border-white/20 hover:bg-white/10 transition"
           >
             <ImagePlus className="w-5 h-5" />
-            <span className="font-heading text-sm font-semibold">Add Hero Image</span>
-          </button>
-        )}
-
-        {/* Bottom gradient fade into filmstrip */}
-        <div className="absolute bottom-0 left-0 right-0 h-20 z-[18] pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, transparent, rgba(15,10,32,0.95))' }}
-        />
-      </motion.div>
-
-      <HeroUploadModal
-        isOpen={showUpload}
-        onClose={() => setShowUpload(false)}
-        role={uploadRole}
-        onSave={(url) => {
-          saveMutation.mutate({ url, role: uploadRole });
-          setShowUpload(false);
-        }}
-      />
-    </div>
+            <span className="font-heading text-sm font-semibold">Add Hero Image in Profile</span>
+          </Link>
+        </div>
+      )}
+    </motion.div>
   );
 }

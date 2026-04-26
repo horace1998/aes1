@@ -83,7 +83,7 @@ export default function Profile() {
         </div>
 
         {/* Hero Image manager */}
-        <HeroImageManager />
+        <HeroImageManager user={user} />
 
         {/* Station ID */}
         <GlassCard variant="strong" className="p-5 mb-6 text-center">

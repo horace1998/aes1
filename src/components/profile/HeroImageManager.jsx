@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ImagePlus, Trash2 } from 'lucide-react';
+import { ImagePlus, Trash2, Sliders } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import HeroUploadModal from '@/components/dashboard/HeroUploadModal';
+import HeroEditor from './HeroEditor';
 
 /**
- * HeroImageManager — lets the user upload / replace / remove
- * the dashboard hero image from the Profile page.
+ * HeroImageManager — Profile section for uploading / editing / removing
+ * the dashboard hero image. Opens the full HeroEditor for live preview.
  */
-export default function HeroImageManager() {
+export default function HeroImageManager({ user }) {
   const queryClient = useQueryClient();
-  const [showUpload, setShowUpload] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
 
   const { data: assets = [] } = useQuery({
     queryKey: ['heroAssets'],
@@ -20,14 +20,6 @@ export default function HeroImageManager() {
   });
 
   const hero = assets.find(a => a.role === 'hero');
-
-  const saveMutation = useMutation({
-    mutationFn: async (url) => {
-      if (hero) return base44.entities.HeroAsset.update(hero.id, { image_url: url });
-      return base44.entities.HeroAsset.create({ image_url: url, role: 'hero', order: 0 });
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
-  });
 
   const deleteMutation = useMutation({
     mutationFn: () => base44.entities.HeroAsset.delete(hero.id),
@@ -53,7 +45,7 @@ export default function HeroImageManager() {
               {hero ? 'Your dashboard idol' : 'No image set'}
             </p>
             <p className="text-xs text-muted-foreground">
-              Shown behind the editorial title on home.
+              Edit with live preview before saving.
             </p>
           </div>
         </div>
@@ -62,10 +54,10 @@ export default function HeroImageManager() {
           <GlassButton
             variant="primary"
             className="flex-1 flex items-center justify-center gap-2 py-2 text-xs"
-            onClick={() => setShowUpload(true)}
+            onClick={() => setShowEditor(true)}
           >
-            <ImagePlus className="w-3.5 h-3.5" />
-            {hero ? 'Replace' : 'Upload'}
+            <Sliders className="w-3.5 h-3.5" />
+            {hero ? 'Edit & Preview' : 'Upload'}
           </GlassButton>
           {hero && (
             <GlassButton
@@ -79,14 +71,11 @@ export default function HeroImageManager() {
         </div>
       </GlassCard>
 
-      <HeroUploadModal
-        isOpen={showUpload}
-        onClose={() => setShowUpload(false)}
-        role="hero"
-        onSave={(url) => {
-          saveMutation.mutate(url);
-          setShowUpload(false);
-        }}
+      <HeroEditor
+        isOpen={showEditor}
+        onClose={() => setShowEditor(false)}
+        hero={hero}
+        user={user}
       />
     </>
   );

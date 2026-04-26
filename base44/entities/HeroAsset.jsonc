@@ -33,6 +33,31 @@
       "type": "number",
       "default": 0,
       "description": "Outline blur intensity 0-100"
+    },
+    "brightness": {
+      "type": "number",
+      "default": 100,
+      "description": "Image brightness 50-150"
+    },
+    "contrast": {
+      "type": "number",
+      "default": 100,
+      "description": "Image contrast 50-150"
+    },
+    "saturation": {
+      "type": "number",
+      "default": 100,
+      "description": "Image saturation 0-200"
+    },
+    "shadow": {
+      "type": "number",
+      "default": 50,
+      "description": "Drop shadow intensity 0-100"
+    },
+    "text_color": {
+      "type": "string",
+      "default": "#ffffff",
+      "description": "Hex color of the editorial title overlay"
     }
   },
   "required": [
