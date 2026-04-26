@@ -57,6 +57,11 @@ export default function Dashboard() {
     },
   });
 
+  const completeMutation = useMutation({
+    mutationFn: (goal) => base44.entities.Goal.update(goal.id, { status: 'completed', progress: 100 }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+  });
+
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
     queryFn: () => base44.entities.Milestone.list('-created_date'),
@@ -185,6 +190,7 @@ export default function Dashboard() {
                 goal={goal}
                 index={i}
                 onCheckin={handleCheckin}
+                onComplete={(g) => completeMutation.mutate(g)}
               />
             ))
           )}

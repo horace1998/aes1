@@ -34,6 +34,11 @@ export default function Goals() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
   });
 
+  const completeMutation = useMutation({
+    mutationFn: (goal) => base44.entities.Goal.update(goal.id, { status: 'completed', progress: 100 }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+  });
+
   const filtered = activeTab === 'all' ? goals : goals.filter(g => g.status === activeTab);
 
   return (
@@ -90,6 +95,7 @@ export default function Goals() {
                   goal={goal}
                   index={i}
                   onCheckin={(g) => checkinMutation.mutate(g)}
+                  onComplete={(g) => completeMutation.mutate(g)}
                 />
               ))
             )}
