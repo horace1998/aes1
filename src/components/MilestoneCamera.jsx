@@ -147,7 +147,14 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
       {/* Camera / Preview */}
       <div className="flex-1 relative overflow-hidden">
         {!captured ? (
-          <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+            style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'none' }}
+          />
         ) : (
           <img src={captured} alt="captured" className="w-full h-full object-cover" />
         )}
