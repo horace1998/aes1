@@ -18,10 +18,14 @@ export default function GlassCard({ children, className, variant = 'default', an
 
   return (
     <Component
-      className={cn(variants[variant], 'rounded-2xl', className)}
+      className={cn(variants[variant], 'rounded-2xl relative overflow-hidden', className)}
       {...animateProps}
       {...props}
     >
+      {/* Metallic top highlight */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+      {/* Side chrome */}
+      <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-white/50 via-white/20 to-transparent pointer-events-none" />
       {children}
     </Component>
   );

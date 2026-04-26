@@ -16,7 +16,7 @@ export default function BottomNav({ onAddGoal }) {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-6 pt-2">
-      <div className="glass-strong rounded-2xl px-2 py-2 flex items-center justify-around max-w-md mx-auto">
+      <div className="glass-strong rounded-2xl px-2 py-2 flex items-center justify-around max-w-md mx-auto" style={{ boxShadow: '0 8px 32px rgba(100,60,180,0.18), 0 2px 8px rgba(0,0,0,0.08), inset 0 2px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(180,160,220,0.20)' }}>
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
           return (
