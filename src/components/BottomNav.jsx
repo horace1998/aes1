@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, User, Plus, Trophy } from 'lucide-react';
+import { Home, Target, User, Plus, Trophy, Radio } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/', icon: Home, label: 'Home' },
   { path: '/goals', icon: Target, label: 'Goals' },
   { path: '/gallery', icon: Trophy, label: 'Gallery' },
+  { path: '/feed', icon: Radio, label: 'Feed' },
   { path: '/profile', icon: User, label: 'Profile' },
 ];
 

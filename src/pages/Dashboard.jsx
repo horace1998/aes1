@@ -10,6 +10,8 @@ import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import BottomNav from '@/components/BottomNav';
 import { Sparkles, Flame } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
+import FanRankBadge from '@/components/dashboard/FanRankBadge';
+import TrendsSection from '@/components/dashboard/TrendsSection';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
@@ -50,9 +52,15 @@ export default function Dashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
   });
 
+  const { data: milestones = [] } = useQuery({
+    queryKey: ['milestones'],
+    queryFn: () => base44.entities.Milestone.list('-created_date'),
+  });
+
   const activeGoals = goals.filter(g => g.status === 'active');
   const completedCount = goals.filter(g => g.status === 'completed').length;
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
+  const milestoneCount = milestones.length;
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -86,6 +94,9 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
+        {/* Fan Rank */}
+        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
+
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           {[
@@ -105,13 +116,16 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Trends */}
+        {goals.length > 0 && <TrendsSection goals={goals} />}
+
         {/* Active Goals */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-4">
+          <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-4 mt-6">
             Active Goals
           </p>
 

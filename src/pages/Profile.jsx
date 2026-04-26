@@ -9,6 +9,8 @@ import BottomNav from '@/components/BottomNav';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, Star, Flame, Target, LogOut, Heart } from 'lucide-react';
+import FanRankBadge from '@/components/dashboard/FanRankBadge';
+import { useQuery as useQueryMilestones } from '@tanstack/react-query';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -30,6 +32,11 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       setShowNewGoal(false);
     },
+  });
+
+  const { data: milestones = [] } = useQueryMilestones({
+    queryKey: ['milestones'],
+    queryFn: () => base44.entities.Milestone.list('-created_date'),
   });
 
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
@@ -61,6 +68,9 @@ export default function Profile() {
             </div>
           )}
         </motion.div>
+
+        {/* Fan Rank */}
+        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3 mb-8">

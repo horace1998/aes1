@@ -1,0 +1,56 @@
+{
+  "name": "FeedPost",
+  "type": "object",
+  "properties": {
+    "milestone_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "idol_name": {
+      "type": "string"
+    },
+    "idol_group": {
+      "type": "string"
+    },
+    "goal_title": {
+      "type": "string"
+    },
+    "asset_url": {
+      "type": "string"
+    },
+    "asset_type": {
+      "type": "string"
+    },
+    "caption": {
+      "type": "string"
+    },
+    "fan_rank": {
+      "type": "string"
+    },
+    "cheers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          },
+          "reaction": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "user_email",
+    "goal_title",
+    "idol_name"
+  ]
+}
