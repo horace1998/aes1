@@ -1,235 +1,261 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, CalendarCheck, Radio, Plus, X, Sparkles, Camera, CheckSquare } from 'lucide-react';
+import { Home, Target, CalendarCheck, Radio, Sparkles, Camera, CheckSquare, ArrowRight } from 'lucide-react';
 
-const NAV_ITEMS = [
-  { path: '/',      icon: Home,         label: 'Home'  },
-  { path: '/goals', icon: Target,       label: 'Goals' },
-  { path: '/tasks', icon: CalendarCheck,label: 'Tasks' },
-  { path: '/feed',  icon: Radio,        label: 'Feed'  },
+const NAV_ITEMS_LEFT  = [
+  { path: '/',      icon: Home,          label: 'Home'  },
+  { path: '/goals', icon: Target,        label: 'Goals' },
+];
+const NAV_ITEMS_RIGHT = [
+  { path: '/tasks', icon: CalendarCheck, label: 'Tasks' },
+  { path: '/feed',  icon: Radio,         label: 'Feed'  },
 ];
 
-const ACTION_ITEMS = [
-  { id: 'goal',      label: 'New Goal',      icon: Sparkles,   gradient: ['#a78bfa', '#6366f1'] },
-  { id: 'milestone', label: 'New Milestone', icon: Camera,     gradient: ['#34d399', '#0ea5e9'] },
-  { id: 'task',      label: 'New Task',      icon: CheckSquare,gradient: ['#f472b6', '#fb7185'] },
+const ACTIONS = [
+  { id: 'goal',      label: 'Goal',      icon: Sparkles,    color: '#a78bfa', bg: 'linear-gradient(135deg,#a78bfa,#6366f1)' },
+  { id: 'milestone', label: 'Milestone', icon: Camera,      color: '#34d399', bg: 'linear-gradient(135deg,#34d399,#0ea5e9)' },
+  { id: 'task',      label: 'Task',      icon: CheckSquare, color: '#f472b6', bg: 'linear-gradient(135deg,#f472b6,#fb7185)' },
 ];
 
-const noSelect = {
+const ns = {
   userSelect: 'none',
   WebkitUserSelect: 'none',
   WebkitTouchCallout: 'none',
   WebkitTapHighlightColor: 'transparent',
+  touchAction: 'manipulation',
 };
 
 export default function BottomNav({ onSelect }) {
-  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(null); // null = idle, 0/1/2 = index
   const location = useLocation();
 
-  const handleAction = (id) => {
-    setOpen(false);
-    onSelect(id);
+  const current = active !== null ? ACTIONS[active] : null;
+  const Icon = current?.icon;
+
+  const handleDialTap = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (active === null) {
+      setActive(0);
+    } else {
+      setActive((v) => (v + 1) % ACTIONS.length);
+    }
+  };
+
+  const handleConfirm = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (current) {
+      onSelect(current.id);
+      setActive(null);
+    }
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActive(null);
+  };
+
+  const renderNavItem = (item) => {
+    const isActive = location.pathname === item.path;
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        draggable={false}
+        className="flex flex-col items-center justify-center flex-1 h-full gap-1"
+        style={ns}
+      >
+        <item.icon
+          className="w-5 h-5 pointer-events-none"
+          style={{ color: isActive ? '#7c3aed' : 'rgba(120,100,160,0.45)', transition: 'color 0.2s' }}
+          strokeWidth={isActive ? 2.2 : 1.8}
+        />
+        <span
+          className="text-[9px] font-heading font-semibold pointer-events-none"
+          style={{ color: isActive ? '#7c3aed' : 'rgba(120,100,160,0.4)', letterSpacing: '0.05em' }}
+        >
+          {item.label}
+        </span>
+        {isActive && (
+          <motion.div
+            layoutId="dot"
+            className="absolute bottom-2 w-1 h-1 rounded-full"
+            style={{ background: '#7c3aed' }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          />
+        )}
+      </Link>
+    );
   };
 
   return (
-    <>
-      {/* Backdrop */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-40"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setOpen(false)}
-            style={{ background: 'rgba(10,6,30,0.45)', backdropFilter: 'blur(12px)', ...noSelect }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Action Sheet */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed left-0 right-0 z-50 flex justify-center"
-            style={{ bottom: 96, ...noSelect }}
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 24 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-          >
-            <div
-              className="flex gap-4 px-6 py-4 rounded-2xl"
-              style={{
-                background: 'rgba(255,255,255,0.13)',
-                backdropFilter: 'blur(28px) saturate(180%)',
-                border: '1px solid rgba(255,255,255,0.22)',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.22), inset 0 1.5px 0 rgba(255,255,255,0.4)',
-              }}
-            >
-              {ACTION_ITEMS.map((item, i) => (
-                <motion.button
-                  key={item.id}
-                  className="flex flex-col items-center gap-2"
-                  style={noSelect}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 14 }}
-                  transition={{ delay: i * 0.06, type: 'spring', stiffness: 400, damping: 28 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleAction(item.id)}
-                >
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                    style={{
-                      background: `linear-gradient(135deg, ${item.gradient[0]}, ${item.gradient[1]})`,
-                      boxShadow: `0 8px 24px ${item.gradient[1]}55`,
-                    }}
-                  >
-                    <item.icon className="w-6 h-6 text-white pointer-events-none" />
-                  </div>
-                  <span
-                    className="text-[10px] font-heading font-semibold"
-                    style={{ color: 'rgba(255,255,255,0.85)', letterSpacing: '0.04em', ...noSelect }}
-                  >
-                    {item.label}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Nav Bar */}
+    <div
+      className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-5"
+      style={ns}
+    >
       <div
-        className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-5 pt-2"
-        style={noSelect}
+        className="flex items-center max-w-sm mx-auto"
+        style={{
+          height: 68,
+          background: 'rgba(255,255,255,0.18)',
+          backdropFilter: 'blur(32px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+          border: '1px solid rgba(255,255,255,0.32)',
+          borderRadius: 26,
+          boxShadow: '0 12px 48px rgba(80,40,140,0.13), inset 0 1.5px 0 rgba(255,255,255,0.55)',
+          position: 'relative',
+          overflow: 'visible',
+        }}
       >
-        <div
-          className="flex items-center max-w-sm mx-auto px-3"
-          style={{
-            height: 64,
-            background: 'rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(32px) saturate(200%)',
-            border: '1px solid rgba(255,255,255,0.28)',
-            borderRadius: 24,
-            boxShadow: '0 12px 40px rgba(80,40,140,0.12), inset 0 1.5px 0 rgba(255,255,255,0.5)',
-          }}
-        >
-          {/* Left 2 nav items */}
-          {NAV_ITEMS.slice(0, 2).map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="relative flex flex-col items-center justify-center flex-1 h-full"
-                style={noSelect}
-                draggable={false}
-              >
-                <motion.div
-                  className="flex flex-col items-center gap-1"
-                  animate={{ y: isActive ? -1 : 0 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="navPill"
-                      className="absolute top-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                      style={{ background: 'linear-gradient(135deg, #a78bfa, #6366f1)' }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <item.icon
-                    className="w-5 h-5 pointer-events-none"
-                    style={{ color: isActive ? '#7c3aed' : 'rgba(100,80,140,0.5)' }}
-                    strokeWidth={isActive ? 2.2 : 1.8}
-                  />
-                  <span
-                    className="text-[9px] font-heading font-semibold pointer-events-none"
-                    style={{ color: isActive ? '#7c3aed' : 'rgba(100,80,140,0.45)', letterSpacing: '0.05em' }}
-                  >
-                    {item.label}
-                  </span>
-                </motion.div>
-              </Link>
-            );
-          })}
+        {/* Left nav */}
+        <div className="flex flex-1 items-center h-full relative">
+          {NAV_ITEMS_LEFT.map(renderNavItem)}
+        </div>
 
-          {/* Center + button */}
-          <div className="flex items-center justify-center px-2" style={{ flexShrink: 0 }}>
+        {/* ── CENTER DIAL AREA ── */}
+        <div className="flex flex-col items-center justify-center" style={{ width: 100, flexShrink: 0, ...ns }}>
+
+          {/* Label that appears above dial when active */}
+          <AnimatePresence mode="wait">
+            {current && (
+              <motion.div
+                key={current.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="absolute pointer-events-none"
+                style={{ top: -30, left: '50%', transform: 'translateX(-50%)', zIndex: 60 }}
+              >
+                <span
+                  className="text-[10px] font-heading font-bold whitespace-nowrap px-3 py-1 rounded-full"
+                  style={{
+                    background: current.bg,
+                    color: '#fff',
+                    letterSpacing: '0.08em',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                  }}
+                >
+                  + {current.label}
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="flex items-center gap-2" style={ns}>
+
+            {/* Cancel — only visible when active */}
+            <AnimatePresence>
+              {active !== null && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.6 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+                  onClick={handleCancel}
+                  style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    background: 'rgba(0,0,0,0.08)',
+                    border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    ...ns,
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: 'rgba(80,60,120,0.7)', fontWeight: 700, lineHeight: 1 }}>✕</span>
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            {/* Main dial button */}
             <motion.button
-              className="relative flex items-center justify-center rounded-2xl"
+              onClick={handleDialTap}
               style={{
-                width: 50,
-                height: 50,
-                background: open
-                  ? 'linear-gradient(135deg, #1e1040, #2d1b69)'
-                  : 'linear-gradient(135deg, #a78bfa 0%, #6366f1 55%, #3b82f6 100%)',
-                boxShadow: open
-                  ? '0 4px 16px rgba(30,16,64,0.4)'
-                  : '0 6px 22px rgba(99,102,241,0.45)',
-                ...noSelect,
+                width: 52, height: 52, borderRadius: 16,
+                background: current ? current.bg : 'linear-gradient(135deg,#a78bfa,#6366f1,#3b82f6)',
+                boxShadow: current
+                  ? `0 6px 20px ${current.color}66`
+                  : '0 6px 20px rgba(99,102,241,0.4)',
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative', overflow: 'hidden',
+                transition: 'background 0.25s, box-shadow 0.25s',
+                ...ns,
               }}
-              animate={{ rotate: open ? 45 : 0 }}
               whileTap={{ scale: 0.88 }}
-              transition={{ type: 'spring', stiffness: 420, damping: 22 }}
-              onClick={() => setOpen((v) => !v)}
             >
+              {/* Sheen */}
               <span
-                className="absolute inset-0 rounded-2xl pointer-events-none"
-                style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.28) 0%, transparent 55%)' }}
+                style={{
+                  position: 'absolute', inset: 0, borderRadius: 16, pointerEvents: 'none',
+                  background: 'linear-gradient(160deg, rgba(255,255,255,0.28) 0%, transparent 55%)',
+                }}
               />
-              {open
-                ? <X className="w-5 h-5 text-white relative z-10 pointer-events-none" strokeWidth={2.5} />
-                : <Plus className="w-5 h-5 text-white relative z-10 pointer-events-none" strokeWidth={2.5} />
-              }
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active ?? 'idle'}
+                  initial={{ rotate: -60, opacity: 0, scale: 0.6 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 60, opacity: 0, scale: 0.6 }}
+                  transition={{ type: 'spring', stiffness: 460, damping: 24 }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  {Icon
+                    ? <Icon className="pointer-events-none" style={{ width: 22, height: 22, color: '#fff' }} />
+                    : <span style={{ fontSize: 22, color: '#fff', fontWeight: 300, lineHeight: 1 }}>+</span>
+                  }
+                </motion.div>
+              </AnimatePresence>
             </motion.button>
+
+            {/* Confirm arrow — only visible when active */}
+            <AnimatePresence>
+              {active !== null && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.6 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+                  onClick={handleConfirm}
+                  style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    background: current?.bg,
+                    border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 4px 10px ${current?.color}55`,
+                    ...ns,
+                  }}
+                >
+                  <ArrowRight className="pointer-events-none" style={{ width: 14, height: 14, color: '#fff' }} />
+                </motion.button>
+              )}
+            </AnimatePresence>
+
           </div>
 
-          {/* Right 2 nav items */}
-          {NAV_ITEMS.slice(2).map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="relative flex flex-col items-center justify-center flex-1 h-full"
-                style={noSelect}
-                draggable={false}
-              >
-                <motion.div
-                  className="flex flex-col items-center gap-1"
-                  animate={{ y: isActive ? -1 : 0 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="navPill"
-                      className="absolute top-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                      style={{ background: 'linear-gradient(135deg, #a78bfa, #6366f1)' }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <item.icon
-                    className="w-5 h-5 pointer-events-none"
-                    style={{ color: isActive ? '#7c3aed' : 'rgba(100,80,140,0.5)' }}
-                    strokeWidth={isActive ? 2.2 : 1.8}
-                  />
-                  <span
-                    className="text-[9px] font-heading font-semibold pointer-events-none"
-                    style={{ color: isActive ? '#7c3aed' : 'rgba(100,80,140,0.45)', letterSpacing: '0.05em' }}
-                  >
-                    {item.label}
-                  </span>
-                </motion.div>
-              </Link>
-            );
-          })}
+          {/* Step dots */}
+          <div className="flex gap-1 mt-1.5" style={{ height: 6, ...ns }}>
+            {ACTIONS.map((a, i) => (
+              <motion.div
+                key={a.id}
+                animate={{
+                  width: active === i ? 14 : 4,
+                  background: active === i ? a.color : 'rgba(160,140,200,0.3)',
+                }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                style={{ height: 4, borderRadius: 4 }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Right nav */}
+        <div className="flex flex-1 items-center h-full relative">
+          {NAV_ITEMS_RIGHT.map(renderNavItem)}
         </div>
       </div>
-    </>
+    </div>
   );
 }
