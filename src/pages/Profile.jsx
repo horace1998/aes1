@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import BottomNav from '@/components/BottomNav';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, Star, Flame, Target, LogOut, Heart } from 'lucide-react';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
-import { useQuery as useQueryMilestones } from '@tanstack/react-query';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -34,7 +32,7 @@ export default function Profile() {
     },
   });
 
-  const { data: milestones = [] } = useQueryMilestones({
+  const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
     queryFn: () => base44.entities.Milestone.list('-created_date'),
   });
