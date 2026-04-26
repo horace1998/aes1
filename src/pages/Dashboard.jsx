@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { User as UserIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
@@ -83,7 +84,15 @@ export default function Dashboard() {
                 {user.full_name?.split(' ')[0] || 'Station'}
               </h1>
             </div>
-            <NotificationBell userEmail={user.email} />
+            <div className="flex items-center gap-2">
+              <NotificationBell userEmail={user.email} />
+              <Link
+                to="/profile"
+                className="w-10 h-10 rounded-full glass-strong flex items-center justify-center ring-2 ring-violet-300/40 hover:ring-violet-400 transition"
+              >
+                <UserIcon className="w-4 h-4 text-violet-500" />
+              </Link>
+            </div>
           </div>
         </motion.div>
 
