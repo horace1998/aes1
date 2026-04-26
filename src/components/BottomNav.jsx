@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, CalendarCheck, Radio, Plus, X, Sparkles, Camera, CheckSquare } from 'lucide-react';
+import { Home, Target, CalendarCheck, Radio, Plus, X, Trophy, Camera, CheckSquare } from 'lucide-react';
 
 const NAV_ITEMS_LEFT = [
   { path: '/',      icon: Home,          label: 'Home'  },
@@ -13,7 +13,7 @@ const NAV_ITEMS_RIGHT = [
 ];
 
 const ACTIONS = [
-  { id: 'goal',      label: 'Goal',      icon: Sparkles,    bg: 'linear-gradient(135deg,#a78bfa,#6366f1)', shadow: 'rgba(167,139,250,0.45)' },
+  { id: 'goal',      label: 'Goal',      icon: Trophy,      bg: 'linear-gradient(135deg,#a78bfa,#6366f1)', shadow: 'rgba(167,139,250,0.45)' },
   { id: 'milestone', label: 'Milestone', icon: Camera,      bg: 'linear-gradient(135deg,#34d399,#0ea5e9)', shadow: 'rgba(52,211,153,0.45)' },
   { id: 'task',      label: 'Task',      icon: CheckSquare, bg: 'linear-gradient(135deg,#f472b6,#fb923c)', shadow: 'rgba(244,114,182,0.45)' },
 ];
