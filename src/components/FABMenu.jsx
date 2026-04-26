@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Target, Camera, CheckSquare } from 'lucide-react';
 
@@ -17,13 +17,43 @@ export default function FABMenu({ onSelect }) {
   const [fabPos, setFabPos] = useState({ x: 0, y: 0 });
   const holdTimer = useRef(null);
   const fabRef = useRef(null);
+  const btnRef = useRef(null);
 
-  const openMenu = useCallback(() => {
-    if (!fabRef.current) return;
-    const rect = fabRef.current.getBoundingClientRect();
-    setFabPos({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-    setOpen(true);
-    setPressing(false);
+  // Attach non-passive touchstart so we can call preventDefault and block native selection
+  useEffect(() => {
+    const btn = btnRef.current;
+    if (!btn) return;
+
+    const onTouchStart = (e) => {
+      e.preventDefault(); // blocks long-press selection & context menu
+      setPressing(true);
+      const rect = btn.getBoundingClientRect();
+      holdTimer.current = setTimeout(() => {
+        setFabPos({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+        setOpen(true);
+        setPressing(false);
+      }, HOLD_MS);
+    };
+
+    const onTouchEnd = (e) => {
+      e.preventDefault();
+      clearTimeout(holdTimer.current);
+      setPressing(false);
+    };
+
+    const onContextMenu = (e) => e.preventDefault();
+
+    btn.addEventListener('touchstart', onTouchStart, { passive: false });
+    btn.addEventListener('touchend', onTouchEnd, { passive: false });
+    btn.addEventListener('touchcancel', onTouchEnd, { passive: false });
+    btn.addEventListener('contextmenu', onContextMenu);
+
+    return () => {
+      btn.removeEventListener('touchstart', onTouchStart);
+      btn.removeEventListener('touchend', onTouchEnd);
+      btn.removeEventListener('touchcancel', onTouchEnd);
+      btn.removeEventListener('contextmenu', onContextMenu);
+    };
   }, []);
 
   const closeMenu = useCallback(() => {
@@ -31,21 +61,21 @@ export default function FABMenu({ onSelect }) {
     setPressing(false);
   }, []);
 
-  const handlePointerDown = (e) => {
+  // Mouse support (desktop)
+  const handleMouseDown = (e) => {
     e.preventDefault();
-    e.stopPropagation();
     setPressing(true);
-    holdTimer.current = setTimeout(openMenu, HOLD_MS);
+    const rect = btnRef.current.getBoundingClientRect();
+    holdTimer.current = setTimeout(() => {
+      setFabPos({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+      setOpen(true);
+      setPressing(false);
+    }, HOLD_MS);
   };
 
-  const cancel = () => {
+  const handleMouseUp = () => {
     clearTimeout(holdTimer.current);
     setPressing(false);
-  };
-
-  const prevent = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
   };
 
   return (
@@ -64,7 +94,7 @@ export default function FABMenu({ onSelect }) {
         )}
       </AnimatePresence>
 
-      {/* Radial menu items — positioned fixed relative to FAB center */}
+      {/* Radial menu items */}
       <AnimatePresence>
         {open && MENU_ITEMS.map((item, i) => {
           const rad = (item.angle * Math.PI) / 180;
@@ -73,25 +103,31 @@ export default function FABMenu({ onSelect }) {
           return (
             <motion.div
               key={item.id}
-              className="fixed z-50 flex flex-col items-center gap-1 select-none"
-              style={{ left: x, top: y, transform: 'translate(-50%, -50%)', touchAction: 'none' }}
+              className="fixed z-50 flex flex-col items-center gap-1"
+              style={{
+                left: x, top: y,
+                transform: 'translate(-50%, -50%)',
+                touchAction: 'none',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+              }}
               initial={{ opacity: 0, scale: 0.3 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.3 }}
               transition={{ type: 'spring', stiffness: 440, damping: 30, delay: i * 0.04 }}
             >
               <button
-                className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center select-none`}
-                style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.3)', touchAction: 'none' }}
+                className={`w-12 h-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center`}
+                style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.3)', touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
                 onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                onContextMenu={prevent}
+                onContextMenu={(e) => e.preventDefault()}
                 onClick={() => { closeMenu(); onSelect(item.id); }}
               >
                 <item.icon className="w-5 h-5 text-white pointer-events-none" />
               </button>
               <span
-                className="text-[10px] font-heading font-bold whitespace-nowrap px-2 py-0.5 rounded-full select-none pointer-events-none"
-                style={{ background: 'rgba(0,0,0,0.5)', color: '#fff', backdropFilter: 'blur(4px)', letterSpacing: '0.04em' }}
+                className="text-[10px] font-heading font-bold whitespace-nowrap px-2 py-0.5 rounded-full pointer-events-none"
+                style={{ background: 'rgba(0,0,0,0.5)', color: '#fff', backdropFilter: 'blur(4px)', letterSpacing: '0.04em', userSelect: 'none', WebkitUserSelect: 'none' }}
               >
                 {item.label}
               </span>
@@ -100,12 +136,11 @@ export default function FABMenu({ onSelect }) {
         })}
       </AnimatePresence>
 
-      {/* FAB wrapper */}
+      {/* FAB */}
       <div
         ref={fabRef}
-        className="relative flex items-center justify-center select-none"
-        style={{ width: 56, height: 56, marginTop: -28, touchAction: 'none' }}
-        onContextMenu={prevent}
+        className="relative flex items-center justify-center"
+        style={{ width: 56, height: 56, marginTop: -28, touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Idle ripple */}
         {!open && !pressing && (
@@ -129,23 +164,24 @@ export default function FABMenu({ onSelect }) {
         )}
 
         <motion.button
-          className="relative w-14 h-14 rounded-full flex items-center justify-center select-none z-50"
+          ref={btnRef}
+          className="relative w-14 h-14 rounded-full flex items-center justify-center z-50"
           style={{
             background: 'linear-gradient(135deg, #a78bfa 0%, #6366f1 50%, #3b82f6 100%)',
             boxShadow: open
               ? '0 0 0 3px rgba(167,139,250,0.5), 0 12px 32px rgba(99,102,241,0.45)'
               : '0 6px 20px rgba(99,102,241,0.4)',
             touchAction: 'none',
-            WebkitUserSelect: 'none',
             userSelect: 'none',
+            WebkitUserSelect: 'none',
+            WebkitTouchCallout: 'none',
           }}
           animate={{ rotate: open ? 45 : 0, scale: pressing ? 0.9 : 1 }}
           transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-          onPointerDown={handlePointerDown}
-          onPointerUp={cancel}
-          onPointerLeave={cancel}
-          onPointerCancel={cancel}
-          onContextMenu={prevent}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onContextMenu={(e) => e.preventDefault()}
         >
           <span className="absolute inset-0 rounded-full pointer-events-none"
             style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.28) 0%, transparent 60%)' }} />
