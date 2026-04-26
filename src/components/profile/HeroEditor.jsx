@@ -108,7 +108,7 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
 
           {/* Scrollable controls */}
           <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
-            <div className="px-4 py-3 max-w-xl mx-auto pb-4">
+            <div className="px-4 py-3 max-w-xl mx-auto" style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}>
               {/* Replace image */}
               <button
                 onClick={() => setShowUpload(true)}
