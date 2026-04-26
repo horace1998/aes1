@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, Check, RotateCcw, ImagePlus } from 'lucide-react';
+import { X, Check, RotateCcw, ImagePlus, Move } from 'lucide-react';
 import GlassButton from '@/components/ui/GlassButton';
 import HeroPreview from './HeroPreview';
 import HeroUploadModal from '@/components/dashboard/HeroUploadModal';
@@ -17,13 +17,15 @@ const DEFAULTS = {
   text_color: '#ffffff',
   title_line1: '',
   title_line2: '',
+  title_x: 5,
+  title_y: 8,
 };
 
 const PRESET_COLORS = ['#ffffff', '#f5d0fe', '#fcd34d', '#fda4af', '#a5b4fc', '#86efac', '#000000'];
 
 /**
- * HeroEditor — full-screen mobile-first editor for the hero image.
- * Layout: sticky header / scrollable middle / sticky footer (Cancel + Apply).
+ * HeroEditor — mobile-first editor.
+ * Layout: sticky header (top) | pinned preview (top) | scrollable controls | sticky footer (Cancel/Apply)
  */
 export default function HeroEditor({ isOpen, onClose, hero, user }) {
   const queryClient = useQueryClient();
@@ -31,7 +33,6 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
   const [draftImage, setDraftImage] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
 
-  // Initialize draft from hero whenever it opens
   useEffect(() => {
     if (isOpen) {
       setDraft({
@@ -44,6 +45,8 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
         text_color: hero?.text_color ?? DEFAULTS.text_color,
         title_line1: hero?.title_line1 ?? '',
         title_line2: hero?.title_line2 ?? '',
+        title_x: hero?.title_x ?? DEFAULTS.title_x,
+        title_y: hero?.title_y ?? DEFAULTS.title_y,
       });
       setDraftImage(hero?.image_url || null);
     }
@@ -63,10 +66,7 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
 
   const update = (key, value) => setDraft(d => ({ ...d, [key]: value }));
   const reset = () => setDraft(DEFAULTS);
-
-  // Default placeholders: group on line 1, member on line 2
-  const placeholderLine1 = (user?.favorite_group || 'GROUP').toUpperCase();
-  const placeholderLine2 = (user?.favorite_idol || 'IDOL').toUpperCase();
+  const handleTitleDrag = (x, y) => setDraft(d => ({ ...d, title_x: x, title_y: y }));
 
   return (
     <AnimatePresence>
@@ -78,7 +78,7 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
           exit={{ opacity: 0 }}
         >
           {/* Sticky header */}
-          <div className="flex-shrink-0 glass-strong border-b border-white/40 px-4 py-3 flex items-center justify-between safe-area-top">
+          <div className="flex-shrink-0 glass-strong border-b border-white/40 px-4 py-3 flex items-center justify-between" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
             <button onClick={onClose} className="glass-subtle rounded-full p-2">
               <X className="w-4 h-4" />
             </button>
@@ -88,26 +88,30 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
             </button>
           </div>
 
-          {/* Scrollable middle */}
-          <div className="flex-1 overflow-y-auto overscroll-contain">
-            <div className="px-4 py-4 max-w-xl mx-auto pb-6">
-              {/* Live preview — capped height so editor controls remain visible */}
-              <div className="mb-4 mx-auto" style={{ maxHeight: '40vh' }}>
-                <div style={{ maxHeight: '40vh' }} className="aspect-[4/5] mx-auto" >
-                  <HeroPreview
-                    imageUrl={draftImage}
-                    settings={draft}
-                    idolName={user?.favorite_idol}
-                    groupName={user?.favorite_group}
-                    compact
-                  />
-                </div>
-              </div>
+          {/* Pinned preview (drag-to-position title) */}
+          <div className="flex-shrink-0 px-4 pt-3 pb-2 bg-background">
+            <div className="mx-auto" style={{ height: '34vh', aspectRatio: '4/5' }}>
+              <HeroPreview
+                imageUrl={draftImage}
+                settings={draft}
+                idolName={user?.favorite_idol}
+                groupName={user?.favorite_group}
+                compact
+                onTitleDrag={handleTitleDrag}
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground text-center mt-1.5 flex items-center justify-center gap-1">
+              <Move className="w-3 h-3" /> Drag title to reposition
+            </p>
+          </div>
 
+          {/* Scrollable controls */}
+          <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+            <div className="px-4 py-3 max-w-xl mx-auto pb-4">
               {/* Replace image */}
               <button
                 onClick={() => setShowUpload(true)}
-                className="w-full glass-subtle rounded-2xl py-3 px-4 mb-5 flex items-center justify-center gap-2 hover:bg-white/60 transition"
+                className="w-full glass-subtle rounded-2xl py-3 px-4 mb-4 flex items-center justify-center gap-2 hover:bg-white/60 transition"
               >
                 <ImagePlus className="w-4 h-4 text-violet-500" />
                 <span className="font-heading text-sm font-semibold">
@@ -115,32 +119,36 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
                 </span>
               </button>
 
-              {/* Editable title lines */}
-              <div className="mb-5">
+              {/* Editable title lines (any case allowed) */}
+              <div className="mb-4">
                 <p className="font-heading text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">Title Text (optional)</p>
                 <div className="space-y-2">
                   <input
                     type="text"
                     value={draft.title_line1}
                     onChange={(e) => update('title_line1', e.target.value)}
-                    placeholder={`Line 1 — defaults to "${placeholderLine1}"`}
+                    placeholder={`Line 1 — defaults to "${user?.favorite_group || 'Group'}"`}
                     maxLength={20}
-                    className="w-full glass-subtle rounded-xl px-3 py-2 text-sm outline-none text-foreground placeholder:text-muted-foreground/50 font-heading"
+                    className="w-full glass-subtle rounded-xl px-3 py-2 text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                   />
                   <input
                     type="text"
                     value={draft.title_line2}
                     onChange={(e) => update('title_line2', e.target.value)}
-                    placeholder={`Line 2 — defaults to "${placeholderLine2}"`}
+                    placeholder={`Line 2 — defaults to "${user?.favorite_idol || 'Idol'}"`}
                     maxLength={20}
-                    className="w-full glass-subtle rounded-xl px-3 py-2 text-sm outline-none text-foreground placeholder:text-muted-foreground/50 font-heading"
+                    className="w-full glass-subtle rounded-xl px-3 py-2 text-sm outline-none text-foreground placeholder:text-muted-foreground/50"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                   />
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-1.5">Leave blank to use group + idol name automatically.</p>
+                <p className="text-[10px] text-muted-foreground mt-1.5">Use any case — uppercase, lowercase, or mixed.</p>
               </div>
 
               {/* Text color */}
-              <div className="mb-5">
+              <div className="mb-4">
                 <p className="font-heading text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">Text Color</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   {PRESET_COLORS.map(c => (
@@ -165,19 +173,22 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
               </div>
 
               {/* Sliders */}
-              <div className="space-y-4">
-                <Slider label="Glow"       value={draft.glow}       min={0}   max={100} onChange={(v) => update('glow', v)} />
-                <Slider label="Outline Blur" value={draft.blur}     min={0}   max={100} onChange={(v) => update('blur', v)} />
-                <Slider label="Brightness" value={draft.brightness} min={50}  max={150} onChange={(v) => update('brightness', v)} />
-                <Slider label="Contrast"   value={draft.contrast}   min={50}  max={150} onChange={(v) => update('contrast', v)} />
-                <Slider label="Saturation" value={draft.saturation} min={0}   max={200} onChange={(v) => update('saturation', v)} />
-                <Slider label="Shadow"     value={draft.shadow}     min={0}   max={100} onChange={(v) => update('shadow', v)} />
+              <div className="space-y-3.5">
+                <Slider label="Glow"        value={draft.glow}       min={0}   max={100} onChange={(v) => update('glow', v)} />
+                <Slider label="Outline Blur" value={draft.blur}      min={0}   max={100} onChange={(v) => update('blur', v)} />
+                <Slider label="Brightness"  value={draft.brightness} min={50}  max={150} onChange={(v) => update('brightness', v)} />
+                <Slider label="Contrast"    value={draft.contrast}   min={50}  max={150} onChange={(v) => update('contrast', v)} />
+                <Slider label="Saturation"  value={draft.saturation} min={0}   max={200} onChange={(v) => update('saturation', v)} />
+                <Slider label="Shadow"      value={draft.shadow}     min={0}   max={100} onChange={(v) => update('shadow', v)} />
               </div>
             </div>
           </div>
 
-          {/* Sticky footer */}
-          <div className="flex-shrink-0 glass-strong border-t border-white/40 px-4 py-3 flex gap-3 safe-area-bottom">
+          {/* Sticky footer — guaranteed tappable, respects safe area */}
+          <div
+            className="flex-shrink-0 glass-strong border-t border-white/40 px-4 pt-3 flex gap-3"
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+          >
             <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
             <GlassButton
               variant="primary"

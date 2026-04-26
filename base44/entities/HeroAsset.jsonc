@@ -66,6 +66,16 @@
     "title_line2": {
       "type": "string",
       "description": "Custom second line of the editorial title overlay (defaults to idol name)"
+    },
+    "title_x": {
+      "type": "number",
+      "default": 5,
+      "description": "Horizontal position of the title in % (0-100)"
+    },
+    "title_y": {
+      "type": "number",
+      "default": 8,
+      "description": "Vertical position of the title in % (0-100)"
     }
   },
   "required": [

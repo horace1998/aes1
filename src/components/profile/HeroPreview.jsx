@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 /**
  * HeroPreview — pure visual renderer of the hero banner.
  * Used by both the dashboard (live) and the profile editor (preview).
  *
- * settings: { glow, blur, brightness, contrast, saturation, shadow, text_color }
+ * settings: { glow, blur, brightness, contrast, saturation, shadow, text_color,
+ *             title_line1, title_line2, title_x, title_y }
+ *
+ * onTitleDrag(xPct, yPct) — optional. When provided, the title becomes draggable.
  */
-export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL', groupName = 'SYNKIFY', compact = false }) {
+export default function HeroPreview({
+  imageUrl,
+  settings,
+  idolName = 'YOUR IDOL',
+  groupName = 'SYNKIFY',
+  compact = false,
+  onTitleDrag = null,
+}) {
   const {
     glow = 50,
     blur = 0,
@@ -17,54 +27,75 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
     text_color = '#ffffff',
     title_line1,
     title_line2,
+    title_x = 5,
+    title_y = 8,
   } = settings || {};
 
-  const upperIdol = (idolName || 'YOUR IDOL').toUpperCase();
-  const upperGroup = (groupName || 'SYNKIFY').toUpperCase();
+  // Defaults: line1 = group, line2 = idol. Preserve user case (no forced uppercase).
+  const line1 = (title_line1?.trim() || groupName || 'SYNKIFY');
+  const line2 = (title_line2?.trim() || idolName || 'YOUR IDOL');
 
-  // Default: line1 = group, line2 = idol. User can override either via editor.
-  const line1 = (title_line1?.trim() || upperGroup).toUpperCase();
-  const line2 = (title_line2?.trim() || upperIdol).toUpperCase();
+  const containerRef = useRef(null);
+  const draggable = typeof onTitleDrag === 'function';
+  const [dragging, setDragging] = useState(false);
+
+  const handlePointerMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    onTitleDrag(Math.max(0, Math.min(95, x)), Math.max(0, Math.min(90, y)));
+  };
+
+  const startDrag = (e) => {
+    if (!draggable) return;
+    e.preventDefault();
+    setDragging(true);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const endDrag = (e) => {
+    setDragging(false);
+    e.currentTarget?.releasePointerCapture?.(e.pointerId);
+  };
 
   return (
     <div
-      className={`relative rounded-3xl overflow-hidden ${compact ? 'aspect-[4/5]' : 'aspect-[4/5]'}`}
+      ref={containerRef}
+      className={`relative rounded-3xl overflow-hidden h-full w-full ${compact ? '' : 'aspect-[4/5]'}`}
       style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
     >
-      {/* Editorial title */}
-      <div className="absolute inset-x-0 top-8 z-20 px-5 pointer-events-none">
+      {/* Editorial title — draggable when onTitleDrag is provided */}
+      <div
+        className={`absolute z-20 px-2 ${draggable ? 'cursor-move touch-none' : 'pointer-events-none'} ${dragging ? 'ring-2 ring-violet-400/60 rounded-xl' : ''}`}
+        style={{
+          left: `${title_x}%`,
+          top: `${title_y}%`,
+          maxWidth: `${100 - title_x}%`,
+        }}
+        onPointerDown={startDrag}
+        onPointerMove={dragging ? handlePointerMove : undefined}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
         <h1
-          className="font-display leading-[0.85] tracking-tight break-words"
+          className="font-display leading-[0.85] tracking-tight break-words select-none"
           style={{
             color: text_color,
-            fontSize: compact ? 'clamp(40px,12vw,80px)' : 'clamp(56px,16vw,120px)',
+            fontSize: compact ? 'clamp(32px,10vw,68px)' : 'clamp(56px,16vw,120px)',
           }}
         >
           {line1}
         </h1>
         <h1
-          className="font-display leading-[0.85] tracking-tight break-words"
+          className="font-display leading-[0.85] tracking-tight break-words select-none"
           style={{
             color: text_color,
-            fontSize: compact ? 'clamp(40px,12vw,80px)' : 'clamp(56px,16vw,120px)',
+            fontSize: compact ? 'clamp(32px,10vw,68px)' : 'clamp(56px,16vw,120px)',
           }}
         >
           {line2}
         </h1>
-      </div>
-
-      {/* Ghost echo */}
-      <div className="absolute inset-x-0 bottom-16 z-[5] px-5 pointer-events-none overflow-hidden">
-        <h2
-          className="font-display leading-[0.85] tracking-tight"
-          style={{
-            color: 'transparent',
-            WebkitTextStroke: `1px ${hexToRgba(text_color, 0.18)}`,
-            fontSize: compact ? 'clamp(50px,15vw,90px)' : 'clamp(70px,20vw,140px)',
-          }}
-        >
-          {line1.slice(0, 7)}
-        </h2>
       </div>
 
       {imageUrl && (
@@ -80,7 +111,8 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
           <img
             src={imageUrl}
             alt="hero"
-            className="absolute inset-0 w-full h-full object-contain object-bottom z-[10]"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-contain object-bottom z-[10] pointer-events-none"
             style={{
               filter: `
                 brightness(${brightness}%)
@@ -103,13 +135,4 @@ export default function HeroPreview({ imageUrl, settings, idolName = 'YOUR IDOL'
       />
     </div>
   );
-}
-
-function hexToRgba(hex, alpha) {
-  const h = hex.replace('#', '');
-  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-  const r = parseInt(full.slice(0, 2), 16);
-  const g = parseInt(full.slice(2, 4), 16);
-  const b = parseInt(full.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
 }
