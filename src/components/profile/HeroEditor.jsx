@@ -73,24 +73,25 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-50 bg-background flex flex-col"
+          style={{ height: '100dvh' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          {/* Sticky header */}
-          <div className="flex-shrink-0 glass-strong border-b border-white/40 px-4 py-3 flex items-center justify-between" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
-            <button onClick={onClose} className="glass-subtle rounded-full p-2">
-              <X className="w-4 h-4" />
+          {/* Sticky header — compact */}
+          <div className="flex-shrink-0 glass-strong border-b border-white/40 px-3 py-1.5 flex items-center justify-between" style={{ paddingTop: 'max(0.375rem, env(safe-area-inset-top))' }}>
+            <button onClick={onClose} className="glass-subtle rounded-full p-1.5">
+              <X className="w-3.5 h-3.5" />
             </button>
-            <p className="font-heading text-sm font-bold uppercase tracking-wider">Hero Editor</p>
-            <button onClick={reset} className="glass-subtle rounded-full p-2" title="Reset">
-              <RotateCcw className="w-4 h-4" />
+            <p className="font-heading text-xs font-bold uppercase tracking-wider">Hero Editor</p>
+            <button onClick={reset} className="glass-subtle rounded-full p-1.5" title="Reset">
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Pinned preview (drag-to-position title) */}
-          <div className="flex-shrink-0 px-4 pt-3 pb-2 bg-background">
-            <div className="mx-auto" style={{ height: '34vh', aspectRatio: '4/5' }}>
+          {/* Pinned preview (drag-to-position title) — compact */}
+          <div className="flex-shrink-0 px-3 pt-2 pb-1 bg-background">
+            <div className="mx-auto" style={{ height: '26vh', aspectRatio: '4/5' }}>
               <HeroPreview
                 imageUrl={draftImage}
                 settings={draft}
@@ -100,8 +101,8 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
                 onTitleDrag={handleTitleDrag}
               />
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-1.5 flex items-center justify-center gap-1">
-              <Move className="w-3 h-3" /> Drag title to reposition
+            <p className="text-[9px] text-muted-foreground text-center mt-1 flex items-center justify-center gap-1">
+              <Move className="w-2.5 h-2.5" /> Drag title to reposition
             </p>
           </div>
 
@@ -186,8 +187,8 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
 
           {/* Sticky footer — guaranteed tappable, respects safe area */}
           <div
-            className="flex-shrink-0 glass-strong border-t border-white/40 px-4 pt-3 flex gap-3"
-            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+            className="flex-shrink-0 glass-strong border-t border-white/40 px-3 pt-2 flex gap-2"
+            style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
           >
             <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
             <GlassButton
