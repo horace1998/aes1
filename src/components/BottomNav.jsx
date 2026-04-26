@@ -1,50 +1,57 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, User, Plus, Trophy, Radio } from 'lucide-react';
+import { Home, Target, User, CalendarCheck, Radio } from 'lucide-react';
+import FABMenu from '@/components/FABMenu';
 
-const NAV_ITEMS = [
+const NAV_ITEMS_LEFT = [
   { path: '/', icon: Home, label: 'Home' },
   { path: '/goals', icon: Target, label: 'Goals' },
-  { path: '/gallery', icon: Trophy, label: 'Gallery' },
+];
+const NAV_ITEMS_RIGHT = [
+  { path: '/tasks', icon: CalendarCheck, label: 'Tasks' },
   { path: '/feed', icon: Radio, label: 'Feed' },
-  { path: '/profile', icon: User, label: 'Profile' },
 ];
 
-export default function BottomNav({ onAddGoal }) {
+export default function BottomNav({ onSelect }) {
   const location = useLocation();
+
+  const renderItem = (item) => {
+    const isActive = location.pathname === item.path;
+    return (
+      <Link key={item.path} to={item.path} className="relative flex flex-col items-center py-2 px-4 flex-1">
+        {isActive && (
+          <motion.div
+            className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/15 to-teal-400/15"
+            layoutId="activeTab"
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          />
+        )}
+        <item.icon className={`w-5 h-5 ${isActive ? 'text-purple-500' : 'text-muted-foreground'} transition-colors relative z-10`} />
+        <span className={`text-[10px] mt-1 font-heading ${isActive ? 'text-purple-500 font-semibold' : 'text-muted-foreground'} relative z-10`}>
+          {item.label}
+        </span>
+      </Link>
+    );
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-6 pt-2">
-      <div className="glass-strong rounded-2xl px-2 py-2 flex items-center justify-around max-w-md mx-auto">
-        {NAV_ITEMS.map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link key={item.path} to={item.path} className="relative flex flex-col items-center py-2 px-4">
-              {isActive && (
-                <motion.div
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/15 to-teal-400/15"
-                  layoutId="activeTab"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
-              <item.icon className={`w-5 h-5 ${isActive ? 'text-purple-500' : 'text-muted-foreground'} transition-colors relative z-10`} />
-              <span className={`text-[10px] mt-1 font-heading ${isActive ? 'text-purple-500 font-semibold' : 'text-muted-foreground'} relative z-10`}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+      <div className="glass-strong rounded-2xl px-2 flex items-center max-w-md mx-auto" style={{ height: 64 }}>
+        {/* Left items */}
+        <div className="flex flex-1 items-center">
+          {NAV_ITEMS_LEFT.map(renderItem)}
+        </div>
 
-        <motion.button
-          className="relative flex flex-col items-center py-1.5 px-3"
-          whileTap={{ scale: 0.9 }}
-          onClick={onAddGoal}
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/25">
-            <Plus className="w-5 h-5 text-white" />
-          </div>
-        </motion.button>
+        {/* Center FAB */}
+        <div className="flex items-center justify-center px-2">
+          <FABMenu onSelect={onSelect} />
+        </div>
+
+        {/* Right items */}
+        <div className="flex flex-1 items-center">
+          {NAV_ITEMS_RIGHT.map(renderItem)}
+        </div>
       </div>
     </div>
   );

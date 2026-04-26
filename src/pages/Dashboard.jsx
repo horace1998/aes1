@@ -7,7 +7,7 @@ import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
-import BottomNav from '@/components/BottomNav';
+import PageShell from '@/components/PageShell';
 import { Sparkles, Flame } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
@@ -17,7 +17,6 @@ import { format } from 'date-fns';
 export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [showNewGoal, setShowNewGoal] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -33,14 +32,6 @@ export default function Dashboard() {
   const { data: goals = [], isLoading } = useQuery({
     queryKey: ['goals'],
     queryFn: () => base44.entities.Goal.list('-created_date'),
-  });
-
-  const createGoalMutation = useMutation({
-    mutationFn: (data) => base44.entities.Goal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      setShowNewGoal(false);
-    },
   });
 
   const checkinMutation = useMutation({
@@ -73,6 +64,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative pb-28">
+      <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
       <div className="relative z-10 px-6 pt-14">
@@ -154,13 +146,7 @@ export default function Dashboard() {
         </motion.div>
       </div>
 
-      <BottomNav onAddGoal={() => setShowNewGoal(true)} />
-      <NewGoalModal
-        isOpen={showNewGoal}
-        onClose={() => setShowNewGoal(false)}
-        onSave={(data) => createGoalMutation.mutate(data)}
-        defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
-      />
+      </PageShell>
     </div>
   );
 }

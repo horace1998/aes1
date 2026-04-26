@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, CheckSquare, Clock } from 'lucide-react';
+import GlassCard from '@/components/ui/GlassCard';
+import GlassButton from '@/components/ui/GlassButton';
+import { format } from 'date-fns';
+
+export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedGoalId, setSelectedGoalId] = useState('');
+  const [dueDate, setDueDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [dueTime, setDueTime] = useState('');
+
+  const activeGoals = goals.filter(g => g.status === 'active');
+
+  const handleSave = () => {
+    if (!title.trim() || !dueDate) return;
+    const goal = activeGoals.find(g => g.id === selectedGoalId);
+    onSave({
+      title: title.trim(),
+      description: description.trim(),
+      goal_id: selectedGoalId || undefined,
+      goal_title: goal?.title || undefined,
+      idol_name: goal?.idol_name || undefined,
+      due_date: dueDate,
+      due_time: dueTime || undefined,
+      status: 'pending',
+    });
+    setTitle('');
+    setDescription('');
+    setSelectedGoalId('');
+    setDueDate(format(new Date(), 'yyyy-MM-dd'));
+    setDueTime('');
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-end justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            onClick={onClose}
+          />
+          <motion.div
+            className="relative w-full max-w-lg mx-4 mb-4"
+            initial={{ y: 300, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="w-5 h-5 text-pink-400" />
+                  <h3 className="font-heading text-xl font-bold">New Task</h3>
+                </div>
+                <button onClick={onClose} className="glass-subtle rounded-full p-2">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="glass-subtle rounded-xl p-3">
+                  <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Task</label>
+                  <input
+                    type="text"
+                    placeholder="What do you need to do?"
+                    className="w-full bg-transparent outline-none text-sm font-medium text-foreground placeholder:text-muted-foreground/40"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                  />
+                </div>
+
+                <div className="glass-subtle rounded-xl p-3">
+                  <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Notes (optional)</label>
+                  <textarea
+                    placeholder="Add details..."
+                    className="w-full bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground/40 resize-none"
+                    rows={2}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                  />
+                </div>
+
+                {activeGoals.length > 0 && (
+                  <div className="glass-subtle rounded-xl p-3">
+                    <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Link to Goal (optional)</label>
+                    <select
+                      className="w-full bg-transparent outline-none text-sm text-foreground"
+                      value={selectedGoalId}
+                      onChange={e => setSelectedGoalId(e.target.value)}
+                    >
+                      <option value="">No goal</option>
+                      {activeGoals.map(g => (
+                        <option key={g.id} value={g.id}>{g.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <div className="glass-subtle rounded-xl p-3 flex-1">
+                    <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Date</label>
+                    <input
+                      type="date"
+                      className="w-full bg-transparent outline-none text-sm font-medium text-foreground"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="glass-subtle rounded-xl p-3 w-36">
+                    <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">
+                      <Clock className="w-3 h-3 inline mr-1" />Time
+                    </label>
+                    <input
+                      type="time"
+                      className="w-full bg-transparent outline-none text-sm font-medium text-foreground"
+                      value={dueTime}
+                      onChange={e => setDueTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-5">
+                <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
+                <GlassButton
+                  variant="primary"
+                  onClick={handleSave}
+                  disabled={!title.trim() || !dueDate}
+                  className="flex-1"
+                >
+                  Add Task
+                </GlassButton>
+              </div>
+            </GlassCard>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

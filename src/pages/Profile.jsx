@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import BottomNav from '@/components/BottomNav';
-import NewGoalModal from '@/components/dashboard/NewGoalModal';
+import PageShell from '@/components/PageShell';
 import { User, Star, Flame, Target, LogOut, Heart } from 'lucide-react';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [showNewGoal, setShowNewGoal] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -22,14 +20,6 @@ export default function Profile() {
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
     queryFn: () => base44.entities.Goal.list('-created_date'),
-  });
-
-  const createGoalMutation = useMutation({
-    mutationFn: (data) => base44.entities.Goal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      setShowNewGoal(false);
-    },
   });
 
   const { data: milestones = [] } = useQuery({
@@ -44,6 +34,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen relative pb-28">
+      <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
       <div className="relative z-10 px-6 pt-14">
@@ -108,13 +99,7 @@ export default function Profile() {
         </GlassButton>
       </div>
 
-      <BottomNav onAddGoal={() => setShowNewGoal(true)} />
-      <NewGoalModal
-        isOpen={showNewGoal}
-        onClose={() => setShowNewGoal(false)}
-        onSave={(data) => createGoalMutation.mutate(data)}
-        defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
-      />
+      </PageShell>
     </div>
   );
 }

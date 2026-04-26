@@ -7,14 +7,12 @@ import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import MilestoneCard from '@/components/milestones/MilestoneCard';
 import MilestoneUploadModal from '@/components/milestones/MilestoneUploadModal';
-import BottomNav from '@/components/BottomNav';
-import NewGoalModal from '@/components/dashboard/NewGoalModal';
+import PageShell from '@/components/PageShell';
 import { Trophy, Plus, Grid, List, ImageIcon } from 'lucide-react';
 
 export default function MilestoneGallery() {
   const queryClient = useQueryClient();
   const [showUpload, setShowUpload] = useState(false);
-  const [showNewGoal, setShowNewGoal] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
   const [user, setUser] = useState(null);
@@ -34,14 +32,6 @@ export default function MilestoneGallery() {
     queryFn: () => base44.entities.Goal.list('-created_date'),
   });
 
-  const createGoalMutation = useMutation({
-    mutationFn: (data) => base44.entities.Goal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      setShowNewGoal(false);
-    },
-  });
-
   // Unique idols from milestones for filtering
   const idols = ['all', ...new Set(milestones.map(m => m.idol_name).filter(Boolean))];
 
@@ -56,6 +46,7 @@ export default function MilestoneGallery() {
 
   return (
     <div className="min-h-screen relative pb-28">
+      <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
       <div className="relative z-10 px-6 pt-14">
@@ -199,21 +190,13 @@ export default function MilestoneGallery() {
         )}
       </div>
 
-      <BottomNav onAddGoal={() => setShowNewGoal(true)} />
-
       <MilestoneUploadModal
         isOpen={showUpload}
         onClose={() => { setShowUpload(false); setSelectedGoal(null); }}
         onSaved={() => queryClient.invalidateQueries({ queryKey: ['milestones'] })}
         goal={selectedGoal}
       />
-
-      <NewGoalModal
-        isOpen={showNewGoal}
-        onClose={() => setShowNewGoal(false)}
-        onSave={(data) => createGoalMutation.mutate(data)}
-        defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
-      />
+      </PageShell>
     </div>
   );
 }

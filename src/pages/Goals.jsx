@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
-import BottomNav from '@/components/BottomNav';
+import PageShell from '@/components/PageShell';
 import { format } from 'date-fns';
 
 const TABS = ['active', 'completed', 'all'];
@@ -14,24 +14,15 @@ const TABS = ['active', 'completed', 'all'];
 export default function Goals() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('active');
-  const [showNewGoal, setShowNewGoal] = useState(false);
   const [user, setUser] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     base44.auth.me().then(setUser);
   }, []);
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
     queryFn: () => base44.entities.Goal.list('-created_date'),
-  });
-
-  const createGoalMutation = useMutation({
-    mutationFn: (data) => base44.entities.Goal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      setShowNewGoal(false);
-    },
   });
 
   const checkinMutation = useMutation({
@@ -47,6 +38,7 @@ export default function Goals() {
 
   return (
     <div className="min-h-screen relative pb-28">
+      <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
       <div className="relative z-10 px-6 pt-14">
@@ -105,13 +97,7 @@ export default function Goals() {
         </AnimatePresence>
       </div>
 
-      <BottomNav onAddGoal={() => setShowNewGoal(true)} />
-      <NewGoalModal
-        isOpen={showNewGoal}
-        onClose={() => setShowNewGoal(false)}
-        onSave={(data) => createGoalMutation.mutate(data)}
-        defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
-      />
+      </PageShell>
     </div>
   );
 }
