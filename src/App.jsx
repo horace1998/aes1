@@ -21,7 +21,7 @@ const AuthenticatedApp = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ede9fe 0%, #e0e7ff 25%, #e0f2fe 50%, #f5f3ff 75%, #fce7f3 100%)' }}>
         <div className="text-center">
-          <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>SYNKIFY</h1>
+          <h1 className="font-display text-4xl tracking-wide uppercase text-foreground mb-4">SYNKIFY</h1>
           <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-400 rounded-full animate-spin mx-auto"></div>
         </div>
       </div>

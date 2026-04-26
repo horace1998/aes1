@@ -48,7 +48,7 @@ export default function Profile() {
           <div className="w-20 h-20 rounded-full glass-strong flex items-center justify-center mb-4 ring-2 ring-violet-300/40">
             <User className="w-8 h-8 text-violet-500" />
           </div>
-          <h1 className="font-heading text-2xl font-bold">{user.full_name || 'Station Member'}</h1>
+          <h1 className="font-display text-4xl tracking-wide uppercase">{user.full_name || 'Station Member'}</h1>
           <p className="text-sm text-muted-foreground">{user.email}</p>
           {user.favorite_idol && (
             <div className="flex items-center gap-1.5 mt-2 glass-subtle rounded-full px-3 py-1">

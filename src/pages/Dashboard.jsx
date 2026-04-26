@@ -12,6 +12,7 @@ import { Target, Flame, CheckCircle2 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
+import HeroBanner from '@/components/dashboard/HeroBanner';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
@@ -78,13 +79,16 @@ export default function Dashboard() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground">{greeting()}</p>
-              <h1 className="font-heading text-3xl font-bold text-foreground">
+              <h1 className="font-display text-4xl tracking-wide uppercase text-foreground">
                 {user.full_name?.split(' ')[0] || 'Station'}
               </h1>
             </div>
             <NotificationBell userEmail={user.email} />
           </div>
         </motion.div>
+
+        {/* Hero Banner */}
+        <HeroBanner user={user} />
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
