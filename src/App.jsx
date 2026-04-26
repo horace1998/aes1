@@ -10,6 +10,7 @@ import Dashboard from '@/pages/Dashboard';
 import Onboarding from '@/pages/Onboarding';
 import Goals from '@/pages/Goals';
 import Profile from '@/pages/Profile';
+import MilestoneGallery from '@/pages/MilestoneGallery';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -40,6 +41,7 @@ const AuthenticatedApp = () => {
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/goals" element={<Goals />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/gallery" element={<MilestoneGallery />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

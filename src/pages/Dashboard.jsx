@@ -9,6 +9,7 @@ import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import BottomNav from '@/components/BottomNav';
 import { Sparkles, Flame } from 'lucide-react';
+import NotificationBell from '@/components/NotificationBell';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
@@ -74,10 +75,15 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
-          <p className="text-sm text-muted-foreground">{greeting()}</p>
-          <h1 className="font-heading text-3xl font-bold text-foreground">
-            {user.full_name?.split(' ')[0] || 'Station'}
-          </h1>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">{greeting()}</p>
+              <h1 className="font-heading text-3xl font-bold text-foreground">
+                {user.full_name?.split(' ')[0] || 'Station'}
+              </h1>
+            </div>
+            <NotificationBell userEmail={user.email} />
+          </div>
         </motion.div>
 
         {/* Stats */}
