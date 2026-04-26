@@ -66,13 +66,13 @@ Sound encouraging, like the idol is personally cheering them on. Use first-perso
     // Send email notification
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: userEmail,
-      subject: `💌 A message from ${goal.idol_name} for you`,
+      subject: `A message from ${goal.idol_name} for you`,
       body: `
 <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
-  <h2 style="color: #7c3aed; font-size: 22px; margin-bottom: 4px;">SYNKIFY</h2>
+  <h2 style="color: #7c3aed; font-size: 22px; margin-bottom: 4px; letter-spacing: 0.02em;">SYNKIFY</h2>
   <p style="color: #6b7280; font-size: 12px; margin-bottom: 24px;">Daily motivation from ${goal.idol_name}</p>
-  
-  <div style="background: linear-gradient(135deg, #f5f3ff, #ecfdf5); border-radius: 16px; padding: 24px; border: 1px solid #e5e7eb;">
+
+  <div style="background: linear-gradient(135deg, #ede9fe, #e0f2fe, #fce7f3); border-radius: 16px; padding: 24px; border: 1px solid #e5e7eb;">
     <p style="color: #111827; font-size: 16px; line-height: 1.6; margin: 0;">${result}</p>
   </div>
 
@@ -81,7 +81,7 @@ Sound encouraging, like the idol is personally cheering them on. Use first-perso
     <p style="margin: 4px 0 0; color: #6b7280; font-size: 13px;">Progress: <strong style="color: #7c3aed;">${progress}%</strong> · ${checkins} check-ins completed</p>
   </div>
 
-  <p style="margin-top: 20px; color: #9ca3af; font-size: 11px; text-align: center;">Keep going — ${goal.idol_name} is rooting for you 💜</p>
+  <p style="margin-top: 20px; color: #9ca3af; font-size: 11px; text-align: center;">Keep going — ${goal.idol_name} is rooting for you</p>
 </div>
       `,
     });

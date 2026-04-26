@@ -32,7 +32,7 @@ export default function OnboardingWelcome({ onNext }) {
           SYNKIFY
         </h1>
         <motion.div
-          className="h-1 w-16 mx-auto mt-3 rounded-full bg-gradient-to-r from-purple-500 to-teal-400"
+          className="h-1 w-16 mx-auto mt-3 rounded-full bg-gradient-to-r from-violet-400 to-pink-300"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
@@ -62,20 +62,20 @@ export default function OnboardingWelcome({ onNext }) {
           onClick={handleScan}
           animate={scanning ? {
             boxShadow: [
-              '0 0 0 0 rgba(167, 139, 250, 0)',
-              '0 0 0 20px rgba(167, 139, 250, 0.15)',
-              '0 0 0 40px rgba(167, 139, 250, 0)',
+              '0 0 0 0 rgba(196, 181, 253, 0)',
+              '0 0 0 20px rgba(196, 181, 253, 0.2)',
+              '0 0 0 40px rgba(196, 181, 253, 0)',
             ]
           } : {}}
           transition={scanning ? { duration: 1.5, repeat: Infinity } : { type: 'spring', stiffness: 300, damping: 25 }}
         >
           <Fingerprint 
-            className={`w-12 h-12 transition-colors duration-500 ${scanning ? 'text-purple-500' : 'text-muted-foreground'}`}
+            className={`w-12 h-12 transition-colors duration-500 ${scanning ? 'text-violet-500' : 'text-muted-foreground'}`}
           />
         </motion.div>
         {scanning && (
           <motion.div
-            className="absolute inset-0 rounded-full border-2 border-purple-400"
+            className="absolute inset-0 rounded-full border-2 border-violet-300"
             initial={{ scale: 1, opacity: 1 }}
             animate={{ scale: 1.8, opacity: 0 }}
             transition={{ duration: 1.2, repeat: Infinity }}

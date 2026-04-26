@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import { Target, Sparkles } from 'lucide-react';
+import { Target, ArrowRight } from 'lucide-react';
 
 const GOAL_SUGGESTIONS = [
   'Exercise every day',
@@ -61,10 +61,10 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
           <div className="iridescent rounded-xl p-4 glass mb-4">
             <p className="text-xs text-muted-foreground font-heading uppercase tracking-wider mb-2">My Pledge</p>
             <p className="font-heading text-lg font-bold text-foreground leading-snug">
-              Before I meet <span className="text-purple-500">{idolData.idol_name}</span>, I will{' '}
-              <span className="text-teal-500">{goal || '...'}</span>{' '}
+              Before I meet <span className="text-violet-500">{idolData.idol_name}</span>, I will{' '}
+              <span className="text-indigo-500">{goal || '...'}</span>{' '}
               for the next{' '}
-              <span className="text-purple-500">{timelineValue} {timelineUnit}</span>
+              <span className="text-violet-500">{timelineValue} {timelineUnit}</span>
             </p>
           </div>
         </motion.div>
@@ -73,7 +73,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
       {/* Goal input */}
       <GlassCard className="p-4 mb-4" animate={false}>
         <div className="flex items-center gap-3 mb-3">
-          <Target className="w-4 h-4 text-purple-500" />
+          <Target className="w-4 h-4 text-violet-500" />
           <span className="text-xs font-heading uppercase tracking-wider text-muted-foreground">Your Goal</span>
         </div>
         <input
@@ -91,7 +91,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
           <motion.button
             key={s}
             className={`glass-subtle rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-              goal === s ? 'bg-purple-500/20 text-purple-600 ring-1 ring-purple-400/30' : 'text-muted-foreground hover:bg-white/30'
+              goal === s ? 'bg-violet-300/30 text-violet-600 ring-1 ring-violet-300/50' : 'text-muted-foreground hover:bg-white/50'
             }`}
             onClick={() => setGoal(s)}
             initial={{ opacity: 0, y: 10 }}
@@ -125,7 +125,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
                 key={unit}
                 className={`flex-1 rounded-xl py-2 text-xs font-heading font-medium capitalize transition-all ${
                   timelineUnit === unit
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
                     : 'glass-subtle text-muted-foreground'
                 }`}
                 onClick={() => setTimelineUnit(unit)}
@@ -145,7 +145,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
           disabled={!goal.trim()}
           className="flex-1 flex items-center justify-center gap-2"
         >
-          <Sparkles className="w-4 h-4" /> Begin Journey
+          Begin Journey <ArrowRight className="w-4 h-4" />
         </GlassButton>
       </div>
     </motion.div>

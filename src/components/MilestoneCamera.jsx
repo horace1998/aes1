@@ -65,10 +65,10 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
     // Draw video frame
     ctx.drawImage(video, 0, 0, w, h);
 
-    // Iridescent overlay at bottom
+    // Iridescent overlay at bottom (soft pastel)
     const grad = ctx.createLinearGradient(0, h * 0.6, 0, h);
-    grad.addColorStop(0, 'rgba(167,139,250,0)');
-    grad.addColorStop(1, 'rgba(96,211,196,0.55)');
+    grad.addColorStop(0, 'rgba(196,181,253,0)');
+    grad.addColorStop(1, 'rgba(196,181,253,0.5)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
@@ -88,7 +88,7 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
     ctx.textAlign = 'center';
     ctx.fillStyle = '#fff';
     ctx.font = `bold ${Math.round(w * 0.045)}px "Space Grotesk", sans-serif`;
-    ctx.fillText(`🔥 ${streak} Day Streak`, bx, by + 4);
+    ctx.fillText(`${streak} Day Streak`, bx, by + 4);
 
     const goalLabel = selectedGoal?.title || '';
     ctx.font = `${Math.round(w * 0.028)}px "Inter", sans-serif`;
@@ -162,7 +162,7 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
                 onClick={() => setSelectedGoal(g)}
                 className={`shrink-0 rounded-full px-3 py-1 text-xs font-heading font-semibold text-white border transition-all ${
                   selectedGoal?.id === g.id
-                    ? 'bg-purple-500/70 border-purple-300'
+                    ? 'bg-violet-400/70 border-violet-200'
                     : 'bg-black/30 border-white/20'
                 }`}
               >
@@ -176,7 +176,7 @@ export default function MilestoneCamera({ isOpen, onClose, goals = [] }) {
         {!captured && selectedGoal && (
           <div className="absolute bottom-28 left-0 right-0 flex justify-center pointer-events-none">
             <div className="glass rounded-full px-5 py-2 text-center">
-              <p className="text-white font-heading font-bold text-sm">🔥 {getStreak(selectedGoal)} Day Streak</p>
+              <p className="text-white font-heading font-bold text-sm">{getStreak(selectedGoal)} Day Streak</p>
               <p className="text-white/70 text-[10px]">{selectedGoal.title}</p>
             </div>
           </div>

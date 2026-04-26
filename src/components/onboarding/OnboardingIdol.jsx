@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import { Search, Star, ChevronRight } from 'lucide-react';
+import { Search, Check, ChevronRight } from 'lucide-react';
 
 const IDOL_DATA = [
   { name: 'Jungkook', group: 'BTS', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop' },
@@ -77,8 +77,8 @@ export default function OnboardingIdol({ onNext, onBack }) {
               <div
                 className={`glass rounded-2xl p-4 cursor-pointer transition-all duration-300 ${
                   selected?.name === idol.name
-                    ? 'ring-2 ring-purple-500 bg-white/40'
-                    : 'hover:bg-white/30'
+                    ? 'ring-2 ring-violet-400 bg-white/60'
+                    : 'hover:bg-white/50'
                 }`}
                 onClick={() => { setSelected(idol); setCustomName(''); setCustomGroup(''); }}
               >
@@ -93,7 +93,9 @@ export default function OnboardingIdol({ onNext, onBack }) {
                     animate={{ scale: 1 }}
                     className="flex justify-center mt-2"
                   >
-                    <Star className="w-4 h-4 text-purple-500 fill-purple-500" />
+                    <div className="w-5 h-5 rounded-full bg-violet-400 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    </div>
                   </motion.div>
                 )}
               </div>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { Star, Flame } from 'lucide-react';
+import { ImageIcon, Heart } from 'lucide-react';
 
 const ASSET_TYPE_COLORS = {
-  badge: 'from-purple-500/20 to-blue-500/20',
-  fanart: 'from-pink-500/20 to-rose-400/20',
-  photo: 'from-teal-400/20 to-emerald-400/20',
-  sticker: 'from-orange-400/20 to-yellow-400/20',
+  badge: 'from-violet-200/40 to-indigo-200/40',
+  fanart: 'from-pink-200/40 to-violet-200/40',
+  photo: 'from-sky-200/40 to-indigo-200/40',
+  sticker: 'from-pink-200/40 to-rose-200/40',
 };
 
 export default function MilestoneCard({ milestone, index = 0 }) {
@@ -33,7 +33,7 @@ export default function MilestoneCard({ milestone, index = 0 }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Star className="w-10 h-10 text-purple-400/60" />
+            <ImageIcon className="w-10 h-10 text-violet-300/70" />
           </div>
         )}
         {/* Type badge */}
@@ -50,7 +50,7 @@ export default function MilestoneCard({ milestone, index = 0 }) {
           {milestone.goal_title}
         </p>
         <div className="flex items-center gap-1 mb-1.5">
-          <Flame className="w-3 h-3 text-purple-400" />
+          <Heart className="w-3 h-3 text-pink-400" />
           <span className="text-[10px] text-muted-foreground">{milestone.idol_name}</span>
         </div>
         {milestone.caption && (

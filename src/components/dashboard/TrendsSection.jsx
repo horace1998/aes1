@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <div className="glass-strong rounded-xl px-3 py-2">
         <p className="text-xs font-heading font-semibold">{payload[0].payload.date}</p>
-        <p className="text-xs text-sky-500">{payload[0].value} check-ins</p>
+        <p className="text-xs text-violet-500">{payload[0].value} check-ins</p>
       </div>
     );
   }
@@ -68,11 +68,11 @@ export default function TrendsSection({ goals }) {
       {/* Consistency score + most productive day */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <GlassCard className="p-4 text-center" animate={false}>
-          <p className="font-heading text-2xl font-bold text-sky-500">{consistencyScore}%</p>
+          <p className="font-heading text-2xl font-bold text-violet-500">{consistencyScore}%</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Consistency Score</p>
           <div className="h-1.5 rounded-full bg-white/30 mt-2 overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-500"
+              className="h-full rounded-full bg-gradient-to-r from-violet-300 to-indigo-400"
               initial={{ width: 0 }}
               animate={{ width: `${consistencyScore}%` }}
               transition={{ type: 'spring', stiffness: 80, damping: 20, delay: 0.5 }}
@@ -81,7 +81,7 @@ export default function TrendsSection({ goals }) {
         </GlassCard>
 
         <GlassCard className="p-4 text-center" animate={false}>
-          <p className="font-heading text-2xl font-bold text-cyan-600">{DAY_LABELS[topDayIdx]}</p>
+          <p className="font-heading text-2xl font-bold text-indigo-500">{DAY_LABELS[topDayIdx]}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Most Productive</p>
           <p className="text-[9px] text-muted-foreground/60 mt-1">day of the week</p>
         </GlassCard>
@@ -115,12 +115,12 @@ export default function TrendsSection({ goals }) {
             </Bar>
             <defs>
               <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7dd3fc" />
-                <stop offset="100%" stopColor="#0284c7" />
+                <stop offset="0%" stopColor="#c4b5fd" />
+                <stop offset="100%" stopColor="#818cf8" />
               </linearGradient>
               <linearGradient id="peakGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22d3ee" />
-                <stop offset="100%" stopColor="#0ea5e9" />
+                <stop offset="0%" stopColor="#f9a8d4" />
+                <stop offset="100%" stopColor="#a78bfa" />
               </linearGradient>
             </defs>
           </BarChart>

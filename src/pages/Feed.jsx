@@ -82,7 +82,7 @@ export default function Feed() {
           <div>
             <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-1">Community</p>
             <h1 className="font-heading text-3xl font-bold text-foreground flex items-center gap-2">
-              <Radio className="w-6 h-6 text-sky-500" />
+              <Radio className="w-6 h-6 text-violet-400" />
               Fan Feed
             </h1>
           </div>
@@ -103,7 +103,7 @@ export default function Feed() {
                 key={idol}
                 className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all ${
                   filterIdol === idol
-                    ? 'bg-gradient-to-r from-sky-400 to-cyan-500 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
                     : 'glass-subtle text-muted-foreground'
                 }`}
                 onClick={() => setFilterIdol(idol)}
@@ -122,7 +122,7 @@ export default function Feed() {
         ) : filtered.length === 0 ? (
           <GlassCard className="p-10 text-center">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.2 }}>
-              <Waves className="w-10 h-10 text-sky-400/60 mx-auto mb-3" />
+              <Waves className="w-10 h-10 text-violet-300 mx-auto mb-3" />
             </motion.div>
             <p className="font-heading font-semibold mb-1">No posts yet</p>
             <p className="text-sm text-muted-foreground mb-5">
@@ -170,7 +170,7 @@ export default function Feed() {
                     unsaredMilestones.map(m => (
                       <motion.button
                         key={m.id}
-                        className="w-full glass-subtle rounded-2xl p-3 flex items-center gap-3 text-left hover:ring-1 hover:ring-sky-400/50 transition-all"
+                        className="w-full glass-subtle rounded-2xl p-3 flex items-center gap-3 text-left hover:ring-1 hover:ring-violet-300/60 transition-all"
                         whileTap={{ scale: 0.97 }}
                         onClick={() => handleShareMilestone(m)}
                       >
@@ -182,7 +182,7 @@ export default function Feed() {
                           <p className="text-xs text-muted-foreground">{m.idol_name}</p>
                           {m.caption && <p className="text-[10px] text-muted-foreground/60 italic truncate">"{m.caption}"</p>}
                         </div>
-                        <Share2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
+                        <Share2 className="w-4 h-4 text-violet-400 flex-shrink-0" />
                       </motion.button>
                     ))
                   )}

@@ -17,7 +17,7 @@ export default function ThreeBackground() {
 
     // Create pulsing orbs
     const orbs = [];
-    const colors = [0x38bdf8, 0x0ea5e9, 0x7dd3fc, 0xbae6fd, 0x60a5fa, 0x22d3ee];
+    const colors = [0xc4b5fd, 0xddd6fe, 0xbae6fd, 0xe0f2fe, 0xfbcfe8, 0xfce7f3];
     
     colors.forEach((color, i) => {
       const geometry = new THREE.SphereGeometry(1.0 + Math.random() * 0.8, 32, 32);
@@ -88,7 +88,7 @@ export default function ThreeBackground() {
     <div
       ref={mountRef}
       className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ background: 'linear-gradient(160deg, #f0f9ff 0%, #bae6fd 30%, #7dd3fc 55%, #e0f2fe 80%, #f0fdff 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #ede9fe 0%, #e0e7ff 25%, #e0f2fe 50%, #f5f3ff 75%, #fce7f3 100%)' }}
     />
   );
 }

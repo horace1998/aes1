@@ -4,22 +4,24 @@ import GlassCard from '@/components/ui/GlassCard';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { Flame, Trophy } from 'lucide-react';
+import { Trophy, Heart, Flame, Sparkles, Crown, HandHeart } from 'lucide-react';
 
 const REACTIONS = [
-  { emoji: '💜', label: 'Purple Heart' },
-  { emoji: '🔥', label: 'Fire' },
-  { emoji: '⭐', label: 'Star' },
-  { emoji: '👑', label: 'Crown' },
-  { emoji: '🫶', label: 'Cheer' },
+  { id: 'heart', label: 'Heart', icon: Heart, color: 'text-pink-400' },
+  { id: 'fire', label: 'Fire', icon: Flame, color: 'text-violet-400' },
+  { id: 'star', label: 'Star', icon: Sparkles, color: 'text-indigo-400' },
+  { id: 'crown', label: 'Crown', icon: Crown, color: 'text-violet-500' },
+  { id: 'cheer', label: 'Cheer', icon: HandHeart, color: 'text-pink-500' },
 ];
+
+const REACTION_MAP = REACTIONS.reduce((m, r) => { m[r.id] = r; return m; }, {});
 
 const RANK_COLORS = {
   trainee: 'text-slate-500',
-  debut: 'text-cyan-500',
-  rising: 'text-sky-500',
-  idol: 'text-blue-500',
-  legend: 'text-blue-700',
+  debut: 'text-indigo-400',
+  rising: 'text-violet-400',
+  idol: 'text-violet-500',
+  legend: 'text-pink-500',
 };
 
 export default function FeedPostCard({ post, userEmail, index = 0 }) {
@@ -34,15 +36,15 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
 
   const userReaction = (post.cheers || []).find(c => c.user_email === userEmail)?.reaction;
 
-  const handleReact = async (emoji) => {
+  const handleReact = async (id) => {
     setShowPicker(false);
-    setAnimatingReaction(emoji);
+    setAnimatingReaction(id);
     setTimeout(() => setAnimatingReaction(null), 800);
 
     const existing = (post.cheers || []).filter(c => c.user_email !== userEmail);
-    const newCheers = userReaction === emoji
+    const newCheers = userReaction === id
       ? existing // toggle off
-      : [...existing, { user_email: userEmail, reaction: emoji }];
+      : [...existing, { user_email: userEmail, reaction: id }];
     await base44.entities.FeedPost.update(post.id, { cheers: newCheers });
     queryClient.invalidateQueries({ queryKey: ['feedposts'] });
   };
@@ -60,7 +62,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full glass-strong flex items-center justify-center">
-              <Trophy className="w-4 h-4 text-sky-500" />
+              <Trophy className="w-4 h-4 text-violet-400" />
             </div>
             <div>
               <p className="text-xs font-heading font-semibold">{post.user_name || post.user_email?.split('@')[0]}</p>
@@ -80,7 +82,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
             <img src={post.asset_url} alt={post.goal_title} className="w-full aspect-square object-cover" />
             {/* Floating reaction animation */}
             <AnimatePresence>
-              {animatingReaction && (
+              {animatingReaction && REACTION_MAP[animatingReaction] && (
                 <motion.div
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
                   initial={{ scale: 0.5, opacity: 0 }}
@@ -88,7 +90,10 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
                   exit={{ scale: 2, opacity: 0 }}
                   transition={{ duration: 0.7 }}
                 >
-                  <span className="text-5xl">{animatingReaction}</span>
+                  {(() => {
+                    const Icon = REACTION_MAP[animatingReaction].icon;
+                    return <Icon className={`w-16 h-16 ${REACTION_MAP[animatingReaction].color} drop-shadow-lg`} />;
+                  })()}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -98,7 +103,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
         {/* Content */}
         <div className="px-4 pb-4 pt-3">
           <p className="text-xs text-muted-foreground font-heading mb-0.5">
-            <span className="text-sky-500">{post.idol_name}</span>
+            <span className="text-violet-500">{post.idol_name}</span>
             {post.idol_group ? ` · ${post.idol_group}` : ''}
           </p>
           <p className="text-sm font-heading font-semibold text-foreground mb-1">{post.goal_title}</p>
@@ -109,17 +114,22 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
           {/* Reactions row */}
           <div className="flex items-center gap-2 flex-wrap">
             {/* Existing reactions */}
-            {Object.entries(cheerCounts).map(([emoji, count]) => (
-              <motion.button
-                key={emoji}
-                className={`glass-subtle rounded-full px-2.5 py-1 flex items-center gap-1 ${userReaction === emoji ? 'ring-1 ring-sky-400/60' : ''}`}
-                whileTap={{ scale: 0.85 }}
-                onClick={() => handleReact(emoji)}
-              >
-                <span className="text-sm">{emoji}</span>
-                <span className="text-[10px] font-heading font-semibold">{count}</span>
-              </motion.button>
-            ))}
+            {Object.entries(cheerCounts).map(([id, count]) => {
+              const r = REACTION_MAP[id];
+              if (!r) return null;
+              const Icon = r.icon;
+              return (
+                <motion.button
+                  key={id}
+                  className={`glass-subtle rounded-full px-2.5 py-1 flex items-center gap-1.5 ${userReaction === id ? 'ring-1 ring-violet-300/60' : ''}`}
+                  whileTap={{ scale: 0.85 }}
+                  onClick={() => handleReact(id)}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${r.color}`} />
+                  <span className="text-[10px] font-heading font-semibold">{count}</span>
+                </motion.button>
+              );
+            })}
 
             {/* Add reaction button */}
             <div className="relative">
@@ -128,7 +138,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowPicker(p => !p)}
               >
-                <Flame className="w-3 h-3 text-sky-500" />
+                <Heart className="w-3 h-3 text-violet-400" />
                 <span className="text-[10px] font-heading text-muted-foreground">Cheer</span>
               </motion.button>
 
@@ -141,16 +151,20 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
                     exit={{ opacity: 0, scale: 0.8, y: 10 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                   >
-                    {REACTIONS.map(r => (
-                      <motion.button
-                        key={r.emoji}
-                        className="w-9 h-9 rounded-xl glass flex items-center justify-center text-xl hover:scale-110 transition-transform"
-                        onClick={() => handleReact(r.emoji)}
-                        whileTap={{ scale: 0.85 }}
-                      >
-                        {r.emoji}
-                      </motion.button>
-                    ))}
+                    {REACTIONS.map(r => {
+                      const Icon = r.icon;
+                      return (
+                        <motion.button
+                          key={r.id}
+                          className="w-9 h-9 rounded-xl glass flex items-center justify-center hover:scale-110 transition-transform"
+                          onClick={() => handleReact(r.id)}
+                          whileTap={{ scale: 0.85 }}
+                          aria-label={r.label}
+                        >
+                          <Icon className={`w-4 h-4 ${r.color}`} />
+                        </motion.button>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>

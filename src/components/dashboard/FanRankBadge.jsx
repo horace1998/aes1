@@ -14,7 +14,7 @@ export default function FanRankBadge({ totalCheckins, milestoneCount, compact = 
   if (compact) {
     return (
       <div className={`flex items-center gap-1.5 glass-subtle rounded-full px-3 py-1`}>
-        <span className="text-sm">{rank.emoji}</span>
+        <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${rank.color}`} />
         <span className={`text-xs font-heading font-bold ${rank.textColor}`}>{rank.label}</span>
       </div>
     );
@@ -26,7 +26,7 @@ export default function FanRankBadge({ totalCheckins, milestoneCount, compact = 
         <div>
           <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-0.5">Fan Rank</p>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{rank.emoji}</span>
+            <span className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${rank.color}`} />
             <span className={`font-heading text-xl font-bold bg-gradient-to-r ${rank.color} bg-clip-text text-transparent`}>
               {rank.label}
             </span>
@@ -44,7 +44,7 @@ export default function FanRankBadge({ totalCheckins, milestoneCount, compact = 
         <div>
           <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
             <span>{rank.label}</span>
-            <span>{next.rank.emoji} {next.rank.label} in {next.pointsNeeded} pts</span>
+            <span>{next.rank.label} in {next.pointsNeeded} pts</span>
           </div>
           <div className="h-2 rounded-full bg-white/30 overflow-hidden">
             <motion.div
@@ -60,7 +60,7 @@ export default function FanRankBadge({ totalCheckins, milestoneCount, compact = 
         </div>
       ) : (
         <div className="text-center">
-          <p className="text-xs text-orange-500 font-heading font-semibold">👑 Maximum Rank Achieved</p>
+          <p className="text-xs text-violet-500 font-heading font-semibold tracking-wider uppercase">Maximum Rank Achieved</p>
         </div>
       )}
     </GlassCard>

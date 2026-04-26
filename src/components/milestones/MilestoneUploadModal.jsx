@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import { base44 } from '@/api/base44Client';
-import { X, Upload, ImageIcon, Sparkles } from 'lucide-react';
+import { X, Upload, ImageIcon, Check } from 'lucide-react';
 
 const ASSET_TYPES = ['badge', 'fanart', 'photo', 'sticker'];
 
@@ -93,13 +93,13 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                     transition={{ type: 'spring' }}
                   />
                 ) : (
-                  <div className="glass h-48 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-white/40 hover:border-purple-400/50 transition-colors">
+                  <div className="glass h-48 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-white/60 hover:border-violet-300/60 transition-colors">
                     {uploading ? (
-                      <div className="w-8 h-8 border-3 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-[3px] border-violet-300 border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
                         <div className="w-12 h-12 rounded-full glass-strong flex items-center justify-center">
-                          <Upload className="w-5 h-5 text-purple-500" />
+                          <Upload className="w-5 h-5 text-violet-500" />
                         </div>
                         <p className="text-sm text-muted-foreground text-center">
                           Tap to upload your<br />fandom asset
@@ -124,7 +124,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                     key={type}
                     className={`flex-1 rounded-xl py-2 text-[10px] font-heading font-semibold uppercase tracking-wider transition-all ${
                       assetType === type
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
+                        ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
                         : 'glass-subtle text-muted-foreground'
                     }`}
                     onClick={() => setAssetType(type)}
@@ -141,7 +141,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Finally did it! 30 days strong 💜"
+                  placeholder="e.g. Finally did it. 30 days strong."
                   className="w-full bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground/40"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
@@ -156,7 +156,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                   disabled={!assetUrl || saving}
                   className="flex-1 flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Check className="w-4 h-4" />
                   {saving ? 'Saving...' : 'Save Milestone'}
                 </GlassButton>
               </div>

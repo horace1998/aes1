@@ -112,20 +112,20 @@ export default function Tasks() {
                   onClick={() => setSelectedDate(day)}
                   className={`relative flex flex-col items-center justify-center rounded-xl py-1.5 transition-all ${
                     isSelected
-                      ? 'bg-gradient-to-br from-purple-500 to-blue-500 shadow-lg shadow-purple-500/30'
+                      ? 'bg-gradient-to-br from-violet-400 to-indigo-400 shadow-md shadow-violet-300/40'
                       : isToday
-                      ? 'glass border border-purple-400/40'
-                      : 'hover:bg-white/10'
+                      ? 'glass border border-violet-300/50'
+                      : 'hover:bg-white/40'
                   }`}
                 >
                   <span className={`text-sm font-heading font-semibold ${
-                    isSelected ? 'text-white' : isToday ? 'text-purple-500' : 'text-foreground'
+                    isSelected ? 'text-white' : isToday ? 'text-violet-500' : 'text-foreground'
                   }`}>
                     {format(day, 'd')}
                   </span>
                   {hasTasks && (
                     <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${
-                      allDone ? 'bg-teal-400' : isSelected ? 'bg-white' : 'bg-pink-400'
+                      allDone ? 'bg-indigo-400' : isSelected ? 'bg-white' : 'bg-pink-400'
                     }`} />
                   )}
                 </button>
@@ -165,7 +165,7 @@ export default function Tasks() {
                         className="mt-0.5 shrink-0"
                       >
                         {task.status === 'done'
-                          ? <CheckCircle2 className="w-5 h-5 text-teal-400" />
+                          ? <CheckCircle2 className="w-5 h-5 text-indigo-400" />
                           : <Circle className="w-5 h-5 text-muted-foreground" />
                         }
                       </button>
@@ -183,7 +183,7 @@ export default function Tasks() {
                             </span>
                           )}
                           {task.goal_title && (
-                            <span className="text-[10px] glass-subtle rounded-full px-2 py-0.5 text-purple-500 font-heading font-medium">
+                            <span className="text-[10px] glass-subtle rounded-full px-2 py-0.5 text-violet-500 font-heading font-medium">
                               {task.goal_title}
                             </span>
                           )}
