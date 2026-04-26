@@ -8,7 +8,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
-import { Sparkles, Flame } from 'lucide-react';
+import { Target, Flame, CheckCircle2 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
@@ -92,9 +92,9 @@ export default function Dashboard() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           {[
-            { label: 'Active', value: activeGoals.length, icon: Sparkles, color: 'text-purple-500' },
-            { label: 'Completed', value: completedCount, icon: Flame, color: 'text-teal-500' },
-            { label: 'Check-ins', value: totalCheckins, icon: Flame, color: 'text-orange-400' },
+            { label: 'Active', value: activeGoals.length, icon: Target, color: 'text-sky-500' },
+            { label: 'Completed', value: completedCount, icon: CheckCircle2, color: 'text-cyan-500' },
+            { label: 'Check-ins', value: totalCheckins, icon: Flame, color: 'text-blue-500' },
           ].map((stat, i) => (
             <GlassCard key={stat.label} variant="default" className="p-4 text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ export default function Dashboard() {
             </div>
           ) : activeGoals.length === 0 ? (
             <GlassCard className="p-8 text-center">
-              <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+              <Target className="w-8 h-8 text-sky-400 mx-auto mb-3" />
               <p className="font-heading font-semibold mb-1">No active goals</p>
               <p className="text-sm text-muted-foreground">Tap + to create your first goal</p>
             </GlassCard>

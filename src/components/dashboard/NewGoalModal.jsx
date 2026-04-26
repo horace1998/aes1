@@ -119,7 +119,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                           key={unit}
                           className={`flex-1 rounded-lg py-1.5 text-[10px] font-heading font-medium capitalize transition-all ${
                             timelineUnit === unit
-                              ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                              ? 'bg-gradient-to-r from-sky-400 to-cyan-500 text-white'
                               : 'glass text-muted-foreground'
                           }`}
                           onClick={() => setTimelineUnit(unit)}

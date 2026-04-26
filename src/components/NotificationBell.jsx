@@ -41,7 +41,7 @@ export default function NotificationBell({ userEmail }) {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-[9px] font-bold text-white"
+            className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gradient-to-r from-sky-400 to-cyan-500 flex items-center justify-center text-[9px] font-bold text-white"
           >
             {unread}
           </motion.span>
@@ -68,10 +68,10 @@ export default function NotificationBell({ userEmail }) {
                     {notifications.map((n) => (
                       <div
                         key={n.id}
-                        className={`glass-subtle rounded-xl p-3 ${!n.is_read ? 'ring-1 ring-purple-400/30' : ''}`}
+                        className={`glass-subtle rounded-xl p-3 ${!n.is_read ? 'ring-1 ring-sky-400/40' : ''}`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-heading font-semibold text-purple-500 uppercase tracking-wider">
+                          <span className="text-[10px] font-heading font-semibold text-sky-500 uppercase tracking-wider">
                             {n.idol_name}
                           </span>
                           <span className="text-[9px] text-muted-foreground/60">
@@ -83,7 +83,7 @@ export default function NotificationBell({ userEmail }) {
                           <div className="mt-2 flex items-center gap-1">
                             <div className="flex-1 h-1 rounded-full bg-white/30 overflow-hidden">
                               <div
-                                className="h-full rounded-full bg-gradient-to-r from-purple-500 to-teal-400"
+                                className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-500"
                                 style={{ width: `${n.progress}%` }}
                               />
                             </div>

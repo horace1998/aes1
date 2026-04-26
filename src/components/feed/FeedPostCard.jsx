@@ -4,7 +4,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { Flame, Star } from 'lucide-react';
+import { Flame, Trophy } from 'lucide-react';
 
 const REACTIONS = [
   { emoji: '💜', label: 'Purple Heart' },
@@ -16,10 +16,10 @@ const REACTIONS = [
 
 const RANK_COLORS = {
   trainee: 'text-slate-500',
-  debut: 'text-teal-500',
-  rising: 'text-blue-500',
-  idol: 'text-purple-500',
-  legend: 'text-orange-500',
+  debut: 'text-cyan-500',
+  rising: 'text-sky-500',
+  idol: 'text-blue-500',
+  legend: 'text-blue-700',
 };
 
 export default function FeedPostCard({ post, userEmail, index = 0 }) {
@@ -60,7 +60,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full glass-strong flex items-center justify-center">
-              <Star className="w-4 h-4 text-purple-400" />
+              <Trophy className="w-4 h-4 text-sky-500" />
             </div>
             <div>
               <p className="text-xs font-heading font-semibold">{post.user_name || post.user_email?.split('@')[0]}</p>
@@ -98,7 +98,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
         {/* Content */}
         <div className="px-4 pb-4 pt-3">
           <p className="text-xs text-muted-foreground font-heading mb-0.5">
-            <span className="text-purple-500">{post.idol_name}</span>
+            <span className="text-sky-500">{post.idol_name}</span>
             {post.idol_group ? ` · ${post.idol_group}` : ''}
           </p>
           <p className="text-sm font-heading font-semibold text-foreground mb-1">{post.goal_title}</p>
@@ -112,7 +112,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
             {Object.entries(cheerCounts).map(([emoji, count]) => (
               <motion.button
                 key={emoji}
-                className={`glass-subtle rounded-full px-2.5 py-1 flex items-center gap-1 ${userReaction === emoji ? 'ring-1 ring-purple-400/50' : ''}`}
+                className={`glass-subtle rounded-full px-2.5 py-1 flex items-center gap-1 ${userReaction === emoji ? 'ring-1 ring-sky-400/60' : ''}`}
                 whileTap={{ scale: 0.85 }}
                 onClick={() => handleReact(emoji)}
               >
@@ -128,7 +128,7 @@ export default function FeedPostCard({ post, userEmail, index = 0 }) {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowPicker(p => !p)}
               >
-                <Flame className="w-3 h-3 text-orange-400" />
+                <Flame className="w-3 h-3 text-sky-500" />
                 <span className="text-[10px] font-heading text-muted-foreground">Cheer</span>
               </motion.button>
 

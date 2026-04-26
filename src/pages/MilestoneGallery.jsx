@@ -63,13 +63,13 @@ export default function MilestoneGallery() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'grid' ? 'ring-1 ring-purple-400/40' : ''}`}
+              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'grid' ? 'ring-1 ring-sky-400/50' : ''}`}
               onClick={() => setViewMode('grid')}
             >
               <Grid className="w-4 h-4" />
             </button>
             <button
-              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'list' ? 'ring-1 ring-purple-400/40' : ''}`}
+              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'list' ? 'ring-1 ring-sky-400/50' : ''}`}
               onClick={() => setViewMode('list')}
             >
               <List className="w-4 h-4" />
@@ -80,19 +80,19 @@ export default function MilestoneGallery() {
         {/* Stats banner */}
         <GlassCard variant="strong" className="p-4 mb-6 flex items-center justify-between">
           <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-purple-500">{milestones.length}</p>
+            <p className="font-heading text-2xl font-bold text-sky-500">{milestones.length}</p>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Milestones</p>
           </div>
           <div className="w-px h-10 bg-white/30" />
           <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-teal-500">
+            <p className="font-heading text-2xl font-bold text-cyan-600">
               {new Set(milestones.map(m => m.idol_name)).size}
             </p>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Idols</p>
           </div>
           <div className="w-px h-10 bg-white/30" />
           <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-orange-400">
+            <p className="font-heading text-2xl font-bold text-blue-500">
               {new Set(milestones.map(m => m.goal_id)).size}
             </p>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Goals</p>
@@ -122,7 +122,7 @@ export default function MilestoneGallery() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleAddMilestone(null)}
               >
-                <Plus className="w-4 h-4 text-purple-500" />
+                <Plus className="w-4 h-4 text-sky-500" />
                 <span className="text-xs font-heading text-muted-foreground">Free upload</span>
               </motion.button>
             </div>
@@ -137,7 +137,7 @@ export default function MilestoneGallery() {
                 key={idol}
                 className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all ${
                   filterIdol === idol
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-sky-400 to-cyan-500 text-white shadow-md'
                     : 'glass-subtle text-muted-foreground'
                 }`}
                 onClick={() => setFilterIdol(idol)}
@@ -162,7 +162,7 @@ export default function MilestoneGallery() {
               animate={{ scale: 1 }}
               transition={{ type: 'spring', delay: 0.2 }}
             >
-              <Trophy className="w-10 h-10 text-purple-400/50 mx-auto mb-3" />
+              <Trophy className="w-10 h-10 text-sky-400/60 mx-auto mb-3" />
             </motion.div>
             <p className="font-heading font-semibold mb-1">No milestones yet</p>
             <p className="text-sm text-muted-foreground mb-5">

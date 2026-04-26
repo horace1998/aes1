@@ -6,9 +6,9 @@ export default function GlassButton({ children, className, variant = 'primary', 
   const baseClass = 'relative overflow-hidden rounded-2xl px-6 py-3 font-heading font-semibold text-sm transition-all duration-300 cursor-pointer select-none';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40',
-    secondary: 'glass text-foreground hover:bg-white/40',
-    accent: 'bg-gradient-to-r from-teal-400 to-emerald-400 text-white shadow-lg shadow-teal-500/25',
+    primary: 'bg-gradient-to-r from-sky-400 to-cyan-500 text-white shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50',
+    secondary: 'glass text-foreground hover:bg-white/50',
+    accent: 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-lg shadow-cyan-500/30',
     ghost: 'bg-transparent text-foreground hover:bg-white/20',
   };
 

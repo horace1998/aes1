@@ -6,30 +6,30 @@
 
 @layer base {
   :root {
-    --background: 240 20% 96%;
-    --foreground: 240 10% 10%;
+    --background: 200 80% 97%;
+    --foreground: 210 60% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 210 60% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
-    --primary: 260 60% 55%;
+    --popover-foreground: 210 60% 14%;
+    --primary: 200 95% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 175 50% 55%;
+    --secondary: 190 85% 60%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 240 10% 92%;
-    --muted-foreground: 240 5% 45%;
-    --accent: 300 40% 70%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 200 40% 94%;
+    --muted-foreground: 210 25% 45%;
+    --accent: 195 90% 70%;
+    --accent-foreground: 210 60% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 88%;
-    --input: 240 10% 88%;
-    --ring: 260 60% 55%;
-    --chart-1: 260 60% 55%;
-    --chart-2: 175 50% 55%;
-    --chart-3: 300 40% 70%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 200 50% 88%;
+    --input: 200 50% 88%;
+    --ring: 200 95% 50%;
+    --chart-1: 200 95% 50%;
+    --chart-2: 190 85% 60%;
+    --chart-3: 220 90% 65%;
+    --chart-4: 175 75% 55%;
+    --chart-5: 210 85% 70%;
     --radius: 1rem;
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
@@ -91,55 +91,65 @@
   }
 }
 
-/* Liquid Glass Utilities */
+/* Liquid Glass — Ocean Bright Blue, high transparency */
 .glass {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: 
-    0 8px 32px rgba(120, 80, 200, 0.07),
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+    0 8px 32px rgba(14, 165, 233, 0.1),
+    0 2px 8px rgba(2, 132, 199, 0.05),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(186, 230, 253, 0.18);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 
-    0 16px 48px rgba(120, 80, 200, 0.1),
-    0 4px 12px rgba(0, 0, 0, 0.05),
-    inset 0 2px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+    0 16px 48px rgba(14, 165, 233, 0.14),
+    0 4px 12px rgba(2, 132, 199, 0.06),
+    inset 0 2px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -1px 0 rgba(186, 230, 253, 0.22);
 }
 
 .glass-subtle {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.09);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 4px 16px rgba(14, 165, 233, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.glass-blue {
+  background: linear-gradient(135deg, rgba(186, 230, 253, 0.28), rgba(125, 211, 252, 0.16));
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(186, 230, 253, 0.55);
+  box-shadow: 
+    0 8px 32px rgba(14, 165, 233, 0.14),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.6);
 }
 
 .iridescent {
   background: linear-gradient(135deg, 
-    rgba(167, 139, 250, 0.3),
-    rgba(96, 211, 196, 0.3),
-    rgba(232, 167, 246, 0.3),
-    rgba(147, 197, 253, 0.3)
+    rgba(56, 189, 248, 0.3),
+    rgba(14, 165, 233, 0.25),
+    rgba(125, 211, 252, 0.3),
+    rgba(186, 230, 253, 0.3)
   );
 }
 
 .iridescent-border {
   border-image: linear-gradient(135deg, 
-    rgba(167, 139, 250, 0.5),
-    rgba(96, 211, 196, 0.5),
-    rgba(232, 167, 246, 0.5)
+    rgba(56, 189, 248, 0.5),
+    rgba(14, 165, 233, 0.5),
+    rgba(125, 211, 252, 0.5)
   ) 1;
 }
 

@@ -13,9 +13,9 @@ const NAV_ITEMS_RIGHT = [
 ];
 
 const ACTIONS = [
-  { id: 'goal',      label: 'Goal',      icon: Trophy,      bg: 'linear-gradient(135deg,#a78bfa,#6366f1)', shadow: 'rgba(167,139,250,0.45)' },
-  { id: 'milestone', label: 'Milestone', icon: Camera,      bg: 'linear-gradient(135deg,#34d399,#0ea5e9)', shadow: 'rgba(52,211,153,0.45)' },
-  { id: 'task',      label: 'Task',      icon: CheckSquare, bg: 'linear-gradient(135deg,#f472b6,#fb923c)', shadow: 'rgba(244,114,182,0.45)' },
+  { id: 'goal',      label: 'Goal',      icon: Trophy,      bg: 'linear-gradient(135deg,#7dd3fc,#0284c7)', shadow: 'rgba(56,189,248,0.45)' },
+  { id: 'milestone', label: 'Milestone', icon: Camera,      bg: 'linear-gradient(135deg,#67e8f9,#0891b2)', shadow: 'rgba(34,211,238,0.45)' },
+  { id: 'task',      label: 'Task',      icon: CheckSquare, bg: 'linear-gradient(135deg,#93c5fd,#2563eb)', shadow: 'rgba(96,165,250,0.45)' },
 ];
 
 const ns = {
@@ -49,12 +49,12 @@ export default function BottomNav({ onSelect }) {
       >
         <item.icon
           className="w-5 h-5 pointer-events-none"
-          style={{ color: isActive ? '#7c3aed' : 'rgba(120,100,160,0.45)', transition: 'color 0.2s' }}
+          style={{ color: isActive ? '#0284c7' : 'rgba(70,110,150,0.5)', transition: 'color 0.2s' }}
           strokeWidth={isActive ? 2.2 : 1.8}
         />
         <span
           className="text-[9px] font-heading font-semibold pointer-events-none"
-          style={{ color: isActive ? '#7c3aed' : 'rgba(120,100,160,0.4)', letterSpacing: '0.05em' }}
+          style={{ color: isActive ? '#0284c7' : 'rgba(70,110,150,0.45)', letterSpacing: '0.05em' }}
         >
           {item.label}
         </span>
@@ -62,7 +62,7 @@ export default function BottomNav({ onSelect }) {
           <motion.div
             layoutId="dot"
             className="absolute bottom-1.5 w-1 h-1 rounded-full"
-            style={{ background: '#7c3aed' }}
+            style={{ background: '#0284c7' }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -134,7 +134,7 @@ export default function BottomNav({ onSelect }) {
                   </div>
                   <span
                     className="font-heading font-semibold text-[11px]"
-                    style={{ color: '#4b3a7a', letterSpacing: '0.04em', pointerEvents: 'none' }}
+                    style={{ color: '#075985', letterSpacing: '0.04em', pointerEvents: 'none' }}
                   >
                     {action.label}
                   </span>
@@ -150,12 +150,12 @@ export default function BottomNav({ onSelect }) {
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
           height: 64, position: 'relative', zIndex: 50,
-          background: 'rgba(255,255,255,0.18)',
+          background: 'rgba(255,255,255,0.22)',
           backdropFilter: 'blur(32px) saturate(200%)',
           WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-          border: '1px solid rgba(255,255,255,0.32)',
+          border: '1px solid rgba(255,255,255,0.45)',
           borderRadius: 26,
-          boxShadow: '0 12px 40px rgba(80,40,140,0.12), inset 0 1.5px 0 rgba(255,255,255,0.55)',
+          boxShadow: '0 12px 40px rgba(14,165,233,0.18), inset 0 1.5px 0 rgba(255,255,255,0.7)',
         }}
       >
         <div className="flex flex-1 items-center h-full">
@@ -173,10 +173,10 @@ export default function BottomNav({ onSelect }) {
               width: 48, height: 48, borderRadius: 15,
               background: open
                 ? 'linear-gradient(135deg,#f87171,#ef4444)'
-                : 'linear-gradient(135deg,#a78bfa 0%,#6366f1 55%,#3b82f6 100%)',
+                : 'linear-gradient(135deg,#7dd3fc 0%,#0ea5e9 55%,#0284c7 100%)',
               boxShadow: open
                 ? '0 6px 20px rgba(239,68,68,0.4)'
-                : '0 6px 20px rgba(99,102,241,0.4)',
+                : '0 6px 20px rgba(14,165,233,0.5)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative', overflow: 'hidden',
