@@ -20,11 +20,11 @@ export default function ThreeBackground() {
     const colors = [0xa78bfa, 0x60d3c4, 0xe8a7f6, 0x93c5fd];
     
     colors.forEach((color, i) => {
-      const geometry = new THREE.SphereGeometry(0.8 + Math.random() * 0.6, 32, 32);
+      const geometry = new THREE.SphereGeometry(1.0 + Math.random() * 0.8, 32, 32);
       const material = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.15,
+        opacity: 0.22,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
@@ -59,7 +59,7 @@ export default function ThreeBackground() {
         orb.scale.setScalar(baseScale * pulse);
         orb.position.y = baseY + Math.sin(t * moveSpeed + offset) * 0.5;
         orb.position.x = baseX + Math.cos(t * moveSpeed * 0.7 + offset) * 0.3;
-        orb.material.opacity = 0.1 + 0.08 * Math.sin(t * speed * 0.5 + offset);
+        orb.material.opacity = 0.16 + 0.1 * Math.sin(t * speed * 0.5 + offset);
       });
 
       renderer.render(scene, camera);
@@ -88,7 +88,7 @@ export default function ThreeBackground() {
     <div
       ref={mountRef}
       className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ background: 'linear-gradient(135deg, #f0eef5 0%, #e8f4f2 50%, #f0eef5 100%)' }}
+      style={{ background: 'linear-gradient(145deg, #ede9f7 0%, #ddf2f0 40%, #f5e8f7 70%, #e8f0fb 100%)' }}
     />
   );
 }

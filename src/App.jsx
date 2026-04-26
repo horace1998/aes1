@@ -18,7 +18,7 @@ const AuthenticatedApp = () => {
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f0eef5 0%, #e8f4f2 50%, #f0eef5 100%)' }}>
+      <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(145deg, #ede9f7 0%, #ddf2f0 40%, #f5e8f7 70%, #e8f0fb 100%)' }}>
         <div className="text-center">
           <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>SYNKIFY</h1>
           <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto"></div>
