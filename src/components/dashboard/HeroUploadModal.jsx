@@ -77,13 +77,13 @@ export default function HeroUploadModal({ isOpen, onClose, onSave, role = 'hero'
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         >
           <motion.div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={handleClose} />
           <motion.div
-            className="relative w-full max-w-lg mx-4 mb-4"
-            initial={{ y: 300, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 300, opacity: 0 }}
+            className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto"
+            initial={{ y: 40, opacity: 0, scale: 0.96 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, ImagePlus, Trash2 } from 'lucide-react';
+import { ImagePlus } from 'lucide-react';
 import HeroUploadModal from './HeroUploadModal';
 import HeroEffectControls from './HeroEffectControls';
 import { debounce } from 'lodash';
@@ -23,7 +23,6 @@ export default function HeroBanner({ user }) {
   });
 
   const hero = assets.find(a => a.role === 'hero');
-  const filmstrip = assets.filter(a => a.role === 'filmstrip');
 
   // Local state for live slider feedback (debounced persist)
   const [glow, setGlow] = useState(50);
@@ -59,14 +58,9 @@ export default function HeroBanner({ user }) {
       return base44.entities.HeroAsset.create({
         image_url: url,
         role,
-        order: role === 'filmstrip' ? filmstrip.length : 0,
+        order: 0,
       });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.HeroAsset.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['heroAssets'] }),
   });
 
@@ -179,28 +173,6 @@ export default function HeroBanner({ user }) {
         />
       </motion.div>
 
-      {/* Filmstrip */}
-      <div
-        className="rounded-2xl p-2"
-        style={{ background: 'linear-gradient(135deg,#2a2440,#1a1530)' }}
-      >
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {filmstrip.map((asset) => (
-            <FilmstripTile
-              key={asset.id}
-              asset={asset}
-              onDelete={() => deleteMutation.mutate(asset.id)}
-            />
-          ))}
-          <button
-            onClick={() => openUpload('filmstrip')}
-            className="flex-shrink-0 w-20 h-24 rounded-xl border-2 border-dashed border-white/30 flex items-center justify-center hover:border-white/60 transition"
-          >
-            <Plus className="w-5 h-5 text-white/70" />
-          </button>
-        </div>
-      </div>
-
       <HeroUploadModal
         isOpen={showUpload}
         onClose={() => setShowUpload(false)}
@@ -210,31 +182,6 @@ export default function HeroBanner({ user }) {
           setShowUpload(false);
         }}
       />
-    </div>
-  );
-}
-
-function FilmstripTile({ asset, onDelete }) {
-  const [showDelete, setShowDelete] = useState(false);
-  return (
-    <div
-      className="relative flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden group"
-      onClick={() => setShowDelete(v => !v)}
-    >
-      <img
-        src={asset.image_url}
-        alt=""
-        className="w-full h-full object-cover"
-        style={{ filter: 'grayscale(0.4) contrast(1.05)' }}
-      />
-      {showDelete && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute inset-0 bg-black/60 flex items-center justify-center"
-        >
-          <Trash2 className="w-4 h-4 text-white" />
-        </button>
-      )}
     </div>
   );
 }
