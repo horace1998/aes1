@@ -36,7 +36,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
   };
 
   return (
-    <ModalPortal>
+    <ModalPortal lockScroll={isOpen}>
     <AnimatePresence>
       {isOpen && (
         <motion.div

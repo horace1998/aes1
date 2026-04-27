@@ -52,7 +52,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
   };
 
   return (
-    <ModalPortal>
+    <ModalPortal lockScroll={isOpen}>
     <AnimatePresence>
       {isOpen && (
         <motion.div

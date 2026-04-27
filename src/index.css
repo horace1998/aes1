@@ -143,9 +143,41 @@
   ) 1;
 }
 
-/* Hide scrollbar */
+/* Hide scrollbar (utility class + global) */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Globally hide ALL scrollbars (Webkit + Firefox + IE) for a clean editorial look */
+html, body, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Vogue-style editorial typography polish */
+.font-display {
+  letter-spacing: 0.02em;
+}
+.font-heading {
+  letter-spacing: -0.005em;
+}
+.editorial-rule {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(120,110,170,0.25), transparent);
+}
+.editorial-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
 
 /* Dreamy aurora atmosphere — soft drifting gradients behind the app */
 .aurora-bg {

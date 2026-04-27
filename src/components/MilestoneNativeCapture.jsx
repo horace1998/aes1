@@ -39,7 +39,7 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
   };
 
   return (
-    <ModalPortal>
+    <ModalPortal lockScroll={isOpen}>
     <AnimatePresence>
       {isOpen && (
         <motion.div
