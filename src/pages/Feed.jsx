@@ -10,11 +10,14 @@ import PageShell from '@/components/PageShell';
 import MilestoneUploadModal from '@/components/milestones/MilestoneUploadModal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { Radio, Share2, Waves } from 'lucide-react';
+import { moderate } from '@/lib/moderation';
+import { toast } from 'sonner';
 
 export default function Feed() {
   const queryClient = useQueryClient();
   const [showShare, setShowShare] = useState(false);
   const [filterIdol, setFilterIdol] = useState('all');
+  const [filterGroup, setFilterGroup] = useState('all');
 
   const { data: user } = useQuery({
     queryKey: ['me'],
@@ -44,6 +47,15 @@ export default function Feed() {
 
   const handleShareMilestone = async (milestone) => {
     if (!user) return;
+
+    // Moderate caption + goal text before publishing
+    const text = `${milestone.goal_title} ${milestone.caption || ''}`.trim();
+    const verdict = await moderate(text, 'post');
+    if (!verdict.ok) {
+      toast.error(verdict.reason);
+      return;
+    }
+
     const totalCheckins = goals.reduce((s, g) => s + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
     const rank = getFanRank(totalCheckins, userMilestones.length);
     await base44.entities.FeedPost.create({
@@ -63,8 +75,18 @@ export default function Feed() {
     setShowShare(false);
   };
 
-  const idols = ['all', ...new Set(posts.map(p => p.idol_name).filter(Boolean))];
-  const filtered = filterIdol === 'all' ? posts : posts.filter(p => p.idol_name === filterIdol);
+  // Hide blocked / pending posts from public view (creator can still see their own)
+  const visiblePosts = posts.filter(p =>
+    p.moderation_status !== 'blocked' &&
+    (p.moderation_status !== 'pending' || p.user_email === user?.email)
+  );
+
+  const groups = ['all', ...new Set(visiblePosts.map(p => p.idol_group).filter(Boolean))];
+  const idols = ['all', ...new Set(visiblePosts.map(p => p.idol_name).filter(Boolean))];
+
+  let filtered = visiblePosts;
+  if (filterGroup !== 'all') filtered = filtered.filter(p => p.idol_group === filterGroup);
+  if (filterIdol !== 'all') filtered = filtered.filter(p => p.idol_name === filterIdol);
 
   return (
     <div className="min-h-screen relative pb-28">
@@ -95,22 +117,47 @@ export default function Feed() {
           )}
         </motion.div>
 
+        {/* Group filter pills */}
+        {groups.length > 1 && (
+          <div className="mb-2">
+            <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5">Group</p>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {groups.map(g => (
+                <button
+                  key={g}
+                  className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium flex-shrink-0 transition-all ${
+                    filterGroup === g
+                      ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
+                      : 'glass-subtle text-muted-foreground'
+                  }`}
+                  onClick={() => setFilterGroup(g)}
+                >
+                  {g === 'all' ? 'All Groups' : g}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Idol filter pills */}
         {idols.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-5 pb-1">
-            {idols.map(idol => (
-              <button
-                key={idol}
-                className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all ${
-                  filterIdol === idol
-                    ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
-                    : 'glass-subtle text-muted-foreground'
-                }`}
-                onClick={() => setFilterIdol(idol)}
-              >
-                {idol}
-              </button>
-            ))}
+          <div className="mb-5">
+            <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-1.5">Bias</p>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {idols.map(idol => (
+                <button
+                  key={idol}
+                  className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all ${
+                    filterIdol === idol
+                      ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
+                      : 'glass-subtle text-muted-foreground'
+                  }`}
+                  onClick={() => setFilterIdol(idol)}
+                >
+                  {idol}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -137,7 +184,7 @@ export default function Feed() {
         ) : (
           <div>
             {filtered.map((post, i) => (
-              <FeedPostCard key={post.id} post={post} userEmail={user?.email} index={i} />
+              <FeedPostCard key={post.id} post={post} userEmail={user?.email} currentUser={user} index={i} />
             ))}
           </div>
         )}

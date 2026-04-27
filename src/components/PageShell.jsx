@@ -13,6 +13,8 @@ import MilestoneNativeCapture from '@/components/MilestoneNativeCapture';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavAction } from '@/lib/NavActionContext';
+import { moderate } from '@/lib/moderation';
+import { toast } from 'sonner';
 
 export default function PageShell({ children, goals = [], user }) {
   const [showGoal, setShowGoal] = useState(false);
@@ -47,6 +49,53 @@ export default function PageShell({ children, goals = [], user }) {
     }
   };
 
+  const handleSaveGoal = async (data) => {
+    const { make_public, category, description, ...goalData } = data;
+
+    // Moderate public mission text
+    if (make_public) {
+      const verdict = await moderate(`${goalData.title}\n${description || ''}`, 'mission');
+      if (!verdict.ok) {
+        toast.error(verdict.reason);
+        return;
+      }
+    }
+
+    const created = await base44.entities.Goal.create({
+      ...goalData,
+      is_mission_creator: !!make_public,
+    });
+
+    if (make_public && user) {
+      const mission = await base44.entities.Mission.create({
+        title: goalData.title,
+        description: description || '',
+        creator_email: user.email,
+        creator_name: user.full_name || user.email.split('@')[0],
+        idol_group: goalData.idol_group,
+        idol_name: goalData.idol_name,
+        timeline_value: goalData.timeline_value,
+        timeline_unit: goalData.timeline_unit,
+        category: category || 'other',
+        member_count: 1,
+        members: [{
+          user_email: user.email,
+          user_name: user.full_name || user.email.split('@')[0],
+          joined_date: new Date().toISOString(),
+        }],
+        status: 'active',
+        moderation_status: 'approved',
+      });
+      // Link goal back to mission
+      try { await base44.entities.Goal.update(created.id, { mission_id: mission.id }); } catch {}
+      queryClient.invalidateQueries({ queryKey: ['missions'] });
+      toast.success('Mission published! Other fans can now join 💜');
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['goals'] });
+    setShowGoal(false);
+  };
+
   return (
     <>
       {children}
@@ -54,11 +103,7 @@ export default function PageShell({ children, goals = [], user }) {
       <NewGoalModal
         isOpen={showGoal}
         onClose={() => setShowGoal(false)}
-        onSave={async (data) => {
-          await base44.entities.Goal.create(data);
-          queryClient.invalidateQueries({ queryKey: ['goals'] });
-          setShowGoal(false);
-        }}
+        onSave={handleSaveGoal}
         defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
       />
 

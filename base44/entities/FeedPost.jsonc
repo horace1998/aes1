@@ -46,6 +46,19 @@
         }
       },
       "default": []
+    },
+    "comment_count": {
+      "type": "number",
+      "default": 0
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "pending",
+        "blocked"
+      ],
+      "default": "approved"
     }
   },
   "required": [

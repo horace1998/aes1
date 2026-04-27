@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -17,6 +18,8 @@ import Profile from '@/pages/Profile';
 import MilestoneGallery from '@/pages/MilestoneGallery';
 import Feed from '@/pages/Feed';
 import Tasks from '@/pages/Tasks';
+import Missions from '@/pages/Missions';
+import AdminModeration from '@/pages/AdminModeration';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -30,6 +33,8 @@ const AnimatedRoutes = () => {
         <Route path="/gallery" element={<PageTransition><MilestoneGallery /></PageTransition>} />
         <Route path="/feed" element={<PageTransition><Feed /></PageTransition>} />
         <Route path="/tasks" element={<PageTransition><Tasks /></PageTransition>} />
+        <Route path="/missions" element={<PageTransition><Missions /></PageTransition>} />
+        <Route path="/admin/moderation" element={<PageTransition><AdminModeration /></PageTransition>} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AnimatePresence>
@@ -76,6 +81,7 @@ function App() {
             <AuthenticatedApp />
           </Router>
           <Toaster />
+          <SonnerToaster position="top-center" richColors />
         </NavActionProvider>
       </QueryClientProvider>
     </AuthProvider>

@@ -62,6 +62,15 @@
           }
         }
       }
+    },
+    "mission_id": {
+      "type": "string",
+      "description": "If this goal was joined from a public mission"
+    },
+    "is_mission_creator": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this goal originally created a public mission"
     }
   },
   "required": [

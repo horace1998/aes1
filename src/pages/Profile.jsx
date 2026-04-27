@@ -6,7 +6,8 @@ import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import PageShell from '@/components/PageShell';
-import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp } from 'lucide-react';
+import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
 import ReminderSettings from '@/components/profile/ReminderSettings';
@@ -100,6 +101,18 @@ export default function Profile() {
             SYNK-{user.id?.slice(0, 8)?.toUpperCase() || '00000000'}
           </p>
         </GlassCard>
+
+        {/* Admin */}
+        {user.role === 'admin' && (
+          <Link to="/admin/moderation">
+            <GlassButton
+              variant="ghost"
+              className="w-full flex items-center justify-center gap-2 text-violet-500 mb-3"
+            >
+              <Shield className="w-4 h-4" /> Moderation Queue
+            </GlassButton>
+          </Link>
+        )}
 
         {/* Actions */}
         <GlassButton

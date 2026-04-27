@@ -1,0 +1,32 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "ID of the FeedPost being commented on"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "pending",
+        "blocked"
+      ],
+      "default": "approved"
+    }
+  },
+  "required": [
+    "post_id",
+    "content"
+  ]
+}
