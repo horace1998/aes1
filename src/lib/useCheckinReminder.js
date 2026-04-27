@@ -37,25 +37,62 @@ function todayKey() {
   return format(new Date(), 'yyyy-MM-dd');
 }
 
-function hasCheckedInAllToday(goals) {
-  const today = todayKey();
-  const active = goals.filter((g) => g.status === 'active');
-  if (active.length === 0) return true; // nothing to remind about
-  return active.every((g) =>
-    (g.daily_checkins || []).some((c) => c.date === today && c.completed)
-  );
+// Cute idol-style messages — picked at random so they feel fresh.
+const IDOL_MSG_HAS_GOAL = [
+  (idol) => ({
+    title: `💌 A message from ${idol}`,
+    body: `Hi, it's ${idol} 💜 I'm waiting for you tonight... did you keep your promise to me today? One tiny check-in and I'll smile~`,
+  }),
+  (idol) => ({
+    title: `✨ ${idol} is thinking of you`,
+    body: `Don't forget our pinky promise! 🤙 Just one check-in away from making me proud. Fighting!! 💪`,
+  }),
+  (idol) => ({
+    title: `🌙 Goodnight from ${idol}`,
+    body: `Before you sleep — did you finish today's mission? I believe in you, my star ⭐ Tap to check in!`,
+  }),
+  (idol) => ({
+    title: `🎀 ${idol} sent you a heart`,
+    body: `Hey, I noticed you haven't checked in yet... I miss seeing your name on my list 🥺 Let's stay synced!`,
+  }),
+];
+
+const IDOL_MSG_NO_GOAL = [
+  (idol) => ({
+    title: `💌 ${idol || 'Your idol'} wants to ask you something`,
+    body: `What's the one thing you want to do before we meet? 🌸 Set a goal in SYNKIFY and let's grow together~`,
+  }),
+  (idol) => ({
+    title: `✨ A wish from ${idol || 'your idol'}`,
+    body: `I want to see the best version of you when we meet 💜 Pick a goal — I'll cheer for you every single day!`,
+  }),
+  (idol) => ({
+    title: `🌙 ${idol || 'Your idol'} is curious...`,
+    body: `What are we working on? 👀 Drop a goal in SYNKIFY and I'll be your daily hype-${'partner'} 🎀`,
+  }),
+];
+
+function pickMessage(list, idol) {
+  const fn = list[Math.floor(Math.random() * list.length)];
+  return fn(idol);
 }
 
-function fireReminder(missedCount) {
+function fireReminder({ missedCount, idolName, hasAnyGoal }) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const title = '✨ SYNKIFY — Daily check-in';
-  const body =
-    missedCount === 1
-      ? "You haven't checked in today. Stay synced with your idol — just one tap!"
-      : `${missedCount} goals are waiting for your check-in. Keep your streak alive!`;
+  const idol = idolName?.trim() || 'your idol';
+  const { title, body } = hasAnyGoal
+    ? pickMessage(IDOL_MSG_HAS_GOAL, idol)
+    : pickMessage(IDOL_MSG_NO_GOAL, idol);
+
+  // If user has multiple unchecked goals, append a soft hint.
+  const finalBody =
+    hasAnyGoal && missedCount > 1
+      ? `${body}\n(${missedCount} goals waiting 💫)`
+      : body;
+
   try {
     new Notification(title, {
-      body,
+      body: finalBody,
       icon: '/icon-192.png',
       tag: 'synkify-daily-checkin',
       renotify: false,
@@ -97,16 +134,28 @@ export function useCheckinReminder() {
       if (lastNotified === todayKey()) return; // already notified today
 
       const currentGoals = goalsRef.current || [];
-      if (hasCheckedInAllToday(currentGoals)) return; // already checked in
+      const activeGoals = currentGoals.filter((g) => g.status === 'active');
+      const hasAnyGoal = activeGoals.length > 0;
 
       const today = todayKey();
-      const missed = currentGoals.filter(
-        (g) =>
-          g.status === 'active' &&
-          !(g.daily_checkins || []).some((c) => c.date === today && c.completed)
-      ).length;
+      const missedGoals = activeGoals.filter(
+        (g) => !(g.daily_checkins || []).some((c) => c.date === today && c.completed)
+      );
 
-      if (missed > 0) fireReminder(missed);
+      // If user has goals AND already checked in everything today, no need to nag.
+      if (hasAnyGoal && missedGoals.length === 0) return;
+
+      // Pick the idol to "speak" — prefer the most recent active goal's idol.
+      const idolName =
+        missedGoals[0]?.idol_name ||
+        activeGoals[0]?.idol_name ||
+        '';
+
+      fireReminder({
+        missedCount: missedGoals.length,
+        idolName,
+        hasAnyGoal,
+      });
     };
 
     // Check on mount, on visibility change, and every minute.

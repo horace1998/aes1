@@ -41,8 +41,12 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center px-4 pb-6"
-          style={{ background: 'rgba(20,16,40,0.55)', backdropFilter: 'blur(8px)' }}
+          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center px-4"
+          style={{
+            background: 'rgba(20,16,40,0.55)',
+            backdropFilter: 'blur(8px)',
+            paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))',
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

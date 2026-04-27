@@ -48,7 +48,8 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
             onClick={onClose}
           />
           <motion.div
-            className="relative w-full max-w-lg mx-4 mb-4"
+            className="relative w-full max-w-lg mx-4"
+            style={{ marginBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}
             initial={{ y: 300, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 300, opacity: 0 }}
