@@ -54,15 +54,12 @@ export default function HeroBanner({ user }) {
     >
       {hero ? (
         <div className="relative">
-          {/* Skeleton shimmer behind the image — fades out once decoded */}
+          {/* Skeleton shimmer — soft glass tint that blends with the dreamy bg */}
           {!imgReady && (
-            <div
-              className="absolute inset-0 rounded-3xl overflow-hidden aspect-[4/5] z-10"
-              style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
-            >
+            <div className="absolute inset-0 rounded-3xl overflow-hidden aspect-[4/5] z-10 glass-subtle">
               <div className="absolute inset-0 animate-pulse"
                 style={{
-                  background: 'radial-gradient(circle at 50% 55%, rgba(196,181,253,0.18), transparent 60%)',
+                  background: 'radial-gradient(circle at 50% 55%, rgba(196,181,253,0.25), transparent 60%)',
                 }}
               />
             </div>
@@ -81,15 +78,12 @@ export default function HeroBanner({ user }) {
           </motion.div>
         </div>
       ) : (
-        <div
-          className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center"
-          style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
-        >
+        <div className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center glass">
           <Link
             to="/profile"
-            className="glass-subtle rounded-2xl py-4 px-5 flex items-center gap-2 text-white border border-white/20 hover:bg-white/10 transition"
+            className="glass-subtle rounded-2xl py-4 px-5 flex items-center gap-2 text-foreground hover:bg-white/40 transition"
           >
-            <ImagePlus className="w-5 h-5" />
+            <ImagePlus className="w-5 h-5 text-violet-500" />
             <span className="font-heading text-sm font-semibold">Add Hero Image in Profile</span>
           </Link>
         </div>

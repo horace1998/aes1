@@ -63,7 +63,7 @@ export default function HeroPreview({
     <div
       ref={containerRef}
       className={`relative rounded-3xl overflow-hidden h-full w-full ${compact ? '' : 'aspect-[4/5]'}`}
-      style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
+      style={{ background: 'transparent' }}
     >
       {/* Editorial title — draggable when onTitleDrag is provided */}
       <div
@@ -128,10 +128,10 @@ export default function HeroPreview({
         </>
       )}
 
-      {/* Bottom fade */}
+      {/* Bottom fade — soft pastel to blend with dreamy app background */}
       <div
         className="absolute bottom-0 left-0 right-0 h-20 z-[18] pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(15,10,32,0.95))' }}
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(237,233,254,0.6))' }}
       />
     </div>
   );
