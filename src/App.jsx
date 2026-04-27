@@ -66,6 +66,7 @@ const AuthenticatedApp = () => {
 
   return (
     <>
+      <div className="aurora-bg" aria-hidden="true" />
       <AnimatedRoutes />
       <RootChrome />
     </>

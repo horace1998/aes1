@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -8,15 +8,42 @@ import { Link } from 'react-router-dom';
 
 /**
  * HeroBanner — editorial-style hero. Pure display.
- * All editing now lives in the Profile page.
+ * - Caches HeroAsset queries aggressively (5min) so revisits are instant.
+ * - Preloads the hero image so it appears smoothly without layout jank.
+ * - Shows a soft glassy skeleton while the image decodes.
  */
 export default function HeroBanner({ user }) {
   const { data: assets = [] } = useQuery({
     queryKey: ['heroAssets'],
     queryFn: () => base44.entities.HeroAsset.list('order'),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   const hero = assets.find(a => a.role === 'hero');
+  const [imgReady, setImgReady] = useState(false);
+
+  // Preload the hero image as soon as the URL is known
+  useEffect(() => {
+    if (!hero?.image_url) {
+      setImgReady(false);
+      return;
+    }
+    setImgReady(false);
+    const img = new Image();
+    img.decoding = 'async';
+    img.fetchPriority = 'high';
+    img.src = hero.image_url;
+    let cancelled = false;
+    const done = () => { if (!cancelled) setImgReady(true); };
+    if (img.decode) {
+      img.decode().then(done).catch(done);
+    } else {
+      img.onload = done;
+      img.onerror = done;
+    }
+    return () => { cancelled = true; };
+  }, [hero?.image_url]);
 
   return (
     <motion.div
@@ -26,12 +53,33 @@ export default function HeroBanner({ user }) {
       transition={{ type: 'spring', stiffness: 200, damping: 25 }}
     >
       {hero ? (
-        <HeroPreview
-          imageUrl={hero.image_url}
-          settings={hero}
-          idolName={user?.favorite_idol}
-          groupName={user?.favorite_group}
-        />
+        <div className="relative">
+          {/* Skeleton shimmer behind the image — fades out once decoded */}
+          {!imgReady && (
+            <div
+              className="absolute inset-0 rounded-3xl overflow-hidden aspect-[4/5] z-10"
+              style={{ background: 'linear-gradient(160deg, #1a1530 0%, #0f0a20 50%, #1a1024 100%)' }}
+            >
+              <div className="absolute inset-0 animate-pulse"
+                style={{
+                  background: 'radial-gradient(circle at 50% 55%, rgba(196,181,253,0.18), transparent 60%)',
+                }}
+              />
+            </div>
+          )}
+          <motion.div
+            initial={false}
+            animate={{ opacity: imgReady ? 1 : 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <HeroPreview
+              imageUrl={hero.image_url}
+              settings={hero}
+              idolName={user?.favorite_idol}
+              groupName={user?.favorite_group}
+            />
+          </motion.div>
+        </div>
       ) : (
         <div
           className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center"
