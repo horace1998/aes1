@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckSquare, Clock } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import ModalPortal from '@/components/ui/ModalPortal';
 import { format } from 'date-fns';
 
 export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
@@ -35,6 +36,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
   };
 
   return (
+    <ModalPortal>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -145,5 +147,6 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
         </motion.div>
       )}
     </AnimatePresence>
+    </ModalPortal>
   );
 }

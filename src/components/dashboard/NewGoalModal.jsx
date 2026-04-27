@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import ModalPortal from '@/components/ui/ModalPortal';
 import { X, Target, Heart, Users, Sparkles } from 'lucide-react';
 
 const TIMELINE_UNITS = ['days', 'weeks', 'months'];
@@ -51,6 +52,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
   };
 
   return (
+    <ModalPortal>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -228,5 +230,6 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
         </motion.div>
       )}
     </AnimatePresence>
+    </ModalPortal>
   );
 }

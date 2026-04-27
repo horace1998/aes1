@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Camera } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import ModalPortal from '@/components/ui/ModalPortal';
 import { base44 } from '@/api/base44Client';
 
 /**
@@ -38,6 +39,7 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
   };
 
   return (
+    <ModalPortal>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -127,5 +129,6 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
         </motion.div>
       )}
     </AnimatePresence>
+    </ModalPortal>
   );
 }
