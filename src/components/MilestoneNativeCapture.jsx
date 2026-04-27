@@ -44,31 +44,31 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-[60] flex items-center justify-center px-4"
-          style={{
-            background: 'rgba(20,16,40,0.55)',
-            backdropFilter: 'blur(8px)',
-            paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))',
-            paddingTop: 'calc(1rem + env(safe-area-inset-top))',
-          }}
+          style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))', paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={() => !uploading && onClose(null)}
         >
           <motion.div
-            className="w-full max-w-md max-h-full"
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            onClick={() => !uploading && onClose(null)}
+          />
+          <motion.div
+            className="relative w-full max-w-lg max-h-full"
             initial={{ y: 60, opacity: 0, scale: 0.96 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 60, opacity: 0, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-            onClick={(e) => e.stopPropagation()}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            <GlassCard variant="strong" className="p-5 max-h-full overflow-y-auto no-scrollbar" animate={false}>
-              <div className="flex items-center justify-between mb-4">
-                <p className="font-heading font-bold text-base">Capture Milestone</p>
+            <GlassCard variant="strong" className="p-5 rounded-3xl max-h-full overflow-y-auto no-scrollbar" animate={false}>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-violet-400" />
+                  <h3 className="font-heading text-xl font-bold">Capture Milestone</h3>
+                </div>
                 <button
                   onClick={() => !uploading && onClose(null)}
-                  className="glass-subtle rounded-full p-1.5"
+                  className="glass-subtle rounded-full p-2"
                 >
                   <X className="w-4 h-4" />
                 </button>
