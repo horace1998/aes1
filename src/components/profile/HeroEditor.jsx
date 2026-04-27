@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { X, Check, RotateCcw, ImagePlus, Move } from 'lucide-react';
+import { X, Check, RotateCcw, ImagePlus, Move, Wand2 } from 'lucide-react';
 import GlassButton from '@/components/ui/GlassButton';
 import HeroPreview from './HeroPreview';
 import HeroUploadModal from '@/components/dashboard/HeroUploadModal';
+import HeroEraser from './HeroEraser';
 
 const DEFAULTS = {
   glow: 50,
@@ -32,6 +33,7 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
   const [draft, setDraft] = useState(DEFAULTS);
   const [draftImage, setDraftImage] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
+  const [showEraser, setShowEraser] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -109,16 +111,26 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
           {/* Scrollable controls */}
           <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
             <div className="px-4 py-3 max-w-xl mx-auto" style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}>
-              {/* Replace image */}
-              <button
-                onClick={() => setShowUpload(true)}
-                className="w-full glass-subtle rounded-2xl py-3 px-4 mb-4 flex items-center justify-center gap-2 hover:bg-white/60 transition"
-              >
-                <ImagePlus className="w-4 h-4 text-violet-500" />
-                <span className="font-heading text-sm font-semibold">
-                  {draftImage ? 'Replace Image' : 'Upload Image'}
-                </span>
-              </button>
+              {/* Image actions: replace + erase */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <button
+                  onClick={() => setShowUpload(true)}
+                  className="glass-subtle rounded-2xl py-3 px-3 flex items-center justify-center gap-2 hover:bg-white/60 transition"
+                >
+                  <ImagePlus className="w-4 h-4 text-violet-500" />
+                  <span className="font-heading text-xs font-semibold">
+                    {draftImage ? 'Replace' : 'Upload'}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setShowEraser(true)}
+                  disabled={!draftImage}
+                  className="glass-subtle rounded-2xl py-3 px-3 flex items-center justify-center gap-2 hover:bg-white/60 transition disabled:opacity-40"
+                >
+                  <Wand2 className="w-4 h-4 text-violet-500" />
+                  <span className="font-heading text-xs font-semibold">Erase Magic</span>
+                </button>
+              </div>
 
               {/* Editable title lines (any case allowed) */}
               <div className="mb-4">
@@ -209,6 +221,16 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
             onSave={(url) => {
               setDraftImage(url);
               setShowUpload(false);
+            }}
+          />
+
+          <HeroEraser
+            isOpen={showEraser}
+            imageUrl={draftImage}
+            onClose={() => setShowEraser(false)}
+            onApply={(url) => {
+              setDraftImage(url);
+              setShowEraser(false);
             }}
           />
         </motion.div>
