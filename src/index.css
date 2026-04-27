@@ -204,6 +204,13 @@
   user-select: none !important;
 }
 
+/* Disable pinch-zoom and double-tap zoom across the whole app */
+html, body {
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
+  overscroll-behavior: none;
+}
+
 /* Re-enable selection only on explicit text inputs */
 input, textarea, [contenteditable="true"] {
   -webkit-user-select: text !important;
