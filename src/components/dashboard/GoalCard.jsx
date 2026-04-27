@@ -20,7 +20,7 @@ function getProgress(startDate, value, unit) {
   return Math.min(100, Math.max(0, Math.round((elapsed / totalDays) * 100)));
 }
 
-const SWIPE_THRESHOLD = -100;
+const SWIPE_THRESHOLD = 100;
 
 export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
   const progress = getProgress(goal.start_date || goal.created_date, goal.timeline_value, goal.timeline_unit);
@@ -29,13 +29,13 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
   const todayChecked = goal.daily_checkins?.some(c => c.date === format(new Date(), 'yyyy-MM-dd') && c.completed);
 
   const x = useMotionValue(0);
-  const actionOpacity = useTransform(x, [-100, -40, 0], [1, 0.4, 0]);
+  const actionOpacity = useTransform(x, [0, 40, 100], [0, 0.4, 1]);
   const [confirming, setConfirming] = useState(false);
   const isActive = goal.status === 'active';
   const canSwipe = isActive && !!onComplete;
 
   const handleDragEnd = (_, info) => {
-    if (info.offset.x < SWIPE_THRESHOLD) {
+    if (info.offset.x > SWIPE_THRESHOLD) {
       setConfirming(true);
     } else {
       x.set(0);
@@ -57,7 +57,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       {/* Swipe action background */}
       {canSwipe && (
         <motion.div
-          className="absolute inset-0 rounded-2xl bg-gradient-to-l from-emerald-400 to-emerald-500 flex items-center justify-end pr-6"
+          className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 flex items-center justify-start pl-6"
           style={{ opacity: actionOpacity }}
         >
           <div className="flex items-center gap-2 text-white font-heading font-semibold text-sm">
@@ -69,11 +69,11 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
 
       <motion.div
         drag={canSwipe ? 'x' : false}
-        dragConstraints={{ left: -120, right: 0 }}
+        dragConstraints={{ left: 0, right: 120 }}
         dragElastic={0.15}
         style={{ x }}
         onDragEnd={handleDragEnd}
-        animate={confirming ? { x: -110 } : undefined}
+        animate={confirming ? { x: 110 } : undefined}
       >
         <GlassCard
           variant="strong"
