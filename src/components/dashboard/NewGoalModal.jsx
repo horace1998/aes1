@@ -54,7 +54,8 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))', paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -64,14 +65,13 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
             onClick={onClose}
           />
           <motion.div
-            className="relative w-full max-w-lg mx-4"
-            style={{ marginBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}
-            initial={{ y: 300, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 300, opacity: 0 }}
+            className="relative w-full max-w-lg max-h-full"
+            initial={{ y: 60, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 60, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            <GlassCard variant="strong" className="p-6 rounded-3xl max-h-[78vh] overflow-y-auto no-scrollbar" animate={false}>
+            <GlassCard variant="strong" className="p-5 rounded-3xl max-h-full overflow-y-auto no-scrollbar" animate={false}>
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-heading text-xl font-bold">New Goal</h3>
                 <button onClick={onClose} className="glass-subtle rounded-full p-2">

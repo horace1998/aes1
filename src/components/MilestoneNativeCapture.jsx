@@ -41,11 +41,12 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center px-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center px-4"
           style={{
             background: 'rgba(20,16,40,0.55)',
             backdropFilter: 'blur(8px)',
             paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))',
+            paddingTop: 'calc(1rem + env(safe-area-inset-top))',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -53,14 +54,14 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
           onClick={() => !uploading && onClose(null)}
         >
           <motion.div
-            className="w-full max-w-md"
-            initial={{ y: 60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 60, opacity: 0 }}
+            className="w-full max-w-md max-h-full"
+            initial={{ y: 60, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 60, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 280, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <GlassCard variant="strong" className="p-5" animate={false}>
+            <GlassCard variant="strong" className="p-5 max-h-full overflow-y-auto no-scrollbar" animate={false}>
               <div className="flex items-center justify-between mb-4">
                 <p className="font-heading font-bold text-base">Capture Milestone</p>
                 <button
