@@ -10,6 +10,7 @@ import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp } from 'lu
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
 import ReminderSettings from '@/components/profile/ReminderSettings';
+import FocusManager from '@/components/profile/FocusManager';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -82,6 +83,9 @@ export default function Profile() {
             </GlassCard>
           ))}
         </div>
+
+        {/* Focus manager */}
+        <FocusManager user={user} />
 
         {/* Hero Image manager */}
         <HeroImageManager user={user} />

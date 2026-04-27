@@ -48,7 +48,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
       >
         <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-2">Step 2 of 2</p>
         <h2 className="font-heading text-3xl font-bold text-foreground mb-2">Set your first goal</h2>
-        <p className="text-muted-foreground text-sm mb-6">What will you achieve before meeting {idolData.idol_name}?</p>
+        <p className="text-muted-foreground text-sm mb-6">What will you achieve before meeting <span className="font-semibold text-foreground">{idolData.idol_name}</span>?</p>
       </motion.div>
 
       {/* Preview card */}
