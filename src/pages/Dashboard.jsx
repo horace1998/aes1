@@ -16,7 +16,9 @@ import CheerInbox from '@/components/circle/CheerInbox';
 import HomeSplash from '@/components/dashboard/HomeSplash';
 import { leaveGoal } from '@/lib/leaveGoal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
-import { format } from 'date-fns';
+import { format, parseISO, isSameDay } from 'date-fns';
+import { Calendar, Clock, CheckCircle2, Circle, Share2 } from 'lucide-react';
+import GlassCard from '@/components/ui/GlassCard';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -88,6 +90,13 @@ export default function Dashboard() {
     queryKey: ['milestones'],
     queryFn: () => base44.entities.Milestone.list('-created_date'),
   });
+
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: () => base44.entities.Task.list('-due_date'),
+  });
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const activeGoals = goals.filter(g => g.status === 'active');
   const completedCount = goals.filter(g => g.status === 'completed').length;
@@ -187,6 +196,130 @@ export default function Dashboard() {
 
         {/* Trends */}
         {goals.length > 0 && <TrendsSection goals={goals} />}
+
+        {/* Tasks Calendar + List */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <span style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
+            }}>
+              Agenda — To Do
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
+          </div>
+
+          {/* Mini Calendar */}
+          <GlassCard variant="strong" className="p-3 mb-4" animate={false}>
+            <div className="grid grid-cols-7 gap-1">
+              {[...Array(35)].map((_, i) => {
+                const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i - 14);
+                const isSelected = isSameDay(date, selectedDate);
+                const dayTasks = tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), date));
+                const hasDone = dayTasks.some(t => t.status === 'done');
+
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedDate(date)}
+                    className={`aspect-square rounded text-xs font-heading flex flex-col items-center justify-center transition-all border ${
+                      isSelected
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-foreground/10 text-foreground'
+                    }`}
+                  >
+                    <span className="font-bold text-[10px]">{format(date, 'd')}</span>
+                    {hasDone && <span className="text-[6px] text-primary">✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </GlassCard>
+
+          {/* Tasks for selected date */}
+          {tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), selectedDate)).length > 0 ? (
+            <div className="space-y-2">
+              {tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), selectedDate)).map(task => (
+                <GlassCard
+                  key={task.id}
+                  variant={task.status === 'done' ? 'subtle' : 'strong'}
+                  className="p-3 flex items-start gap-3"
+                  animate={false}
+                >
+                  <div className="mt-0.5 flex-shrink-0">
+                    {task.status === 'done' ? (
+                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-foreground/30" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-heading ${
+                      task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'
+                    }`}>
+                      {task.title}
+                    </p>
+                    {task.due_time && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                        <Clock className="w-3 h-3" />
+                        {task.due_time}
+                      </p>
+                    )}
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              textAlign: 'center', padding: '20px',
+              borderRadius: 12, background: 'rgba(0,0,0,0.03)',
+              border: '1px solid rgba(0,0,0,0.07)',
+            }}>
+              <p style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 12, color: 'rgba(0,0,0,0.35)',
+              }}>
+                No tasks for this date
+              </p>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Milestones grid */}
+        {milestones.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mb-8"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+                textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
+              }}>
+                Moments
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {milestones.slice(0, 6).map(m => (
+                <div key={m.id} className="rounded-xl overflow-hidden border border-foreground/10">
+                  {m.asset_url && (
+                    <img src={m.asset_url} alt="" className="w-full aspect-square object-cover" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Active Goals */}
         <motion.div

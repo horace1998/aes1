@@ -114,12 +114,6 @@ export default function Profile() {
           ))}
         </div>
 
-        {/* Photo Wall */}
-        <div className="mb-8">
-          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Milestone Wall</p>
-          <PhotoWall milestones={milestones} emptyLabel="Capture your first milestone to start your wall" />
-        </div>
-
         {/* Trophy Case */}
         <div className="mb-8">
           <BadgeGrid badges={badges} />

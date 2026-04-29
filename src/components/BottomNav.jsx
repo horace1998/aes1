@@ -6,11 +6,9 @@ import { Home, Users, Radio, Plus, Camera, CheckSquare, Trophy, User, Image, Cal
 
 const NAV_ITEMS_LEFT = [
   { path: '/', icon: Home, label: 'Home' },
-  { path: '/gallery', icon: Image, label: 'Wall' },
   { path: '/missions', icon: Users, label: 'Missions' },
 ];
 const NAV_ITEMS_RIGHT = [
-  { path: '/tasks', icon: Calendar, label: 'Plan' },
   { path: '/feed', icon: Radio, label: 'Feed' },
   { path: '/profile', icon: User, label: 'Profile' },
 ];
