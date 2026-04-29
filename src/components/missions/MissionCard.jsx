@@ -37,10 +37,9 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
     }
   }, [currentUser?.email, mission.id, isInMembersList, hasActiveLinkedGoal, isCreator]);
 
-  // Count active missions for this user (created + joined)
-  const activeMissions = userGoals.filter(g => g.status === 'active' && g.mission_id).length;
-  const isCreatorOfActiveMission = userGoals.some(g => g.status === 'active' && g.is_mission_creator);
-  const canJoin = activeMissions < 3;
+  // Count ALL active goals (not just mission-linked)
+  const activeGoals = userGoals.filter(g => g.status === 'active');
+  const canJoin = activeGoals.length < 3;
 
   const handleJoin = async () => {
     if (!currentUser || isMember || isCreator) return;
