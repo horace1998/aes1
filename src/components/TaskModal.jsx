@@ -46,10 +46,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <motion.div
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={onClose}
-          />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
           <motion.div
             className="relative w-full max-w-lg max-h-full"
             initial={{ y: 60, opacity: 0, scale: 0.96 }}
@@ -60,16 +57,16 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
             <GlassCard variant="strong" className="p-5 rounded-3xl max-h-full overflow-y-auto no-scrollbar" animate={false}>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <CheckSquare className="w-5 h-5 text-pink-400" />
+                  <CheckSquare className="w-5 h-5 text-foreground" />
                   <h3 className="font-heading text-xl font-bold">New Task</h3>
                 </div>
-                <button onClick={onClose} className="glass-subtle rounded-full p-2">
+                <button onClick={onClose} className="border border-foreground/15 rounded-full p-2">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-3">
-                <div className="glass-subtle rounded-xl p-3">
+                <div className="border border-foreground/10 rounded-xl p-3">
                   <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Task</label>
                   <input
                     type="text"
@@ -80,7 +77,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
                   />
                 </div>
 
-                <div className="glass-subtle rounded-xl p-3">
+                <div className="border border-foreground/10 rounded-xl p-3">
                   <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Notes (optional)</label>
                   <textarea
                     placeholder="Add details..."
@@ -92,7 +89,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
                 </div>
 
                 {activeGoals.length > 0 && (
-                  <div className="glass-subtle rounded-xl p-3">
+                  <div className="border border-foreground/10 rounded-xl p-3">
                     <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Link to Goal (optional)</label>
                     <select
                       className="w-full bg-transparent outline-none text-sm text-foreground"
@@ -108,7 +105,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
                 )}
 
                 <div className="flex gap-3">
-                  <div className="glass-subtle rounded-xl p-3 flex-1">
+                  <div className="border border-foreground/10 rounded-xl p-3 flex-1">
                     <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">Date</label>
                     <input
                       type="date"
@@ -117,7 +114,7 @@ export default function TaskModal({ isOpen, onClose, onSave, goals = [] }) {
                       onChange={e => setDueDate(e.target.value)}
                     />
                   </div>
-                  <div className="glass-subtle rounded-xl p-3 w-36">
+                  <div className="border border-foreground/10 rounded-xl p-3 w-36">
                     <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">
                       <Clock className="w-3 h-3 inline mr-1" />Time
                     </label>

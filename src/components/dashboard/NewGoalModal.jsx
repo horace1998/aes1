@@ -62,10 +62,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <motion.div
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={onClose}
-          />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
           <motion.div
             className="relative w-full max-w-lg max-h-full"
             initial={{ y: 60, opacity: 0, scale: 0.96 }}
@@ -76,7 +73,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
             <GlassCard variant="strong" className="p-5 rounded-3xl max-h-full overflow-y-auto no-scrollbar" animate={false}>
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-heading text-xl font-bold">New Goal</h3>
-                <button onClick={onClose} className="glass-subtle rounded-full p-2">
+                <button onClick={onClose} className="border border-foreground/15 rounded-full p-2">
                   <X className="w-4 h-4" />
                 </button>
               </div>

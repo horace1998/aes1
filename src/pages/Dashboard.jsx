@@ -97,18 +97,17 @@ export default function Dashboard() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-12">
-        {/* Top utility bar — wordmark + bell + identity */}
+      <div className="relative z-10 px-6 pt-[3.5rem]">
+        {/* Top utility bar — bell + identity (wordmark is in RootChrome sticky bar) */}
         <motion.div
-          className="flex items-center justify-between mb-6"
+          className="flex items-center justify-end mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="font-display text-base tracking-[0.4em] text-foreground" style={{ fontWeight: 700 }}>SYNKIFY</p>
           <div className="flex items-center gap-3">
             <NotificationBell userEmail={user?.email} />
-            <HeroIdentity user={user} size={40} />
+            <HeroIdentity user={user} size={36} />
           </div>
         </motion.div>
 

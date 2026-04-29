@@ -30,11 +30,11 @@ export default function HeroImageManager({ user }) {
     <>
       <GlassCard variant="strong" className="p-5 mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-violet-200 to-indigo-200 flex items-center justify-center">
+          <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 border border-foreground/15 flex items-center justify-center bg-foreground/5">
             {hero ? (
               <img src={hero.image_url} alt="hero" className="w-full h-full object-cover" />
             ) : (
-              <ImagePlus className="w-5 h-5 text-violet-500" />
+              <ImagePlus className="w-5 h-5 text-foreground" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -62,7 +62,7 @@ export default function HeroImageManager({ user }) {
           {hero && (
             <GlassButton
               variant="ghost"
-              className="flex items-center justify-center gap-2 py-2 px-4 text-xs text-rose-500"
+              className="flex items-center justify-center gap-2 py-2 px-4 text-xs text-foreground"
               onClick={() => deleteMutation.mutate()}
             >
               <Trash2 className="w-3.5 h-3.5" /> Remove

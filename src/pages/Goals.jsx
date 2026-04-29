@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,9 +15,15 @@ export default function Goals() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('active');
   const [user, setUser] = useState(null);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser);
+  }, []);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   const { data: goals = [] } = useQuery({
@@ -46,7 +52,7 @@ export default function Goals() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-14">
+      <div className="relative z-10 px-6 pt-[3.5rem]">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,21 +61,21 @@ export default function Goals() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="glass rounded-xl p-1 flex mb-6">
+        <div className="border border-foreground/10 rounded-xl p-1 flex mb-6">
           {TABS.map((tab) => (
             <button
               key={tab}
               className="relative flex-1 py-2 text-xs font-heading font-medium capitalize"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'instant' }); }}
             >
               {activeTab === tab && (
                 <motion.div
-                  className="absolute inset-0 glass-strong rounded-lg"
+                  className="absolute inset-0 bg-foreground rounded-lg"
                   layoutId="goalTab"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <span className={`relative z-10 ${activeTab === tab ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <span className={`relative z-10 ${activeTab === tab ? 'text-background' : 'text-muted-foreground'}`}>
                 {tab} ({(tab === 'all' ? goals : goals.filter(g => g.status === tab)).length})
               </span>
             </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -11,6 +11,9 @@ import { Users, Flame, TrendingUp } from 'lucide-react';
 export default function Missions() {
   const [filterGroup, setFilterGroup] = useState('all');
   const [tab, setTab] = useState('trending'); // trending | new | mine
+
+  // Scroll to top on mount
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
   const { data: user } = useQuery({
     queryKey: ['me'],
@@ -50,7 +53,7 @@ export default function Missions() {
       <PageShell goals={goals} user={user}>
         <ThreeBackground />
 
-        <div className="relative z-10 px-6 pt-14">
+        <div className="relative z-10 px-6 pt-[3.5rem]">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -75,7 +78,7 @@ export default function Missions() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => setTab(t.id)}
+                  onClick={() => { setTab(t.id); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                   className={`flex-1 rounded-xl py-2 text-[11px] font-heading font-semibold transition-all flex items-center justify-center gap-1 ${
                     tab === t.id
                       ? 'bg-foreground text-background'

@@ -89,7 +89,7 @@ export default function BottomNav({ onSelect }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            style={{ background: 'rgba(60,50,90,0.06)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
+            style={{ background: 'rgba(0,0,0,0.08)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
           />
         )}
       </AnimatePresence>

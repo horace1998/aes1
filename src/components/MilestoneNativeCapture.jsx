@@ -49,10 +49,7 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <motion.div
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={() => !uploading && onClose(null)}
-          />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
           <motion.div
             className="relative w-full max-w-lg max-h-full"
             initial={{ y: 60, opacity: 0, scale: 0.96 }}
@@ -68,7 +65,7 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
                 </div>
                 <button
                   onClick={() => !uploading && onClose(null)}
-                  className="glass-subtle rounded-full p-2"
+                  className="border border-foreground/15 rounded-full p-2"
                 >
                   <X className="w-4 h-4" />
                 </button>

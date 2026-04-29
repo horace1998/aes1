@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,7 +10,7 @@ import FeedPostCard from '@/components/feed/FeedPostCard';
 import PageShell from '@/components/PageShell';
 import MilestoneUploadModal from '@/components/milestones/MilestoneUploadModal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
-import { Share2, Waves } from 'lucide-react';
+import { Share2, Waves, X } from 'lucide-react';
 import { moderate } from '@/lib/moderation';
 import { toast } from 'sonner';
 
@@ -18,6 +19,9 @@ export default function Feed() {
   const [showShare, setShowShare] = useState(false);
   const [filterIdol, setFilterIdol] = useState('all');
   const [filterGroup, setFilterGroup] = useState('all');
+
+  // Scroll to top on mount
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
   const { data: user } = useQuery({
     queryKey: ['me'],
@@ -93,7 +97,7 @@ export default function Feed() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-14">
+      <div className="relative z-10 px-6 pt-[3.5rem]">
         {/* Header */}
         <motion.div
           className="flex items-start justify-between mb-6"
@@ -198,7 +202,7 @@ export default function Feed() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div className="absolute inset-0 bg-black/25 backdrop-blur-sm" onClick={() => setShowShare(false)} />
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
             <motion.div
               className="relative w-full max-w-lg mx-4"
               initial={{ y: 40, opacity: 0, scale: 0.96 }}
@@ -207,7 +211,12 @@ export default function Feed() {
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>
-                <p className="font-heading text-lg font-bold mb-1">Share to Fan Feed</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="font-heading text-lg font-bold">Share to Fan Feed</p>
+                  <button onClick={() => setShowShare(false)} className="border border-foreground/15 rounded-full p-1.5">
+                    <X className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                </div>
                 <p className="text-xs text-muted-foreground mb-4">Choose a milestone to share publicly</p>
                 <div className="space-y-2 max-h-72 overflow-y-auto no-scrollbar">
                   {unsaredMilestones.length === 0 ? (
@@ -233,9 +242,9 @@ export default function Feed() {
                     ))
                   )}
                 </div>
-                <GlassButton variant="ghost" onClick={() => setShowShare(false)} className="w-full mt-4">
+                <button onClick={() => setShowShare(false)} className="w-full mt-4 border border-foreground/15 rounded-2xl py-2.5 text-sm font-heading font-medium text-foreground">
                   Cancel
-                </GlassButton>
+                </button>
               </GlassCard>
             </motion.div>
           </motion.div>

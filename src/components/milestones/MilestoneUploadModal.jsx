@@ -54,10 +54,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <motion.div
-            className="absolute inset-0 bg-black/25 backdrop-blur-sm"
-            onClick={onClose}
-          />
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
           <motion.div
             className="relative w-full max-w-lg"
             initial={{ y: 40, opacity: 0, scale: 0.96 }}
@@ -73,7 +70,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                     {goal ? `For: ${goal.title}` : 'Celebrate your achievement'}
                   </p>
                 </div>
-                <button onClick={onClose} className="glass-subtle rounded-full p-2">
+                <button onClick={onClose} className="border border-foreground/15 rounded-full p-2">
                   <X className="w-4 h-4" />
                 </button>
               </div>
