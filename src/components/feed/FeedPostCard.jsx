@@ -145,12 +145,21 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
             </div>
           ) : (
             /* Text-only post */
-            <div className="p-4 bg-foreground/5">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-heading mb-1">
-                {post.idol_group || 'Fan'}{post.idol_name ? ` · ${post.idol_name}` : ''}
-              </p>
-              <p className="font-heading font-bold text-base text-foreground">{post.goal_title}</p>
-              {post.caption && <p className="text-xs text-muted-foreground italic mt-1">"{post.caption}"</p>}
+            <div className="p-4 bg-foreground/5 relative">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-heading mb-1">
+                    {post.idol_group || 'Fan'}{post.idol_name ? ` · ${post.idol_name}` : ''}
+                  </p>
+                  <p className="font-heading font-bold text-base text-foreground">{post.goal_title}</p>
+                  {post.caption && <p className="text-xs text-muted-foreground italic mt-1">"{post.caption}"</p>}
+                </div>
+                {isOwner && (
+                  <button onClick={() => setConfirmDelete(true)} className="ml-2 p-1.5 rounded-full border border-foreground/15" aria-label="Delete">
+                    <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
             </div>
           )}
 

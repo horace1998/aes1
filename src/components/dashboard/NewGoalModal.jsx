@@ -24,11 +24,11 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
   const [category, setCategory] = useState('other');
 
   const idolName = defaultIdol?.idol_name?.trim() || defaultIdol?.idol_group?.trim() || '';
-  const idolGroup = defaultIdol?.idol_group?.trim() || '';
-  const hasFocus = !!idolGroup;
+  const idolGroup = defaultIdol?.idol_group?.trim() || defaultIdol?.idol_name?.trim() || '';
+  const hasFocus = !!(idolName || idolGroup);
 
   const handleSave = () => {
-    if (!goal.trim() || !hasFocus) return;
+    if (!goal.trim()) return;
     onSave({
       title: goal.trim(),
       description: description.trim(),
@@ -218,7 +218,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
 
               <div className="flex gap-3 mt-6">
                 <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
-                <GlassButton variant="primary" onClick={handleSave} disabled={!goal.trim() || !hasFocus} className="flex-1">
+                <GlassButton variant="primary" onClick={handleSave} disabled={!goal.trim()} className="flex-1">
                   Create Goal
                 </GlassButton>
               </div>

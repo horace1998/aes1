@@ -9,14 +9,14 @@ export default function GlassButton({ children, className, variant = 'primary', 
     primary: 'text-white',
     secondary: 'text-white/80',
     accent: 'text-white',
-    ghost: 'text-white/70',
+    ghost: 'text-foreground',
   };
 
   const inlineStyles = {
     primary: { background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)', border: '1px solid rgba(77,127,255,0.35)', boxShadow: '0 4px 20px rgba(26,58,173,0.45)' },
-    secondary: { background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' },
+    secondary: { background: 'rgba(0,0,0,0.05)', border: '1px solid rgba(0,0,0,0.12)' },
     accent: { background: 'linear-gradient(135deg, #4d7fff, #1a3aad)', border: '1px solid rgba(77,127,255,0.4)' },
-    ghost: { background: 'transparent', border: '1px solid rgba(255,255,255,0.12)' },
+    ghost: { background: 'transparent', border: '1px solid rgba(0,0,0,0.15)' },
   };
 
   return (

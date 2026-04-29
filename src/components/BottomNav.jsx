@@ -51,7 +51,7 @@ export default function BottomNav({ onSelect }) {
         <item.icon
           className="w-[18px] h-[18px] pointer-events-none"
           style={{
-            color: isActive ? '#4d7fff' : 'rgba(255,255,255,0.3)',
+            color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.35)',
             transition: 'color 0.2s',
           }}
           strokeWidth={isActive ? 2 : 1.4}
