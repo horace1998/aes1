@@ -50,13 +50,13 @@ export default function BottomNav({ onSelect }) {
       >
         <item.icon
           className="w-[18px] h-[18px] pointer-events-none"
-          style={{ color: isActive ? '#f5f5f5' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }}
+          style={{ color: isActive ? '#1a2a5e' : 'rgba(0,0,0,0.28)', transition: 'color 0.2s' }}
           strokeWidth={isActive ? 1.8 : 1.4}
         />
         <span
           className="text-[9px] pointer-events-none"
           style={{
-            color: isActive ? '#f5f5f5' : 'rgba(255,255,255,0.35)',
+            color: isActive ? '#1a2a5e' : 'rgba(0,0,0,0.35)',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             fontWeight: isActive ? 600 : 500,
@@ -68,7 +68,7 @@ export default function BottomNav({ onSelect }) {
           <motion.div
             layoutId="dot"
             className="absolute bottom-1 w-3 h-px"
-            style={{ background: '#f5f5f5' }}
+            style={{ background: '#1a2a5e' }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -89,7 +89,7 @@ export default function BottomNav({ onSelect }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
+            style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
           />
         )}
       </AnimatePresence>
@@ -119,15 +119,15 @@ export default function BottomNav({ onSelect }) {
                   whileTap={{ scale: 0.88 }}
                   style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                    cursor: 'pointer', background: 'none', border: 'none',
+                    cursor: 'pointer', background: 'none', border: 'none', zIndex: 50,
                     ...ns,
                   }}
                 >
                   <div
                     style={{
                       width: 58, height: 58, borderRadius: 6,
-                      background: action.bg,
-                      boxShadow: `0 8px 22px ${action.shadow}`,
+                      background: '#1a2a5e',
+                      boxShadow: `0 8px 22px rgba(26,42,94,0.25)`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       position: 'relative',
                     }}
@@ -137,7 +137,7 @@ export default function BottomNav({ onSelect }) {
                   <span
                     className="text-[10px]"
                     style={{
-                      color: '#0a0a0a',
+                      color: '#1a2a5e',
                       letterSpacing: '0.22em',
                       textTransform: 'uppercase',
                       fontWeight: 600,
@@ -158,12 +158,12 @@ export default function BottomNav({ onSelect }) {
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
           height: 62, position: 'relative', zIndex: 50,
-          background: 'rgba(18,20,26,0.94)',
-          backdropFilter: 'blur(24px) saturate(115%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(115%)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.97)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(0,0,0,0.09)',
           borderRadius: 8,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
         }}
       >
         <div className="flex flex-1 items-center h-full">
@@ -179,8 +179,8 @@ export default function BottomNav({ onSelect }) {
             transition={{ type: 'spring', stiffness: 420, damping: 26 }}
             style={{
               width: 46, height: 46, borderRadius: 6,
-              background: '#0a0a0a',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+              background: '#1a2a5e',
+              boxShadow: '0 4px 14px rgba(26,42,94,0.3)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative', overflow: 'hidden',

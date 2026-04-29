@@ -6,31 +6,31 @@
 
 @layer base {
   :root {
-    /* Dark editorial — idol poster / streetwear aesthetic */
-    --background: 220 14% 7%;
-    --foreground: 0 0% 96%;
-    --card: 220 12% 11%;
-    --card-foreground: 0 0% 96%;
-    --popover: 220 12% 11%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 0 0% 96%;
-    --primary-foreground: 220 14% 7%;
-    --secondary: 220 10% 16%;
-    --secondary-foreground: 0 0% 85%;
-    --muted: 220 10% 14%;
-    --muted-foreground: 0 0% 50%;
-    --accent: 220 10% 18%;
-    --accent-foreground: 0 0% 90%;
-    --destructive: 0 50% 45%;
+    /* White editorial — clean collage / idol magazine aesthetic */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 222 60% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 220 20% 10%;
+    --muted: 220 12% 96%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 222 60% 28%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 18%;
-    --input: 220 10% 18%;
-    --ring: 0 0% 60%;
-    --chart-1: 0 0% 15%;
-    --chart-2: 0 0% 35%;
-    --chart-3: 0 0% 55%;
-    --chart-4: 0 0% 75%;
-    --chart-5: 0 0% 85%;
+    --border: 220 12% 88%;
+    --input: 220 12% 92%;
+    --ring: 222 60% 28%;
+    --chart-1: 222 60% 28%;
+    --chart-2: 222 40% 50%;
+    --chart-3: 220 15% 65%;
+    --chart-4: 220 10% 80%;
+    --chart-5: 220 8% 90%;
     --radius: 0.5rem;
     --font-heading: 'Playfair Display', 'Times New Roman', serif;
     --font-body: 'Inter', sans-serif;
@@ -94,40 +94,30 @@
   }
 }
 
-/* Dark editorial card — idol poster / streetwear */
+/* White editorial card — clean collage / magazine aesthetic */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(28px) saturate(115%);
-  -webkit-backdrop-filter: blur(28px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3),
-    0 8px 24px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  border: 1px solid rgba(220, 225, 235, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(32px) saturate(115%);
-  -webkit-backdrop-filter: blur(32px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.35),
-    0 12px 32px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  border: 1px solid rgba(210, 218, 230, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 .glass-subtle {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px) saturate(110%);
-  -webkit-backdrop-filter: blur(20px) saturate(110%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(245, 246, 250, 0.9);
+  border: 1px solid rgba(220, 225, 235, 0.7);
 }
 
 .iridescent {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(245, 248, 255, 0.95);
 }
 
 .iridescent-border {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(200, 215, 240, 0.8);
 }
 
 /* Hide scrollbar (utility class + global) */
@@ -147,7 +137,7 @@ body::-webkit-scrollbar,
   display: none !important;
 }
 
-/* Vogue-style editorial typography */
+/* Editorial typography */
 .font-display {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
@@ -163,11 +153,11 @@ body::-webkit-scrollbar,
 }
 .editorial-rule {
   height: 1px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.12);
 }
 .editorial-rule-thick {
   height: 2px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.85);
 }
 .editorial-eyebrow {
   font-family: var(--font-body);
@@ -175,7 +165,7 @@ body::-webkit-scrollbar,
   font-weight: 500;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(30, 40, 70, 0.45);
 }
 .editorial-italic {
   font-family: var(--font-serif-light);
@@ -183,13 +173,13 @@ body::-webkit-scrollbar,
   font-weight: 400;
 }
 
-/* Dark editorial backdrop */
+/* White editorial backdrop */
 .aurora-bg {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
-  background: #0d0f14;
+  background: #ffffff;
 }
 
 /* Page-transition smoothing helper */

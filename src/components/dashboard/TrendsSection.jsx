@@ -83,9 +83,9 @@ export default function TrendsSection({ goals }) {
           <BarChart data={dailyCounts} barSize={8} margin={{ top: 4, right: 0, left: -32, bottom: 0 }}>
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 9, fill: 'rgba(0,0,0,0.45)', fontFamily: 'Inter', letterSpacing: '0.2em' }}
+              tick={{ fontSize: 9, fill: 'rgba(26,42,94,0.5)', fontFamily: 'Inter', letterSpacing: '0.2em' }}
               tickLine={false}
-              axisLine={{ stroke: 'rgba(0,0,0,0.18)' }}
+              axisLine={{ stroke: 'rgba(26,42,94,0.15)' }}
             />
             <YAxis hide allowDecimals={false} />
             <Tooltip content={<CustomTooltip />} cursor={false} />
@@ -95,10 +95,10 @@ export default function TrendsSection({ goals }) {
                   key={i}
                   fill={
                     entry.count === 0
-                      ? 'rgba(0,0,0,0.08)'
+                      ? 'rgba(26,42,94,0.08)'
                       : entry.count === maxCount
-                        ? '#0a0a0a'
-                        : 'rgba(0,0,0,0.45)'
+                        ? '#1a2a5e'
+                        : 'rgba(26,42,94,0.45)'
                   }
                 />
               ))}

@@ -58,9 +58,9 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       {canSwipe && (
         <motion.div
           className="absolute inset-0 rounded-xl flex items-center justify-start pl-6"
-          style={{ opacity: actionOpacity, background: 'rgba(255,255,255,0.12)' }}
+          style={{ opacity: actionOpacity, background: 'rgba(26,42,94,0.08)' }}
         >
-          <p className="editorial-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>— Mark Complete</p>
+          <p className="editorial-eyebrow" style={{ color: '#1a2a5e' }}>— Mark Complete</p>
         </motion.div>
       )}
 
@@ -100,8 +100,8 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
               <div className="mt-3">
                 <div className="h-px bg-foreground/15 relative">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-foreground"
-                    style={{ height: '2px', top: '-0.5px' }}
+                    className="absolute inset-y-0 left-0"
+                    style={{ height: '2px', top: '-0.5px', background: '#1a2a5e' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
@@ -116,16 +116,15 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
 
             {isActive && (
               <motion.button
-                className={`flex-shrink-0 w-9 h-9 rounded-full transition-all flex items-center justify-center ${
-                  todayChecked
-                    ? 'bg-foreground border-foreground'
-                    : 'border-foreground/20 hover:border-foreground'
-                }`}
-                style={{ border: todayChecked ? '1.5px solid rgba(255,255,255,0.8)' : '1.5px solid rgba(255,255,255,0.2)' }}
+                className="flex-shrink-0 w-9 h-9 rounded-full transition-all flex items-center justify-center"
+                style={{
+                  background: todayChecked ? '#1a2a5e' : 'transparent',
+                  border: todayChecked ? '1.5px solid #1a2a5e' : '1.5px solid rgba(0,0,0,0.2)',
+                }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => !todayChecked && onCheckin?.(goal)}
               >
-                {todayChecked && <Check className="w-4 h-4 text-background" strokeWidth={2.5} />}
+                {todayChecked && <Check className="w-4 h-4 text-white" strokeWidth={2.5} />}
               </motion.button>
             )}
           </div>
@@ -136,22 +135,25 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       <AnimatePresence>
         {confirming && (
           <motion.div
-            className="absolute inset-0 rounded-lg glass-strong flex items-center justify-between px-5 z-10 border border-foreground/10"
+            className="absolute inset-0 rounded-xl flex items-center justify-between px-5 z-10"
+            style={{ background: '#fff', border: '1px solid rgba(26,42,94,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <p className="editorial-italic text-sm text-foreground">Close this entry?</p>
+            <p className="editorial-italic text-sm" style={{ color: '#111827' }}>Close this entry?</p>
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="editorial-eyebrow px-3 py-1.5 border border-foreground/20"
+                className="editorial-eyebrow px-3 py-1.5"
+                style={{ border: '1px solid rgba(0,0,0,0.18)', borderRadius: 4 }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className="editorial-eyebrow px-3 py-1.5 bg-foreground text-background"
+                className="editorial-eyebrow px-3 py-1.5 text-white"
+                style={{ background: '#1a2a5e', borderRadius: 4 }}
               >
                 Confirm
               </button>

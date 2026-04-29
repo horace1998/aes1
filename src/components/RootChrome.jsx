@@ -17,13 +17,13 @@ export default function RootChrome() {
       className="fixed top-0 left-0 right-0 z-[55] flex items-center justify-center"
       style={{
         height: 44,
-        background: 'rgba(13,15,20,0.92)',
-        backdropFilter: 'blur(24px) saturate(115%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(115%)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}
     >
-      <p className="font-display text-sm tracking-[0.45em] text-foreground" style={{ fontWeight: 700 }}>
+      <p className="font-display text-sm tracking-[0.45em]" style={{ fontWeight: 700, color: '#111827' }}>
         SYNKIFY
       </p>
     </div>

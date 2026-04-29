@@ -17,13 +17,13 @@ export default function EditorialHeader({ user }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Ghost background name — massive letterform */}
+      {/* Ghost background letter */}
       <p
         className="absolute -top-4 -left-2 font-display leading-none select-none pointer-events-none"
         style={{
           fontSize: 'clamp(7rem, 38vw, 16rem)',
           fontWeight: 900,
-          color: 'rgba(255,255,255,0.03)',
+          color: 'rgba(26,42,94,0.04)',
           letterSpacing: '-0.05em',
         }}
         aria-hidden="true"
@@ -37,7 +37,7 @@ export default function EditorialHeader({ user }) {
         {group && (
           <span
             className="text-[9px] font-heading font-bold tracking-[0.25em] uppercase px-2.5 py-1 rounded-full"
-            style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
+            style={{ background: 'rgba(26,42,94,0.08)', color: '#1a2a5e', border: '1px solid rgba(26,42,94,0.15)' }}
           >
             {group}
           </span>
@@ -46,11 +46,11 @@ export default function EditorialHeader({ user }) {
 
       {/* Main identity */}
       <div className="relative z-10">
-        <p className="editorial-eyebrow mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>WELCOME BACK —</p>
+        <p className="editorial-eyebrow mb-1">WELCOME BACK —</p>
 
         <motion.h1
-          className="font-display text-foreground leading-none"
-          style={{ fontSize: 'clamp(3rem, 15vw, 6rem)', fontWeight: 900, letterSpacing: '-0.04em' }}
+          className="font-display leading-none"
+          style={{ fontSize: 'clamp(3rem, 15vw, 6rem)', fontWeight: 900, letterSpacing: '-0.04em', color: '#111827' }}
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -65,20 +65,19 @@ export default function EditorialHeader({ user }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.25 }}
           >
-            <span className="editorial-italic text-foreground/70" style={{ fontSize: 'clamp(0.9rem, 3.5vw, 1.3rem)' }}>
+            <span className="editorial-italic" style={{ fontSize: 'clamp(0.9rem, 3.5vw, 1.3rem)', color: '#1a2a5e' }}>
               for {focus}
             </span>
-            {/* filmstrip dash */}
             <span className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
-                <span key={i} className="w-1.5 h-px" style={{ background: 'rgba(255,255,255,0.2)' }} />
+                <span key={i} className="w-1.5 h-px" style={{ background: 'rgba(26,42,94,0.2)' }} />
               ))}
             </span>
           </motion.div>
         )}
       </div>
 
-      <div className="mt-4 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+      <div className="mt-4 h-px" style={{ background: 'rgba(0,0,0,0.1)' }} />
     </motion.div>
   );
 }
