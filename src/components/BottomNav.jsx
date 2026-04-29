@@ -50,13 +50,13 @@ export default function BottomNav({ onSelect }) {
       >
         <item.icon
           className="w-[18px] h-[18px] pointer-events-none"
-          style={{ color: isActive ? '#0a0a0a' : 'rgba(0,0,0,0.35)', transition: 'color 0.2s' }}
+          style={{ color: isActive ? '#f5f5f5' : 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }}
           strokeWidth={isActive ? 1.8 : 1.4}
         />
         <span
           className="text-[9px] pointer-events-none"
           style={{
-            color: isActive ? '#0a0a0a' : 'rgba(0,0,0,0.4)',
+            color: isActive ? '#f5f5f5' : 'rgba(255,255,255,0.35)',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             fontWeight: isActive ? 600 : 500,
@@ -68,7 +68,7 @@ export default function BottomNav({ onSelect }) {
           <motion.div
             layoutId="dot"
             className="absolute bottom-1 w-3 h-px"
-            style={{ background: '#0a0a0a' }}
+            style={{ background: '#f5f5f5' }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -89,7 +89,7 @@ export default function BottomNav({ onSelect }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            style={{ background: 'rgba(0,0,0,0.08)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
+            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
           />
         )}
       </AnimatePresence>
@@ -158,10 +158,10 @@ export default function BottomNav({ onSelect }) {
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
           height: 62, position: 'relative', zIndex: 50,
-          background: 'rgba(255,255,255,0.92)',
+          background: 'rgba(18,20,26,0.94)',
           backdropFilter: 'blur(24px) saturate(115%)',
           WebkitBackdropFilter: 'blur(24px) saturate(115%)',
-          border: '1px solid rgba(0,0,0,0.08)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 8,
           boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
         }}

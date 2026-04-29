@@ -57,10 +57,10 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       {/* Swipe action background */}
       {canSwipe && (
         <motion.div
-          className="absolute inset-0 rounded-lg bg-foreground flex items-center justify-start pl-6"
-          style={{ opacity: actionOpacity }}
+          className="absolute inset-0 rounded-xl flex items-center justify-start pl-6"
+          style={{ opacity: actionOpacity, background: 'rgba(255,255,255,0.12)' }}
         >
-          <p className="editorial-eyebrow text-background">— Mark Complete</p>
+          <p className="editorial-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>— Mark Complete</p>
         </motion.div>
       )}
 
@@ -74,7 +74,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       >
         <GlassCard
           variant="strong"
-          className="px-5 py-4"
+          className="px-5 py-4 rounded-xl"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.2) }}
@@ -116,11 +116,12 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
 
             {isActive && (
               <motion.button
-                className={`flex-shrink-0 w-9 h-9 rounded-full border transition-all flex items-center justify-center ${
+                className={`flex-shrink-0 w-9 h-9 rounded-full transition-all flex items-center justify-center ${
                   todayChecked
                     ? 'bg-foreground border-foreground'
-                    : 'border-foreground/30 hover:border-foreground'
+                    : 'border-foreground/20 hover:border-foreground'
                 }`}
+                style={{ border: todayChecked ? '1.5px solid rgba(255,255,255,0.8)' : '1.5px solid rgba(255,255,255,0.2)' }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => !todayChecked && onCheckin?.(goal)}
               >

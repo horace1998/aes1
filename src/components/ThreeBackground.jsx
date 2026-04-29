@@ -18,14 +18,14 @@ export default function ThreeBackground() {
     // Create pulsing orbs
     const orbs = [];
     // Monochrome editorial — pure neutral grays only
-    const colors = [0xf5f5f5, 0xeeeeee, 0xe5e5e5, 0xf0f0f0];
+    const colors = [0x1a1f2e, 0x141820, 0x1e2535, 0x111419];
     
     colors.forEach((color, i) => {
       const geometry = new THREE.SphereGeometry(1.0 + Math.random() * 0.8, 32, 32);
       const material = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.35,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
@@ -60,7 +60,7 @@ export default function ThreeBackground() {
         orb.scale.setScalar(baseScale * pulse);
         orb.position.y = baseY + Math.sin(t * moveSpeed + offset) * 0.5;
         orb.position.x = baseX + Math.cos(t * moveSpeed * 0.7 + offset) * 0.3;
-        orb.material.opacity = 0.08 + 0.05 * Math.sin(t * speed * 0.5 + offset);
+        orb.material.opacity = 0.25 + 0.12 * Math.sin(t * speed * 0.5 + offset);
       });
 
       renderer.render(scene, camera);
@@ -89,7 +89,7 @@ export default function ThreeBackground() {
     <div
       ref={mountRef}
       className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ background: '#ffffff' }}
+      style={{ background: '#0d0f14' }}
     />
   );
 }
