@@ -12,29 +12,29 @@ Deno.serve(async (req) => {
     const mission = await base44.asServiceRole.entities.Mission.get(mission_id);
     if (!mission) return Response.json({ error: 'Mission not found' }, { status: 404 });
 
-    // Creator cannot leave their own mission via this endpoint
-    if (mission.creator_email === user.email) {
-      return Response.json({ error: 'Creator cannot leave their own mission' }, { status: 400 });
-    }
-
     const members = mission.members || [];
     const newMembers = members.filter(m => m.user_email !== user.email);
+    const isCreator = mission.creator_email === user.email;
+
+    // If creator leaves OR no members remain → close the mission
+    const shouldClose = isCreator || newMembers.length === 0;
 
     await base44.asServiceRole.entities.Mission.update(mission.id, {
       members: newMembers,
       member_count: newMembers.length,
+      ...(shouldClose ? { status: 'closed' } : {}),
     });
 
-    // Mark the user's goal as abandoned (if provided)
+    // Mark the user's linked goal as abandoned (if provided)
     if (goal_id) {
       try {
         await base44.entities.Goal.update(goal_id, { status: 'abandoned' });
       } catch (e) {
-        // ignore — goal may already be gone
+        // ignore
       }
     }
 
-    return Response.json({ success: true });
+    return Response.json({ success: true, closed: shouldClose });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
