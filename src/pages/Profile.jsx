@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PageShell from '@/components/PageShell';
-import { ArrowLeft, MoreVertical, LogOut } from 'lucide-react';
+import { ArrowLeft, MoreVertical, LogOut, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import BadgeGrid from '@/components/profile/BadgeGrid';
@@ -12,6 +12,8 @@ import { evaluateBadges, buildStats } from '@/lib/badges';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [postTasks, setPostTasks] = useState({});
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -40,6 +42,11 @@ export default function Profile() {
     queryFn: () => base44.entities.Mission.list('-created_date', 100),
   });
 
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: () => base44.entities.Task.list('-created_date'),
+  });
+
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
   const completedGoals = goals.filter(g => g.status === 'completed').length;
   const stats = buildStats({ goals, milestones, missions, userEmail: user?.email });
@@ -52,11 +59,11 @@ export default function Profile() {
       <PageShell goals={goals} user={user}>
         <div className="relative z-10">
           {/* Top bar */}
-          <div className="flex items-center justify-between px-5 pt-6 pb-4">
-            <button onClick={() => navigate(-1)} className="p-2">
+          <div className="flex items-center justify-between px-4 pt-6 pb-4 sticky top-0 z-20 bg-white">
+            <button onClick={() => navigate(-1)} className="p-2 -ml-2">
               <ArrowLeft className="w-5 h-5" style={{ color: '#000' }} />
             </button>
-            <button className="p-2">
+            <button onClick={() => setSelectedPost(null)} className="p-2 -mr-2">
               <MoreVertical className="w-5 h-5" style={{ color: '#000' }} />
             </button>
           </div>
@@ -119,13 +126,66 @@ export default function Profile() {
               <BadgeGrid badges={badges} />
             </div>
 
-            {/* Gallery */}
-            <div className="mb-8">
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>
-                Posts
-              </p>
-              <PhotoWall milestones={milestones} />
-            </div>
+            {/* Gallery with Task Management */}
+             <div className="mb-8">
+               <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>
+                 Posts
+               </p>
+               {milestones.filter(m => m.asset_url).length === 0 ? (
+                 <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(0,0,0,0.4)', fontSize: 12 }}>
+                   No posts yet
+                 </div>
+               ) : (
+                 <div className="grid grid-cols-3 gap-1.5">
+                   {milestones.filter(m => m.asset_url).map((post) => (
+                     <button
+                       key={post.id}
+                       onClick={() => setSelectedPost(selectedPost?.id === post.id ? null : post)}
+                       className="relative aspect-square rounded-xl overflow-hidden"
+                       style={{ background: selectedPost?.id === post.id ? 'rgba(26, 58, 173, 0.2)' : 'rgba(0,0,0,0.03)', border: selectedPost?.id === post.id ? '2px solid #1a3aad' : 'none' }}
+                     >
+                       <img src={post.asset_url} alt={post.goal_title} className="w-full h-full object-cover" />
+                     </button>
+                   ))}
+                 </div>
+               )}
+             </div>
+
+             {/* Post Details Panel */}
+             {selectedPost && (
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 className="mb-8 p-4 rounded-2xl"
+                 style={{ background: 'rgba(26, 58, 173, 0.08)', border: '1px solid rgba(26, 58, 173, 0.2)' }}
+               >
+                 <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', color: '#1a3aad', marginBottom: 8 }}>
+                   POST DETAILS
+                 </p>
+                 <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 600, color: '#000', marginBottom: 8 }}>
+                   Goal: {selectedPost.goal_title}
+                 </p>
+                 <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, color: 'rgba(0,0,0,0.6)', marginBottom: 12 }}>
+                   {selectedPost.caption || 'No caption'}
+                 </p>
+
+                 {/* Link to Task */}
+                 <div>
+                   <label style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, display: 'block', marginBottom: 8, color: '#000' }}>
+                     Link to Task
+                   </label>
+                   <select
+                     onChange={(e) => {
+                       if (e.target.value) setPostTasks({ ...postTasks, [selectedPost.id]: e.target.value });
+                     }}
+                     style={{ width: '100%', padding: '8px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.1)', fontFamily: 'Space Grotesk, sans-serif', fontSize: 11 }}
+                   >
+                     <option value="">Select a task...</option>
+                     {/* Tasks will be loaded from backend */}
+                   </select>
+                 </div>
+               </motion.div>
+             )}
 
             {/* Sign Out */}
             <button
