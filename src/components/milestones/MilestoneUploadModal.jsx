@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import ModalPortal from '@/components/ui/ModalPortal';
 import { base44 } from '@/api/base44Client';
 import { X, Upload, ImageIcon, Check } from 'lucide-react';
 
@@ -46,6 +47,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
   };
 
   return (
+    <ModalPortal lockScroll={isOpen}>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -162,5 +164,6 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
         </motion.div>
       )}
     </AnimatePresence>
+    </ModalPortal>
   );
 }

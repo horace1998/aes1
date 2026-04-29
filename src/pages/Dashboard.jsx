@@ -97,37 +97,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
-      {/* Idol background — right-side portrait panel */}
-      {user?.background_image_url && (
-        <div
-          className="fixed top-0 right-0 pointer-events-none"
-          style={{ zIndex: 0, width: '52vw', height: '70vh', maxWidth: 320 }}
-          aria-hidden="true"
-        >
-          <img
-            src={user.background_image_url}
-            alt=""
-            style={{
-              width: '100%', height: '100%',
-              objectFit: 'cover', objectPosition: 'top center',
-              borderBottomLeftRadius: 64,
-              opacity: 1,
-            }}
-          />
-          {/* Fade left edge only */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            borderBottomLeftRadius: 64,
-            background: 'linear-gradient(to left, transparent 20%, rgba(255,255,255,0.35) 100%)',
-          }} />
-          {/* Fade bottom edge */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            borderBottomLeftRadius: 64,
-            background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.05) 30%, transparent 55%)',
-          }} />
-        </div>
-      )}
+
 
       {/* Background manager modal */}
       <AnimatePresence>
@@ -169,7 +139,7 @@ export default function Dashboard() {
         <EditorialHeader user={user} />
 
         {/* Fan Rank */}
-        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} />
+        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} hologram />
 
         {/* Stats — filmstrip style */}
         <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>
