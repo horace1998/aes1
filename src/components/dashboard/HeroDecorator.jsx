@@ -59,12 +59,33 @@ export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount 
         </div>
       )}
 
-      {/* Fan Rank info overlay — bottom */}
-      <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-black/70 to-transparent p-6 relative z-10">
-        <div className="flex items-baseline gap-3 mb-2">
+      {/* Fan Rank info card — bottom */}
+      <div className="absolute bottom-0 right-0 left-0 p-6 relative z-10" style={{
+        background: 'linear-gradient(to top, rgba(10,21,64,0.95), rgba(13,31,107,0.9), transparent)',
+      }}>
+        {/* Header row */}
+        <div className="flex items-start justify-between mb-1">
+          <span style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 9, fontWeight: 700, letterSpacing: '0.38em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+          }}>
+            Fan Rank
+          </span>
+          <span style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+          }}>
+            {String(score).padStart(3, '0')} PTS
+          </span>
+        </div>
+
+        {/* Rank title */}
+        <div className="flex items-baseline gap-3 mb-3">
           <h3 style={{
             fontFamily: 'Bebas Neue, Impact, sans-serif',
-            fontSize: 'clamp(1.8rem, 8vw, 2.8rem)',
+            fontSize: 'clamp(1.8rem, 8vw, 2.6rem)',
             color: '#fff', lineHeight: 1, letterSpacing: '0.06em',
           }}>
             {rank.label}
@@ -72,32 +93,32 @@ export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount 
           <p style={{
             fontFamily: 'Cormorant Garamond, serif',
             fontStyle: 'italic', fontSize: 12,
-            color: 'rgba(255,255,255,0.6)',
+            color: 'rgba(255,255,255,0.5)',
           }}>
             {rank.description}
           </p>
         </div>
-        <div className="flex items-center justify-between">
-          <div style={{ flex: 1, height: 2, borderRadius: 99, background: 'rgba(255,255,255,0.15)', marginRight: 12, overflow: 'hidden' }}>
-            <motion.div
-              style={{
-                height: '100%', borderRadius: 99,
-                background: 'linear-gradient(90deg, rgba(77,127,255,0.9), rgba(200,160,255,0.85))',
-              }}
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 1.1, ease: 'easeOut' }}
-            />
-          </div>
-          <span style={{
-            fontFamily: 'Space Grotesk, sans-serif',
-            fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
-            whiteSpace: 'nowrap',
-          }}>
-            {String(score).padStart(3, '0')} PTS
-          </span>
+
+        {/* Progress bar */}
+        <div style={{ height: 3, borderRadius: 99, background: 'rgba(255,255,255,0.1)', overflow: 'hidden', marginBottom: 7 }}>
+          <motion.div
+            style={{
+              height: '100%', borderRadius: 99,
+              background: 'linear-gradient(90deg, rgba(77,127,255,0.9), rgba(200,160,255,0.85))',
+            }}
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 1.1, ease: 'easeOut' }}
+          />
         </div>
+        <p style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: 9, fontWeight: 600, letterSpacing: '0.3em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)',
+          textAlign: 'right',
+        }}>
+          {next ? `${next.pointsNeeded} pts to ${next.rank.label}` : '— apex tier —'}
+        </p>
       </div>
     </motion.div>
   );
