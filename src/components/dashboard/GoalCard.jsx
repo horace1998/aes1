@@ -28,14 +28,16 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
   const todayChecked = goal.daily_checkins?.some(c => c.date === format(new Date(), 'yyyy-MM-dd') && c.completed);
 
   const x = useMotionValue(0);
-  const actionOpacity = useTransform(x, [0, 40, 100], [0, 0.4, 1]);
+  const completeOpacity = useTransform(x, [-100, -40, 0], [1, 0.4, 0]);
+  const deleteOpacity = useTransform(x, [0, 40, 100], [0, 0.4, 1]);
   const [confirming, setConfirming] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const isActive = goal.status === 'active';
-  const canSwipe = isActive && !!onComplete;
+  const canSwipe = isActive && (!!onComplete || !!onDelete);
 
   const handleDragEnd = (_, info) => {
-    if (info.offset.x > SWIPE_THRESHOLD) setConfirming(true);
+    if (info.offset.x < -SWIPE_THRESHOLD && onComplete) setConfirming(true);
+    else if (info.offset.x > SWIPE_THRESHOLD && onDelete) setConfirmingDelete(true);
     else x.set(0);
   };
 
@@ -43,31 +45,49 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
     <div className="relative mb-3">
       {/* Swipe action reveal */}
       {canSwipe && (
-        <motion.div
-          className="absolute inset-0 flex items-center justify-start pl-5"
-          style={{
-            opacity: actionOpacity,
-            borderRadius: 16,
-            background: 'linear-gradient(90deg, rgba(26,58,173,0.1) 0%, transparent 100%)',
-          }}
-        >
-          <span style={{
-            fontFamily: 'Space Grotesk, sans-serif',
-            fontSize: 9, fontWeight: 700, letterSpacing: '0.32em',
-            textTransform: 'uppercase', color: '#1a3aad',
-          }}>
-            → Complete
-          </span>
-        </motion.div>
+        <>
+          <motion.div
+            className="absolute inset-0 flex items-center justify-end pr-5"
+            style={{
+              opacity: completeOpacity,
+              borderRadius: 16,
+              background: 'linear-gradient(270deg, rgba(26,58,173,0.12) 0%, transparent 72%)',
+            }}
+          >
+            <span style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.32em',
+              textTransform: 'uppercase', color: '#1a3aad',
+            }}>
+              Complete ←
+            </span>
+          </motion.div>
+          <motion.div
+            className="absolute inset-0 flex items-center justify-start pl-5"
+            style={{
+              opacity: deleteOpacity,
+              borderRadius: 16,
+              background: 'linear-gradient(90deg, rgba(200,0,0,0.1) 0%, transparent 72%)',
+            }}
+          >
+            <span style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.32em',
+              textTransform: 'uppercase', color: 'rgba(180,0,0,0.75)',
+            }}>
+              → Delete
+            </span>
+          </motion.div>
+        </>
       )}
 
       <motion.div
         drag={canSwipe ? 'x' : false}
-        dragConstraints={{ left: 0, right: 120 }}
+        dragConstraints={{ left: -120, right: 120 }}
         dragElastic={0.12}
         style={{ x }}
         onDragEnd={handleDragEnd}
-        animate={confirming ? { x: 110 } : undefined}
+        animate={confirming ? { x: -110 } : confirmingDelete ? { x: 110 } : undefined}
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.06, 0.22) }}
@@ -91,30 +111,15 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                   {goal.idol_group || goal.idol_name}
                 </span>
                 <div className="flex items-center gap-2">
-                  {goal.status === 'completed' && (
-                    <span style={{
-                      fontFamily: 'Space Grotesk, sans-serif',
-                      fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-                      textTransform: 'uppercase', color: '#1a3aad',
-                    }}>
-                      ✓ Closed
-                    </span>
-                  )}
-                  {isActive && onDelete && (
-                    <button
-                      onClick={() => setConfirmingDelete(true)}
-                      style={{
-                        fontFamily: 'Space Grotesk, sans-serif',
-                        fontSize: 8, fontWeight: 700, letterSpacing: '0.2em',
-                        textTransform: 'uppercase', color: 'rgba(255,0,0,0.5)',
-                        background: 'rgba(255,0,0,0.05)', border: 'none',
-                        padding: '4px 6px', borderRadius: 4, cursor: 'pointer',
-                      }}
-                      title="Delete goal"
-                    >
-                      ✕
-                    </button>
-                  )}
+                 {goal.status === 'completed' && (
+                   <span style={{
+                     fontFamily: 'Space Grotesk, sans-serif',
+                     fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+                     textTransform: 'uppercase', color: '#1a3aad',
+                   }}>
+                     ✓ Closed
+                   </span>
+                 )}
                 </div>
               </div>
 
@@ -162,28 +167,19 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
               </div>
             </div>
 
-            {/* Check-in button */}
-            {isActive && (
-              <motion.button
+            {/* Check-in status only */}
+            {isActive && todayChecked && (
+              <div
                 className="flex-shrink-0 w-10 h-10 flex items-center justify-center"
                 style={{
                   borderRadius: 12,
-                  background: todayChecked
-                    ? 'linear-gradient(135deg, #1a3aad, #4d7fff)'
-                    : 'rgba(0,0,0,0.04)',
-                  border: todayChecked
-                    ? '1px solid rgba(26,58,173,0.4)'
-                    : '1px solid rgba(0,0,0,0.1)',
-                  boxShadow: todayChecked ? '0 4px 16px rgba(26,58,173,0.3)' : 'none',
+                  background: 'linear-gradient(135deg, #1a3aad, #4d7fff)',
+                  border: '1px solid rgba(26,58,173,0.4)',
+                  boxShadow: '0 4px 16px rgba(26,58,173,0.3)',
                 }}
-                whileTap={{ scale: 0.88 }}
-                onClick={() => !todayChecked && onCheckin?.(goal)}
               >
-                {todayChecked
-                  ? <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
-                  : <span style={{ fontSize: 14, color: 'rgba(0,0,0,0.25)' }}>+</span>
-                }
-              </motion.button>
+                <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
+              </div>
             )}
           </div>
         </div>
@@ -205,7 +201,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
             exit={{ opacity: 0 }}
           >
             <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#0d1117' }}>
-              Close this entry?
+              Mark this goal complete?
             </p>
             <div className="flex gap-2">
               <button
@@ -252,11 +248,11 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
             exit={{ opacity: 0 }}
           >
             <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#0d1117' }}>
-              Hide this goal from active list?
+              Delete this goal?
             </p>
             <div className="flex gap-2">
               <button
-                onClick={() => setConfirmingDelete(false)}
+                onClick={() => { setConfirmingDelete(false); x.set(0); }}
                 style={{
                   fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
                   fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
@@ -276,7 +272,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                   padding: '6px 12px', color: '#fff',
                 }}
               >
-                Hide
+                Delete
               </button>
             </div>
           </motion.div>
