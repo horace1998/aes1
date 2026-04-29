@@ -19,6 +19,7 @@ import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { Calendar, Clock, CheckCircle2, Circle, Share2 } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
+import CalendarWidget from '@/components/dashboard/CalendarWidget';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -222,104 +223,19 @@ export default function Dashboard() {
         {/* Trends */}
         {goals.length > 0 && <TrendsSection goals={goals} />}
 
-        {/* Tasks Calendar + List */}
+        {/* Calendar Widget */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.38 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span style={{
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
-              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
-            }}>
-              Planning
-            </span>
-            <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
-          </div>
-
-          {/* Minimal Calendar — just current week */}
-          <GlassCard variant="strong" className="p-4 mb-4" animate={false}>
-            <div className="flex gap-1.5">
-              {[...Array(7)].map((_, i) => {
-                const date = new Date(selectedDate);
-                const firstDay = new Date(selectedDate.setDate(selectedDate.getDate() - selectedDate.getDay()));
-                const weekDate = new Date(firstDay);
-                weekDate.setDate(weekDate.getDate() + i);
-
-                const isSelected = isSameDay(weekDate, selectedDate);
-                const dayTasks = tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), weekDate));
-
-                return (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedDate(weekDate)}
-                    className={`flex-1 rounded-lg p-2 text-center transition-all border ${
-                      isSelected
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'border-foreground/10 text-foreground hover:bg-foreground/5'
-                    }`}
-                  >
-                    <p className="text-[10px] font-heading font-bold">{format(weekDate, 'EEE').slice(0, 2)}</p>
-                    <p className="text-xs font-heading mt-0.5">{format(weekDate, 'd')}</p>
-                    {dayTasks.length > 0 && (
-                      <p className="text-[8px] mt-1" style={{ opacity: 0.6 }}>{dayTasks.length} tasks</p>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </GlassCard>
-
-          {/* Tasks for selected date */}
-          {tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), selectedDate)).length > 0 ? (
-            <div className="space-y-2">
-              {tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), selectedDate)).map(task => (
-                <GlassCard
-                  key={task.id}
-                  variant={task.status === 'done' ? 'subtle' : 'strong'}
-                  className="p-3 flex items-start gap-3"
-                  animate={false}
-                >
-                  <div className="mt-0.5 flex-shrink-0">
-                    {task.status === 'done' ? (
-                      <CheckCircle2 className="w-5 h-5 text-primary" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-foreground/30" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-heading ${
-                      task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'
-                    }`}>
-                      {task.title}
-                    </p>
-                    {task.due_time && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                        <Clock className="w-3 h-3" />
-                        {task.due_time}
-                      </p>
-                    )}
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          ) : (
-            <div style={{
-              textAlign: 'center', padding: '16px',
-              borderRadius: 12, background: 'rgba(0,0,0,0.03)',
-              border: '1px solid rgba(0,0,0,0.07)',
-            }}>
-              <p style={{
-                fontFamily: 'Space Grotesk, sans-serif',
-                fontSize: 12, color: 'rgba(0,0,0,0.35)',
-              }}>
-                No tasks for this date
-              </p>
-            </div>
-          )}
+          <CalendarWidget
+            tasks={tasks}
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+            onNewTask={() => {}}
+          />
         </motion.div>
 
         {/* Milestones grid */}
