@@ -63,6 +63,11 @@ export default function Dashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
   });
 
+  const deleteGoalMutation = useMutation({
+    mutationFn: (goalId) => base44.entities.Goal.delete(goalId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+  });
+
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
     queryFn: () => base44.entities.Milestone.list('-created_date'),
@@ -73,9 +78,14 @@ export default function Dashboard() {
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
   const milestoneCount = milestones.length;
   const currentRank = getFanRank(totalCheckins, milestoneCount);
+  const canAddGoal = activeGoals.length < 3;
 
   const handleCheckin = (goal) => {
     checkinMutation.mutate({ goal, prevRankId: currentRank.id });
+  };
+
+  const handleDeleteGoal = (goalId) => {
+    deleteGoalMutation.mutate(goalId);
   };
 
   const handleShareLevelUp = async () => {
@@ -234,15 +244,29 @@ export default function Dashboard() {
               </p>
             </div>
           ) : (
-            activeGoals.map((goal, i) => (
-              <GoalCard
-                key={goal.id}
-                goal={goal}
-                index={i}
-                onCheckin={handleCheckin}
-                onComplete={(g) => completeMutation.mutate(g)}
-              />
-            ))
+            <>
+              {activeGoals.map((goal, i) => (
+                <GoalCard
+                  key={goal.id}
+                  goal={goal}
+                  index={i}
+                  onCheckin={handleCheckin}
+                  onComplete={(g) => completeMutation.mutate(g)}
+                  onDelete={() => handleDeleteGoal(goal.id)}
+                />
+              ))}
+              {!canAddGoal && (
+                <div style={{
+                  marginTop: 12, padding: '10px 14px',
+                  background: 'rgba(255,180,0,0.08)', border: '1px solid rgba(255,180,0,0.2)',
+                  borderRadius: 12, textAlign: 'center',
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 11,
+                  color: 'rgba(0,0,0,0.6)',
+                }}>
+                  Max 3 active goals — complete or delete one to add more
+                </div>
+              )}
+            </>
           )}
         </motion.div>
       </div>

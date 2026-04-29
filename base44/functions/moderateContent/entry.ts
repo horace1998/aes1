@@ -68,46 +68,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 3) AI moderation (explicit harm only)
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are the content moderator for a K-pop fan self-improvement community app.
-Users post about their personal goals, milestones, and supportive comments to fellow fans.
-
-Decide whether the following ${kind || 'post'} violates community guidelines.
-
-BLOCK ONLY if it contains:
-- Sexual / NSFW / 18+ content
-- Hate speech, slurs, harassment, or threats
-- Spam, scams, ads, links to external sites, crypto, gambling
-- Self-harm or dangerous content
-
-ALLOW everything else, including:
-- Personal goals and progress updates (even vague ones)
-- Supportive comments
-- Any content related to K-pop, fandom, fitness, wellness, creativity, lifestyle
-- Casual or brief posts
-
-Respond strictly as JSON.
-
-Content to moderate:
-"""${text.slice(0, 1000)}"""`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          verdict: { type: 'string', enum: ['allow', 'block'] },
-          reason: { type: 'string' },
-        },
-        required: ['verdict'],
-      },
-    });
-
-    if (result?.verdict === 'block') {
-      return Response.json({
-        verdict: 'block',
-        reason: result.reason || "Let's keep it K-pop & supportive 💜",
-      });
-    }
-
+    // 3) AI moderation — PAUSED
+    // All content allowed unless caught by hard block above
     return Response.json({ verdict: 'allow' });
   } catch (error) {
     // Fail open so legitimate users aren't blocked by infra issues

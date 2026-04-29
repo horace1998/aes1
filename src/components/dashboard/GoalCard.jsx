@@ -21,7 +21,7 @@ function getProgress(startDate, value, unit) {
 
 const SWIPE_THRESHOLD = 100;
 
-export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
+export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index = 0 }) {
   const progress = getProgress(goal.start_date || goal.created_date, goal.timeline_value, goal.timeline_unit);
   const endDate = getEndDate(goal.start_date || goal.created_date, goal.timeline_value, goal.timeline_unit);
   const daysLeft = Math.max(0, differenceInDays(endDate, new Date()));
@@ -89,15 +89,32 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                 }}>
                   {goal.idol_group || goal.idol_name}
                 </span>
-                {goal.status === 'completed' && (
-                  <span style={{
-                    fontFamily: 'Space Grotesk, sans-serif',
-                    fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-                    textTransform: 'uppercase', color: '#1a3aad',
-                  }}>
-                    ✓ Closed
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {goal.status === 'completed' && (
+                    <span style={{
+                      fontFamily: 'Space Grotesk, sans-serif',
+                      fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+                      textTransform: 'uppercase', color: '#1a3aad',
+                    }}>
+                      ✓ Closed
+                    </span>
+                  )}
+                  {isActive && onDelete && (
+                    <button
+                      onClick={() => onDelete()}
+                      style={{
+                        fontFamily: 'Space Grotesk, sans-serif',
+                        fontSize: 8, fontWeight: 700, letterSpacing: '0.2em',
+                        textTransform: 'uppercase', color: 'rgba(255,0,0,0.5)',
+                        background: 'rgba(255,0,0,0.05)', border: 'none',
+                        padding: '4px 6px', borderRadius: 4, cursor: 'pointer',
+                      }}
+                      title="Delete goal"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Title */}

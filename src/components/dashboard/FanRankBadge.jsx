@@ -16,7 +16,7 @@ async function removeBackground(imageUrl) {
   return URL.createObjectURL(blob);
 }
 
-export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, idolImageUrl, hologram }) {
+export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, idolImageUrl }) {
   const rank = getFanRank(totalCheckins, milestoneCount);
   const score = getRankScore(totalCheckins, milestoneCount);
   const next = getNextRank(totalCheckins, milestoneCount);
@@ -47,7 +47,7 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
       className="mb-7 relative"
       style={{ paddingTop: showIdol ? IDOL_H - IDOL_OVERLAP : 0 }}
     >
-      {/* ── Hologram idol cutout ── */}
+      {/* ── Hologram idol cutout (no box) ── */}
       {showIdol && (
         <div
           className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
