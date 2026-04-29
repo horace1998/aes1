@@ -8,14 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import ReportDialog from '@/components/feed/ReportDialog';
 
-const CATEGORY_COLORS = {
-  fitness: 'from-rose-300 to-pink-300',
-  study: 'from-indigo-300 to-violet-300',
-  wellness: 'from-emerald-300 to-teal-300',
-  creative: 'from-violet-300 to-fuchsia-300',
-  lifestyle: 'from-sky-300 to-indigo-300',
-  other: 'from-violet-300 to-indigo-300',
-};
+
 
 export default function MissionCard({ mission, currentUser, index = 0 }) {
   const queryClient = useQueryClient();
@@ -31,7 +24,7 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
     try {
       const res = await base44.functions.invoke('joinMission', { mission_id: mission.id });
       if (res?.data?.success) {
-        toast.success(`Joined! "${mission.title}" added to your goals 💜`);
+        toast.success(`Joined! "${mission.title}" added to your goals`);
         queryClient.invalidateQueries({ queryKey: ['missions'] });
         queryClient.invalidateQueries({ queryKey: ['goals'] });
       } else {
@@ -43,8 +36,6 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
     setJoining(false);
   };
 
-  const gradient = CATEGORY_COLORS[mission.category] || CATEGORY_COLORS.other;
-
   return (
     <>
       <motion.div
@@ -54,8 +45,8 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
       >
         <GlassCard variant="strong" className="p-5 mb-3" animate={false}>
           <div className="flex items-start gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl border border-foreground/15 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-5 h-5 text-foreground" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-heading text-base font-bold leading-snug">{mission.title}</p>
@@ -66,7 +57,7 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
             </div>
             <button
               onClick={() => setReportOpen(true)}
-              className="glass-subtle rounded-full p-1.5 text-muted-foreground hover:text-pink-500 transition-colors"
+              className="glass-subtle rounded-full p-1.5 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Report"
             >
               <Flag className="w-3 h-3" />
@@ -89,11 +80,11 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
           </div>
 
           {isCreator ? (
-            <div className="glass-subtle rounded-xl py-2 text-center text-[11px] font-heading text-violet-500">
+            <div className="border border-foreground/15 rounded-xl py-2 text-center text-[11px] font-heading text-muted-foreground">
               Your mission · {mission.member_count || 1} joined
             </div>
           ) : isMember ? (
-            <div className="glass-subtle rounded-xl py-2 text-center text-[11px] font-heading text-emerald-500 flex items-center justify-center gap-1">
+            <div className="border border-foreground/15 rounded-xl py-2 text-center text-[11px] font-heading text-foreground flex items-center justify-center gap-1">
               <Check className="w-3.5 h-3.5" /> Joined
             </div>
           ) : (

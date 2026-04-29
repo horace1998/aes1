@@ -30,6 +30,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
         <Route path="/onboarding" element={<PageTransition><Onboarding /></PageTransition>} />
         <Route path="/goals" element={<PageTransition><Goals /></PageTransition>} />
+        
         <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
         <Route path="/gallery" element={<PageTransition><MilestoneGallery /></PageTransition>} />
         <Route path="/feed" element={<PageTransition><Feed /></PageTransition>} />

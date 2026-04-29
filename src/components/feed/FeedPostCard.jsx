@@ -10,21 +10,21 @@ import ReportDialog from '@/components/feed/ReportDialog';
 import { Link } from 'react-router-dom';
 
 const REACTIONS = [
-  { id: 'heart', label: 'Heart', icon: Heart, color: 'text-pink-400' },
-  { id: 'fire', label: 'Fire', icon: Flame, color: 'text-violet-400' },
-  { id: 'star', label: 'Star', icon: Sparkles, color: 'text-indigo-400' },
-  { id: 'crown', label: 'Crown', icon: Crown, color: 'text-violet-500' },
-  { id: 'cheer', label: 'Cheer', icon: HandHeart, color: 'text-pink-500' },
+  { id: 'heart', label: 'Heart', icon: Heart, color: 'text-foreground' },
+  { id: 'fire', label: 'Fire', icon: Flame, color: 'text-foreground' },
+  { id: 'star', label: 'Star', icon: Sparkles, color: 'text-foreground' },
+  { id: 'crown', label: 'Crown', icon: Crown, color: 'text-foreground' },
+  { id: 'cheer', label: 'Cheer', icon: HandHeart, color: 'text-foreground' },
 ];
 
 const REACTION_MAP = REACTIONS.reduce((m, r) => { m[r.id] = r; return m; }, {});
 
 const RANK_COLORS = {
-  trainee: 'text-slate-500',
-  debut: 'text-indigo-400',
-  rising: 'text-violet-400',
-  idol: 'text-violet-500',
-  legend: 'text-pink-500',
+  trainee: 'text-muted-foreground',
+  debut: 'text-muted-foreground',
+  rising: 'text-muted-foreground',
+  idol: 'text-foreground',
+  legend: 'text-foreground',
 };
 
 export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }) {
@@ -71,11 +71,11 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
               to={post.user_email ? `/u/${encodeURIComponent(post.user_email)}` : '#'}
               className="flex items-center gap-2 group"
             >
-              <div className="w-8 h-8 rounded-full glass-strong flex items-center justify-center group-hover:ring-2 group-hover:ring-violet-300/50 transition-all">
-                <Trophy className="w-4 h-4 text-violet-400" />
+              <div className="w-8 h-8 rounded-full border border-foreground/15 flex items-center justify-center transition-all">
+                <Trophy className="w-4 h-4 text-foreground" />
               </div>
               <div>
-                <p className="text-xs font-heading font-semibold group-hover:text-violet-500 transition-colors">
+                <p className="text-xs font-heading font-semibold text-foreground">
                   {post.user_name || post.user_email?.split('@')[0]}
                 </p>
                 {post.fan_rank && (
@@ -89,7 +89,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
               <span className="text-[10px] text-muted-foreground">{date}</span>
               <button
                 onClick={() => setReportOpen(true)}
-                className="glass-subtle rounded-full p-1.5 text-muted-foreground hover:text-pink-500 transition-colors"
+                className="glass-subtle rounded-full p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Report"
               >
                 <Flag className="w-3 h-3" />
@@ -123,7 +123,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
           {/* Content */}
           <div className="px-4 pb-4 pt-3">
             <p className="text-xs text-muted-foreground font-heading mb-0.5">
-              <span className="text-violet-500">{post.idol_name}</span>
+              <span className="text-foreground font-semibold">{post.idol_name}</span>
               {post.idol_group ? ` · ${post.idol_group}` : ''}
             </p>
             <p className="text-sm font-heading font-semibold text-foreground mb-1">{post.goal_title}</p>
@@ -140,7 +140,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
                 return (
                   <motion.button
                     key={id}
-                    className={`glass-subtle rounded-full px-2.5 py-1 flex items-center gap-1.5 ${userReaction === id ? 'ring-1 ring-violet-300/60' : ''}`}
+                    className={`border rounded-full px-2.5 py-1 flex items-center gap-1.5 ${userReaction === id ? 'border-foreground/40 bg-foreground/5' : 'border-foreground/10'}`}
                     whileTap={{ scale: 0.85 }}
                     onClick={() => handleReact(id)}
                   >
@@ -156,7 +156,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowPicker(p => !p)}
                 >
-                  <Heart className="w-3 h-3 text-violet-400" />
+                  <Heart className="w-3 h-3 text-foreground" />
                   <span className="text-[10px] font-heading text-muted-foreground">Cheer</span>
                 </motion.button>
 
@@ -194,7 +194,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowComments(s => !s)}
               >
-                <MessageCircle className="w-3 h-3 text-violet-400" />
+                <MessageCircle className="w-3 h-3 text-muted-foreground" />
                 <span className="text-[10px] font-heading text-muted-foreground">{localCount}</span>
               </motion.button>
             </div>
