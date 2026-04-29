@@ -117,9 +117,19 @@ export default function HeroDecorator({ user }) {
       <div className="space-y-4">
         {/* Main BG upload */}
         <div>
-          <label className="block text-xs font-semibold mb-2 text-foreground/70">
-            Background (Black Filter Applied)
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-semibold text-foreground/70">
+              Background (Black Filter Applied)
+            </label>
+            {bgUrl && (
+              <button
+                onClick={() => setBgUrl(null)}
+                className="text-xs text-destructive hover:text-destructive/80 transition-colors"
+              >
+                Remove
+              </button>
+            )}
+          </div>
           {bgUrl && (
             <img src={bgUrl} alt="bg" className="w-full h-32 object-cover rounded-lg mb-2 grayscale brightness-50" />
           )}
@@ -145,7 +155,21 @@ export default function HeroDecorator({ user }) {
           <div className="flex gap-4">
             {[0, 1].map((idx) => (
               <div key={idx} className="flex-1">
-                <p className="text-xs text-foreground/50 mb-2">{idx === 0 ? 'Left' : 'Right'}</p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-foreground/50">{idx === 0 ? 'Left' : 'Right'}</p>
+                  {sideImages[idx] && (
+                    <button
+                      onClick={() => setSideImages(prev => {
+                        const newArr = [...prev];
+                        newArr[idx] = null;
+                        return newArr;
+                      })}
+                      className="text-xs text-destructive hover:text-destructive/80 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
                 {sideImages[idx] && (
                   <img src={sideImages[idx]} alt={`side-${idx}`} className="w-full h-24 object-cover rounded-lg mb-2 border border-foreground/20" />
                 )}
