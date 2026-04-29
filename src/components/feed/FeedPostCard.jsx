@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { Trophy, Heart, Flame, Sparkles, Crown, HandHeart, MessageCircle, Flag } from 'lucide-react';
 import CommentsThread from '@/components/feed/CommentsThread';
 import ReportDialog from '@/components/feed/ReportDialog';
+import { Link } from 'react-router-dom';
 
 const REACTIONS = [
   { id: 'heart', label: 'Heart', icon: Heart, color: 'text-pink-400' },
@@ -66,19 +67,24 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
         <GlassCard variant="strong" className="overflow-hidden mb-4" animate={false}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full glass-strong flex items-center justify-center">
+            <Link
+              to={post.user_email ? `/u/${encodeURIComponent(post.user_email)}` : '#'}
+              className="flex items-center gap-2 group"
+            >
+              <div className="w-8 h-8 rounded-full glass-strong flex items-center justify-center group-hover:ring-2 group-hover:ring-violet-300/50 transition-all">
                 <Trophy className="w-4 h-4 text-violet-400" />
               </div>
               <div>
-                <p className="text-xs font-heading font-semibold">{post.user_name || post.user_email?.split('@')[0]}</p>
+                <p className="text-xs font-heading font-semibold group-hover:text-violet-500 transition-colors">
+                  {post.user_name || post.user_email?.split('@')[0]}
+                </p>
                 {post.fan_rank && (
                   <p className={`text-[9px] font-heading ${RANK_COLORS[post.fan_rank] || 'text-muted-foreground'} uppercase tracking-wider`}>
                     {post.fan_rank}
                   </p>
                 )}
               </div>
-            </div>
+            </Link>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">{date}</span>
               <button

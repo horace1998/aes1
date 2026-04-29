@@ -6,12 +6,16 @@ import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import PageShell from '@/components/PageShell';
-import { User, CheckCircle2, Flame, Target, LogOut, Heart, TrendingUp, Shield } from 'lucide-react';
+import { CheckCircle2, Flame, Target, LogOut, TrendingUp, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
 import ReminderSettings from '@/components/profile/ReminderSettings';
 import FocusManager from '@/components/profile/FocusManager';
+import BiasMonogram from '@/components/profile/BiasMonogram';
+import BadgeGrid from '@/components/profile/BadgeGrid';
+import PhotoWall from '@/components/profile/PhotoWall';
+import { evaluateBadges, buildStats } from '@/lib/badges';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -31,8 +35,16 @@ export default function Profile() {
     queryFn: () => base44.entities.Milestone.list('-created_date'),
   });
 
+  const { data: missions = [] } = useQuery({
+    queryKey: ['missions'],
+    queryFn: () => base44.entities.Mission.list('-created_date', 100),
+  });
+
   const totalCheckins = goals.reduce((sum, g) => sum + (g.daily_checkins?.filter(c => c.completed).length || 0), 0);
   const completedGoals = goals.filter(g => g.status === 'completed').length;
+
+  const stats = buildStats({ goals, milestones, missions, userEmail: user?.email });
+  const badges = evaluateBadges(stats);
 
   if (!user) return null;
 
@@ -44,23 +56,23 @@ export default function Profile() {
       <div className="relative z-10 px-6 pt-14">
         {/* Profile Header */}
         <motion.div
-          className="flex flex-col items-center text-center mb-8"
+          className="flex flex-col items-center text-center mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
-          <div className="w-20 h-20 rounded-full glass-strong flex items-center justify-center mb-4 ring-2 ring-violet-300/40">
-            <User className="w-8 h-8 text-violet-500" />
-          </div>
-          <h1 className="font-display text-4xl tracking-wide uppercase">{user.full_name || 'Station Member'}</h1>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
-          {user.favorite_idol && (
-            <div className="flex items-center gap-1.5 mt-2 glass-subtle rounded-full px-3 py-1">
-              <Heart className="w-3 h-3 text-pink-400 fill-pink-400" />
-              <span className="text-xs font-heading">{user.favorite_idol}</span>
-            </div>
-          )}
+          <p className="editorial-eyebrow mb-3">Station Member</p>
+          <BiasMonogram biasName={user.favorite_idol} groupName={user.favorite_group} size="lg" />
+          <h1 className="font-display text-3xl tracking-wide uppercase mt-4">{user.full_name || 'Station Member'}</h1>
+          <p className="text-xs text-muted-foreground">{user.email}</p>
         </motion.div>
+
+        {/* View public profile CTA */}
+        <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-6">
+          <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2">
+            <Eye className="w-4 h-4" /> View My Public Profile
+          </GlassButton>
+        </Link>
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
@@ -83,6 +95,17 @@ export default function Profile() {
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
             </GlassCard>
           ))}
+        </div>
+
+        {/* Photo Wall */}
+        <div className="mb-8">
+          <p className="editorial-eyebrow mb-3">Milestone Wall</p>
+          <PhotoWall milestones={milestones} emptyLabel="Capture your first milestone to start your wall" />
+        </div>
+
+        {/* Trophy Case */}
+        <div className="mb-8">
+          <BadgeGrid badges={badges} />
         </div>
 
         {/* Focus manager */}
