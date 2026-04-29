@@ -8,7 +8,7 @@ import GlassButton from '@/components/ui/GlassButton';
 import MilestoneCard from '@/components/milestones/MilestoneCard';
 import MilestoneUploadModal from '@/components/milestones/MilestoneUploadModal';
 import PageShell from '@/components/PageShell';
-import { Trophy, Plus, Grid, List, ImageIcon } from 'lucide-react';
+import { Trophy, Plus, Grid, List, ImageIcon, Trash2 } from 'lucide-react';
 
 export default function MilestoneGallery() {
   const queryClient = useQueryClient();
@@ -49,27 +49,27 @@ export default function MilestoneGallery() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-14">
+      <div className="relative z-10 px-6 pt-[3.5rem]">
         {/* Header */}
         <motion.div
-          className="flex items-start justify-between mb-6"
+          className="flex items-start justify-between mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
           <div>
-            <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-1">Station Archive</p>
-            <h1 className="font-display text-5xl tracking-wide uppercase text-foreground">Milestone Gallery</h1>
+            <p className="editorial-eyebrow mb-1">Station Archive</p>
+            <h1 className="font-display text-4xl tracking-tight text-foreground" style={{ fontWeight: 800 }}>WALL</h1>
           </div>
           <div className="flex items-center gap-2">
             <button
-              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'grid' ? 'ring-1 ring-violet-300/60' : ''}`}
+              className={`border rounded-xl p-2.5 transition-all ${viewMode === 'grid' ? 'bg-foreground text-background border-foreground' : 'border-foreground/15'}`}
               onClick={() => setViewMode('grid')}
             >
               <Grid className="w-4 h-4" />
             </button>
             <button
-              className={`glass-subtle rounded-xl p-2.5 ${viewMode === 'list' ? 'ring-1 ring-violet-300/60' : ''}`}
+              className={`border rounded-xl p-2.5 transition-all ${viewMode === 'list' ? 'bg-foreground text-background border-foreground' : 'border-foreground/15'}`}
               onClick={() => setViewMode('list')}
             >
               <List className="w-4 h-4" />
@@ -78,38 +78,28 @@ export default function MilestoneGallery() {
         </motion.div>
 
         {/* Stats banner */}
-        <GlassCard variant="strong" className="p-4 mb-6 flex items-center justify-between">
-          <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-violet-500">{milestones.length}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Milestones</p>
-          </div>
-          <div className="w-px h-10 bg-white/30" />
-          <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-indigo-500">
-              {new Set(milestones.map(m => m.idol_name)).size}
-            </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Idols</p>
-          </div>
-          <div className="w-px h-10 bg-white/30" />
-          <div className="text-center flex-1">
-            <p className="font-heading text-2xl font-bold text-pink-500">
-              {new Set(milestones.map(m => m.goal_id)).size}
-            </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Goals</p>
-          </div>
-        </GlassCard>
+        <div className="grid grid-cols-3 mb-5 border-t border-b border-foreground/15">
+          {[
+            { label: 'Shots', value: milestones.length },
+            { label: 'Idols', value: new Set(milestones.map(m => m.idol_name)).size },
+            { label: 'Goals', value: new Set(milestones.map(m => m.goal_id)).size },
+          ].map((s, i) => (
+            <div key={s.label} className={`text-center py-4 ${i < 2 ? 'border-r border-foreground/15' : ''}`}>
+              <p className="font-display text-2xl text-foreground" style={{ fontWeight: 700 }}>{String(s.value).padStart(2, '0')}</p>
+              <p className="editorial-eyebrow mt-0.5">{s.label}</p>
+            </div>
+          ))}
+        </div>
 
         {/* Add milestone from goal */}
         {goals.filter(g => g.status === 'active').length > 0 && (
-          <div className="mb-5">
-            <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-2">
-              Add milestone for a goal
-            </p>
+          <div className="mb-4">
+            <p className="editorial-eyebrow mb-2">Add from goal</p>
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {goals.filter(g => g.status === 'active').map(goal => (
                 <motion.button
                   key={goal.id}
-                  className="glass-subtle rounded-xl px-3 py-2 flex-shrink-0 text-left"
+                  className="border border-foreground/15 rounded-xl px-3 py-2 flex-shrink-0 text-left"
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleAddMilestone(goal)}
                 >
@@ -118,11 +108,11 @@ export default function MilestoneGallery() {
                 </motion.button>
               ))}
               <motion.button
-                className="glass rounded-xl px-4 py-2 flex items-center gap-2 flex-shrink-0"
+                className="border border-dashed border-foreground/20 rounded-xl px-4 py-2 flex items-center gap-2 flex-shrink-0"
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleAddMilestone(null)}
               >
-                <Plus className="w-4 h-4 text-violet-500" />
+                <Plus className="w-4 h-4 text-foreground" />
                 <span className="text-xs font-heading text-muted-foreground">Free upload</span>
               </motion.button>
             </div>
@@ -131,14 +121,14 @@ export default function MilestoneGallery() {
 
         {/* Idol filter */}
         {idols.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-5 pb-1">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">
             {idols.map(idol => (
               <button
                 key={idol}
-                className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all ${
+                className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium capitalize flex-shrink-0 transition-all border ${
                   filterIdol === idol
-                    ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
-                    : 'glass-subtle text-muted-foreground'
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'border-foreground/15 text-muted-foreground'
                 }`}
                 onClick={() => setFilterIdol(idol)}
               >
@@ -156,22 +146,17 @@ export default function MilestoneGallery() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <GlassCard className="p-10 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', delay: 0.2 }}
-            >
-              <Trophy className="w-10 h-10 text-violet-300 mx-auto mb-3" />
-            </motion.div>
+          <div className="border border-dashed border-foreground/15 rounded-2xl p-10 text-center">
+            <Trophy className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
             <p className="font-heading font-semibold mb-1">No milestones yet</p>
-            <p className="text-sm text-muted-foreground mb-5">
-              Complete a goal and upload your fandom asset to celebrate!
-            </p>
-            <GlassButton variant="primary" onClick={() => handleAddMilestone(null)} className="flex items-center gap-2 mx-auto">
-              <ImageIcon className="w-4 h-4" /> Upload First Milestone
-            </GlassButton>
-          </GlassCard>
+            <p className="text-sm text-muted-foreground mb-5">Complete a goal and upload your shot!</p>
+            <button
+              onClick={() => handleAddMilestone(null)}
+              className="bg-foreground text-background rounded-2xl px-6 py-2.5 text-sm font-heading font-bold flex items-center gap-2 mx-auto"
+            >
+              <ImageIcon className="w-4 h-4" /> Upload First Shot
+            </button>
+          </div>
         ) : (
           <AnimatePresence mode="wait">
             <motion.div
@@ -183,7 +168,7 @@ export default function MilestoneGallery() {
               transition={{ type: 'spring', stiffness: 300, damping: 28 }}
             >
               {filtered.map((milestone, i) => (
-                <MilestoneCard key={milestone.id} milestone={milestone} index={i} />
+                <MilestoneCard key={milestone.id} milestone={milestone} index={i} currentUserEmail={user?.email} />
               ))}
             </motion.div>
           </AnimatePresence>

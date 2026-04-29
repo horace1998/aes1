@@ -1,67 +1,125 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { ImageIcon, Heart } from 'lucide-react';
+import { ImageIcon, Trash2, X } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 
-const ASSET_TYPE_COLORS = {
-  badge: 'from-violet-200/40 to-indigo-200/40',
-  fanart: 'from-pink-200/40 to-violet-200/40',
-  photo: 'from-sky-200/40 to-indigo-200/40',
-  sticker: 'from-pink-200/40 to-rose-200/40',
-};
+export default function MilestoneCard({ milestone, index = 0, currentUserEmail }) {
+  const queryClient = useQueryClient();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
-export default function MilestoneCard({ milestone, index = 0 }) {
   const date = milestone.created_date
     ? format(new Date(milestone.created_date), 'MMM d, yyyy')
     : '';
 
+  const isOwner = currentUserEmail && milestone.created_by === currentUserEmail;
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    await base44.entities.Milestone.delete(milestone.id);
+    queryClient.invalidateQueries({ queryKey: ['milestones'] });
+  };
+
   return (
-    <motion.div
-      className="glass rounded-2xl overflow-hidden"
-      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 280, damping: 26, delay: index * 0.07 }}
-      whileHover={{ scale: 1.02, y: -2 }}
-    >
-      {/* Asset image */}
-      <div className={`relative bg-gradient-to-br ${ASSET_TYPE_COLORS[milestone.asset_type] || ASSET_TYPE_COLORS.badge} aspect-square`}>
-        {milestone.asset_url ? (
-          <img
-            src={milestone.asset_url}
-            alt={milestone.goal_title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <ImageIcon className="w-10 h-10 text-violet-300/70" />
+    <>
+      <motion.div
+        className="relative overflow-hidden rounded-2xl bg-foreground/5 border border-foreground/10"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 26, delay: index * 0.07 }}
+        whileHover={{ scale: 1.02, y: -2 }}
+      >
+        {/* Asset image */}
+        <div className="relative aspect-square">
+          {milestone.asset_url ? (
+            <img
+              src={milestone.asset_url}
+              alt={milestone.goal_title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-foreground/5">
+              <ImageIcon className="w-10 h-10 text-foreground/30" />
+            </div>
+          )}
+
+          {/* Delete button for owner */}
+          {isOwner && (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm rounded-full p-1.5 text-white"
+              aria-label="Delete"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          )}
+
+          {/* Type badge */}
+          <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm rounded-full px-2 py-0.5">
+            <span className="text-[9px] font-heading font-bold uppercase tracking-wider text-white">
+              {milestone.asset_type}
+            </span>
+          </div>
+
+          {/* Bottom overlay */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+            <p className="font-heading font-bold text-xs text-white line-clamp-1">{milestone.goal_title}</p>
+            <p className="text-[10px] text-white/70">{milestone.idol_name}</p>
+          </div>
+        </div>
+
+        {milestone.caption && (
+          <div className="px-3 py-2">
+            <p className="text-[10px] text-muted-foreground line-clamp-1 italic">"{milestone.caption}"</p>
           </div>
         )}
-        {/* Type badge */}
-        <div className="absolute top-2 right-2 glass-strong rounded-full px-2 py-0.5">
-          <span className="text-[9px] font-heading font-bold uppercase tracking-wider text-foreground">
-            {milestone.asset_type}
-          </span>
-        </div>
-      </div>
+      </motion.div>
 
-      {/* Info */}
-      <div className="p-3">
-        <p className="font-heading font-semibold text-xs text-foreground line-clamp-1 mb-0.5">
-          {milestone.goal_title}
-        </p>
-        <div className="flex items-center gap-1 mb-1.5">
-          <Heart className="w-3 h-3 text-pink-400" />
-          <span className="text-[10px] text-muted-foreground">{milestone.idol_name}</span>
-        </div>
-        {milestone.caption && (
-          <p className="text-[10px] text-muted-foreground line-clamp-2 italic">
-            "{milestone.caption}"
-          </p>
+      {/* Delete confirm dialog */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-none" />
+            <motion.div
+              className="relative w-full max-w-sm bg-background border border-foreground/15 rounded-3xl p-6 shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-heading font-bold text-base">Delete milestone?</p>
+                <button onClick={() => setConfirmDelete(false)} className="border border-foreground/15 rounded-full p-1.5">
+                  <X className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mb-5">This will permanently remove this milestone from your wall.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="flex-1 border border-foreground/15 rounded-2xl py-2.5 text-sm font-heading"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex-1 bg-foreground text-background rounded-2xl py-2.5 text-sm font-heading font-bold"
+                >
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
-        {date && (
-          <p className="text-[9px] text-muted-foreground/60 mt-1.5">{date}</p>
-        )}
-      </div>
-    </motion.div>
+      </AnimatePresence>
+    </>
   );
 }

@@ -3,78 +3,71 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 
 /**
- * EditorialHeader — Vogue-style magazine masthead.
- * Pure typography, monochrome ink-on-paper aesthetic.
+ * EditorialHeader — bold idol-focused header, teen editorial aesthetic.
+ * Large name, italic bias, structural type contrasts.
  */
 export default function EditorialHeader({ user }) {
   const today = new Date();
-  const dateLabel = format(today, "MMMM d, yyyy").toUpperCase();
-  const volumeLabel = `VOL. ${format(today, 'yyyy')} · NO. ${format(today, 'DDD')}`;
-  const firstName = user?.full_name?.split(' ')[0] || 'Reader';
+  const dateLabel = format(today, 'MMM d').toUpperCase();
+  const firstName = user?.full_name?.split(' ')[0] || 'STAN';
   const bias = user?.favorite_idol;
   const group = user?.favorite_group;
   const focus = bias || group;
 
   return (
     <motion.div
-      className="mb-12"
+      className="mb-8"
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Top metadata row */}
-      <div className="flex items-center justify-between mb-3">
-        <p className="editorial-eyebrow">{volumeLabel}</p>
+      {/* Top row */}
+      <div className="flex items-center justify-between mb-4">
         <p className="editorial-eyebrow">{dateLabel}</p>
+        {group && <p className="editorial-eyebrow">{group}</p>}
       </div>
 
-      <div className="editorial-rule-thick mb-1" />
-      <div className="editorial-rule mb-8" />
-
-      {/* Masthead */}
-      <div className="text-center">
-        <p className="editorial-eyebrow mb-4">The Diary</p>
-
-        <motion.h1
-          className="font-display leading-[0.92] text-foreground"
-          style={{
-            fontSize: 'clamp(3.5rem, 15vw, 6rem)',
-            fontWeight: 800,
-            letterSpacing: '-0.02em',
-          }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {firstName}
-        </motion.h1>
-
+      {/* Main identity block */}
+      <div className="relative">
+        {/* Big italic background text */}
         {focus && (
-          <>
-            <div className="flex items-center justify-center gap-4 my-6">
-              <span className="editorial-rule flex-1 max-w-[80px]" />
-              <p className="editorial-eyebrow">Devoted To</p>
-              <span className="editorial-rule flex-1 max-w-[80px]" />
-            </div>
+          <p
+            className="editorial-italic text-foreground/[0.06] select-none pointer-events-none absolute -top-2 left-0 leading-none"
+            style={{ fontSize: 'clamp(4.5rem, 22vw, 9rem)', fontWeight: 700, letterSpacing: '-0.04em' }}
+            aria-hidden="true"
+          >
+            {focus.charAt(0).toUpperCase()}
+          </p>
+        )}
 
+        {/* Foreground type */}
+        <div className="relative z-10">
+          <p className="editorial-eyebrow mb-1">Welcome back —</p>
+          <motion.h1
+            className="font-display text-foreground leading-none"
+            style={{ fontSize: 'clamp(2.8rem, 13vw, 5rem)', fontWeight: 900, letterSpacing: '-0.03em' }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+          >
+            {firstName}
+          </motion.h1>
+
+          {focus && (
             <motion.p
-              className="editorial-italic text-foreground"
-              style={{ fontSize: 'clamp(1.4rem, 5.5vw, 2rem)', lineHeight: 1.1 }}
+              className="editorial-italic text-foreground mt-1"
+              style={{ fontSize: 'clamp(1rem, 4vw, 1.5rem)' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.25 }}
             >
-              {focus}
+              for {focus}
             </motion.p>
-
-            {bias && group && (
-              <p className="editorial-eyebrow mt-3">{group}</p>
-            )}
-          </>
-        )}
+          )}
+        </div>
       </div>
 
-      <div className="editorial-rule mt-10" />
+      <div className="editorial-rule mt-5" />
     </motion.div>
   );
 }

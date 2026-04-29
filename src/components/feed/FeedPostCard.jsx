@@ -1,31 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import GlassCard from '@/components/ui/GlassCard';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { Trophy, Heart, Flame, Sparkles, Crown, HandHeart, MessageCircle, Flag } from 'lucide-react';
+import { Trophy, Heart, Flame, Sparkles, Crown, HandHeart, MessageCircle, Flag, Trash2, X } from 'lucide-react';
 import CommentsThread from '@/components/feed/CommentsThread';
 import ReportDialog from '@/components/feed/ReportDialog';
 import { Link } from 'react-router-dom';
 
 const REACTIONS = [
-  { id: 'heart', label: 'Heart', icon: Heart, color: 'text-foreground' },
-  { id: 'fire', label: 'Fire', icon: Flame, color: 'text-foreground' },
-  { id: 'star', label: 'Star', icon: Sparkles, color: 'text-foreground' },
-  { id: 'crown', label: 'Crown', icon: Crown, color: 'text-foreground' },
-  { id: 'cheer', label: 'Cheer', icon: HandHeart, color: 'text-foreground' },
+  { id: 'heart', label: '♥', icon: Heart },
+  { id: 'fire', label: '🔥', icon: Flame },
+  { id: 'star', label: '✦', icon: Sparkles },
+  { id: 'crown', label: '♛', icon: Crown },
+  { id: 'cheer', label: '🤍', icon: HandHeart },
 ];
 
 const REACTION_MAP = REACTIONS.reduce((m, r) => { m[r.id] = r; return m; }, {});
-
-const RANK_COLORS = {
-  trainee: 'text-muted-foreground',
-  debut: 'text-muted-foreground',
-  rising: 'text-muted-foreground',
-  idol: 'text-foreground',
-  legend: 'text-foreground',
-};
 
 export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }) {
   const queryClient = useQueryClient();
@@ -33,13 +24,18 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
   const [animatingReaction, setAnimatingReaction] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [localCount, setLocalCount] = useState(post.comment_count || 0);
+
+  const isOwner = userEmail && post.user_email === userEmail;
 
   const cheerCounts = (post.cheers || []).reduce((acc, c) => {
     acc[c.reaction] = (acc[c.reaction] || 0) + 1;
     return acc;
   }, {});
 
+  const totalCheers = Object.values(cheerCounts).reduce((s, n) => s + n, 0);
   const userReaction = (post.cheers || []).find(c => c.user_email === userEmail)?.reaction;
 
   const handleReact = async (id) => {
@@ -55,52 +51,31 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
     queryClient.invalidateQueries({ queryKey: ['feedposts'] });
   };
 
+  const handleDelete = async () => {
+    setDeleting(true);
+    await base44.entities.FeedPost.delete(post.id);
+    queryClient.invalidateQueries({ queryKey: ['feedposts'] });
+  };
+
   const date = post.created_date ? format(new Date(post.created_date), 'MMM d') : '';
 
   return (
     <>
       <motion.div
+        className="mb-4"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 26, delay: index * 0.06 }}
       >
-        <GlassCard variant="strong" className="overflow-hidden mb-4" animate={false}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <Link
-              to={post.user_email ? `/u/${encodeURIComponent(post.user_email)}` : '#'}
-              className="flex items-center gap-2 group"
-            >
-              <div className="w-8 h-8 rounded-full border border-foreground/15 flex items-center justify-center transition-all">
-                <Trophy className="w-4 h-4 text-foreground" />
-              </div>
-              <div>
-                <p className="text-xs font-heading font-semibold text-foreground">
-                  {post.user_name || post.user_email?.split('@')[0]}
-                </p>
-                {post.fan_rank && (
-                  <p className={`text-[9px] font-heading ${RANK_COLORS[post.fan_rank] || 'text-muted-foreground'} uppercase tracking-wider`}>
-                    {post.fan_rank}
-                  </p>
-                )}
-              </div>
-            </Link>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground">{date}</span>
-              <button
-                onClick={() => setReportOpen(true)}
-                className="glass-subtle rounded-full p-1.5 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Report"
-              >
-                <Flag className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
+        {/* Card — full-bleed image with overlay UI, magazine style */}
+        <div className="relative overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/5">
 
-          {/* Asset image */}
-          {post.asset_url && (
+          {/* Full image */}
+          {post.asset_url ? (
             <div className="relative">
-              <img src={post.asset_url} alt={post.goal_title} className="w-full aspect-square object-cover" />
+              <img src={post.asset_url} alt={post.goal_title} className="w-full aspect-[4/5] object-cover" />
+
+              {/* Reaction burst */}
               <AnimatePresence>
                 {animatingReaction && REACTION_MAP[animatingReaction] && (
                   <motion.div
@@ -112,92 +87,151 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
                   >
                     {(() => {
                       const Icon = REACTION_MAP[animatingReaction].icon;
-                      return <Icon className={`w-16 h-16 ${REACTION_MAP[animatingReaction].color} drop-shadow-lg`} />;
+                      return <Icon className="w-20 h-20 text-white drop-shadow-2xl" />;
                     })()}
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Top overlay: user info + actions */}
+              <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-3"
+                style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%)' }}>
+                <Link to={post.user_email ? `/u/${encodeURIComponent(post.user_email)}` : '#'} className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                    <Trophy className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-heading font-bold text-white leading-none">
+                      {post.user_name || post.user_email?.split('@')[0]}
+                    </p>
+                    {post.fan_rank && (
+                      <p className="text-[9px] text-white/60 uppercase tracking-wider">{post.fan_rank}</p>
+                    )}
+                  </div>
+                </Link>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/50">{date}</span>
+                  {isOwner ? (
+                    <button
+                      onClick={() => setConfirmDelete(true)}
+                      className="bg-black/40 backdrop-blur-sm rounded-full p-1.5"
+                      aria-label="Delete post"
+                    >
+                      <Trash2 className="w-3 h-3 text-white/80" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setReportOpen(true)}
+                      className="bg-black/40 backdrop-blur-sm rounded-full p-1.5"
+                      aria-label="Report"
+                    >
+                      <Flag className="w-3 h-3 text-white/80" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Bottom overlay: idol label + goal */}
+              <div className="absolute bottom-0 left-0 right-0 p-3"
+                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)' }}>
+                <p className="text-[10px] text-white/60 uppercase tracking-widest font-heading mb-0.5">
+                  {post.idol_group || 'Fan'}{post.idol_name ? ` · ${post.idol_name}` : ''}
+                </p>
+                <p className="text-sm font-heading font-bold text-white leading-tight">{post.goal_title}</p>
+                {post.caption && (
+                  <p className="text-xs text-white/70 italic mt-0.5">"{post.caption}"</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Text-only post */
+            <div className="p-4 bg-foreground/5">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-heading mb-1">
+                {post.idol_group || 'Fan'}{post.idol_name ? ` · ${post.idol_name}` : ''}
+              </p>
+              <p className="font-heading font-bold text-base text-foreground">{post.goal_title}</p>
+              {post.caption && <p className="text-xs text-muted-foreground italic mt-1">"{post.caption}"</p>}
             </div>
           )}
 
-          {/* Content */}
-          <div className="px-4 pb-4 pt-3">
-            <p className="text-xs text-muted-foreground font-heading mb-0.5">
-              <span className="text-foreground font-semibold">{post.idol_name}</span>
-              {post.idol_group ? ` · ${post.idol_group}` : ''}
-            </p>
-            <p className="text-sm font-heading font-semibold text-foreground mb-1">{post.goal_title}</p>
-            {post.caption && (
-              <p className="text-xs text-muted-foreground italic mb-3">"{post.caption}"</p>
-            )}
-
-            {/* Reactions row */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {Object.entries(cheerCounts).map(([id, count]) => {
-                const r = REACTION_MAP[id];
-                if (!r) return null;
-                const Icon = r.icon;
-                return (
-                  <motion.button
-                    key={id}
-                    className={`border rounded-full px-2.5 py-1 flex items-center gap-1.5 ${userReaction === id ? 'border-foreground/40 bg-foreground/5' : 'border-foreground/10'}`}
-                    whileTap={{ scale: 0.85 }}
-                    onClick={() => handleReact(id)}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${r.color}`} />
-                    <span className="text-[10px] font-heading font-semibold">{count}</span>
-                  </motion.button>
-                );
-              })}
-
-              <div className="relative">
-                <motion.button
-                  className="glass-subtle rounded-full px-3 py-1 flex items-center gap-1.5"
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowPicker(p => !p)}
-                >
-                  <Heart className="w-3 h-3 text-foreground" />
-                  <span className="text-[10px] font-heading text-muted-foreground">Cheer</span>
-                </motion.button>
-
-                <AnimatePresence>
-                  {showPicker && (
-                    <motion.div
-                      className="absolute bottom-9 left-0 glass-strong rounded-2xl p-2 flex gap-1.5 z-20 shadow-xl"
-                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                    >
-                      {REACTIONS.map(r => {
-                        const Icon = r.icon;
-                        return (
-                          <motion.button
-                            key={r.id}
-                            className="w-9 h-9 rounded-xl glass flex items-center justify-center hover:scale-110 transition-transform"
-                            onClick={() => handleReact(r.id)}
-                            whileTap={{ scale: 0.85 }}
-                            aria-label={r.label}
-                          >
-                            <Icon className={`w-4 h-4 ${r.color}`} />
-                          </motion.button>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Comments toggle */}
+          {/* Interaction bar */}
+          <div className="flex items-center gap-2 px-3 py-2.5 border-t border-foreground/8">
+            {/* Cheer button */}
+            <div className="relative">
               <motion.button
-                className="glass-subtle rounded-full px-3 py-1 flex items-center gap-1.5 ml-auto"
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setShowComments(s => !s)}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-heading font-semibold transition-all ${
+                  userReaction ? 'bg-foreground text-background' : 'border border-foreground/15 text-foreground'
+                }`}
+                whileTap={{ scale: 0.88 }}
+                onClick={() => setShowPicker(p => !p)}
               >
-                <MessageCircle className="w-3 h-3 text-muted-foreground" />
-                <span className="text-[10px] font-heading text-muted-foreground">{localCount}</span>
+                <Heart className={`w-3 h-3 ${userReaction ? 'fill-current' : ''}`} />
+                <span>{totalCheers > 0 ? totalCheers : 'Cheer'}</span>
               </motion.button>
+
+              <AnimatePresence>
+                {showPicker && (
+                  <motion.div
+                    className="absolute bottom-10 left-0 bg-background border border-foreground/15 rounded-2xl p-2 flex gap-1.5 z-20 shadow-2xl"
+                    initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 8 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                  >
+                    {REACTIONS.map(r => {
+                      const Icon = r.icon;
+                      return (
+                        <motion.button
+                          key={r.id}
+                          className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${
+                            userReaction === r.id ? 'bg-foreground border-foreground' : 'border-foreground/10 hover:bg-foreground/5'
+                          }`}
+                          onClick={() => handleReact(r.id)}
+                          whileTap={{ scale: 0.85 }}
+                          aria-label={r.id}
+                        >
+                          <Icon className={`w-4 h-4 ${userReaction === r.id ? 'text-background' : 'text-foreground'}`} />
+                        </motion.button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+
+            {/* Comments */}
+            <motion.button
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-heading border border-foreground/15 text-foreground"
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowComments(s => !s)}
+            >
+              <MessageCircle className="w-3 h-3" />
+              <span>{localCount || 0}</span>
+            </motion.button>
+
+            {/* Reaction breakdown */}
+            {Object.entries(cheerCounts).length > 0 && (
+              <div className="flex gap-1 ml-auto">
+                {Object.entries(cheerCounts).map(([id, count]) => {
+                  const r = REACTION_MAP[id];
+                  if (!r) return null;
+                  const Icon = r.icon;
+                  return (
+                    <motion.button
+                      key={id}
+                      className={`rounded-full px-2 py-1 flex items-center gap-1 text-[10px] font-heading border transition-all ${
+                        userReaction === id ? 'bg-foreground text-background border-foreground' : 'border-foreground/10 text-muted-foreground'
+                      }`}
+                      whileTap={{ scale: 0.85 }}
+                      onClick={() => handleReact(id)}
+                    >
+                      <Icon className="w-3 h-3" />
+                      <span>{count}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Comments thread */}
@@ -207,7 +241,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
+                className="overflow-hidden border-t border-foreground/8"
               >
                 <CommentsThread
                   postId={post.id}
@@ -217,8 +251,45 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
               </motion.div>
             )}
           </AnimatePresence>
-        </GlassCard>
+        </div>
       </motion.div>
+
+      {/* Delete confirm */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-none" />
+            <motion.div
+              className="relative w-full max-w-sm bg-background border border-foreground/15 rounded-3xl p-6 shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-heading font-bold text-base">Delete post?</p>
+                <button onClick={() => setConfirmDelete(false)} className="border border-foreground/15 rounded-full p-1.5">
+                  <X className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mb-5">This will permanently remove this post from the fan feed.</p>
+              <div className="flex gap-3">
+                <button onClick={() => setConfirmDelete(false)} className="flex-1 border border-foreground/15 rounded-2xl py-2.5 text-sm font-heading">
+                  Cancel
+                </button>
+                <button onClick={handleDelete} disabled={deleting} className="flex-1 bg-foreground text-background rounded-2xl py-2.5 text-sm font-heading font-bold">
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ReportDialog
         isOpen={reportOpen}

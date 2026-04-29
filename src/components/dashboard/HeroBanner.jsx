@@ -78,13 +78,13 @@ export default function HeroBanner({ user }) {
           </motion.div>
         </div>
       ) : (
-        <div className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center glass">
+        <div className="relative rounded-3xl overflow-hidden aspect-[4/5] flex items-center justify-center border border-dashed border-foreground/20 bg-foreground/3">
           <Link
             to="/profile"
-            className="glass-subtle rounded-2xl py-4 px-5 flex items-center gap-2 text-foreground hover:bg-white/40 transition"
+            className="border border-foreground/15 rounded-2xl py-4 px-5 flex items-center gap-2 text-foreground"
           >
-            <ImagePlus className="w-5 h-5 text-violet-500" />
-            <span className="font-heading text-sm font-semibold">Add Hero Image in Profile</span>
+            <ImagePlus className="w-5 h-5 text-foreground" />
+            <span className="font-heading text-sm font-semibold">Add Idol Photo in Profile</span>
           </Link>
         </div>
       )}

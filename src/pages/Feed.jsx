@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -100,23 +99,26 @@ export default function Feed() {
       <div className="relative z-10 px-6 pt-[3.5rem]">
         {/* Header */}
         <motion.div
-          className="flex items-start justify-between mb-6"
+          className="flex items-end justify-between mb-5"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
           <div>
-            <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-1">Community</p>
-            <h1 className="font-display text-5xl tracking-wide uppercase text-foreground">
-              Fan Feed
+            <p className="editorial-eyebrow mb-1">Community</p>
+            <h1 className="font-display text-foreground leading-none" style={{ fontSize: 'clamp(2.5rem,12vw,4.5rem)', fontWeight: 900, letterSpacing: '-0.03em' }}>
+              FAN<br />FEED
             </h1>
           </div>
 
           {unsaredMilestones.length > 0 && (
-            <GlassButton variant="primary" className="flex items-center gap-1.5 py-2 px-4 text-xs" onClick={() => setShowShare(true)}>
+            <button
+              onClick={() => setShowShare(true)}
+              className="flex items-center gap-1.5 bg-foreground text-background rounded-full px-4 py-2 text-xs font-heading font-bold mb-1"
+            >
               <Share2 className="w-3.5 h-3.5" />
-              Share
-            </GlassButton>
+              Post
+            </button>
           )}
         </motion.div>
 
@@ -167,23 +169,24 @@ export default function Feed() {
         {/* Posts */}
         {isLoading ? (
           <div className="space-y-4">
-            {[1, 2, 3].map(i => <div key={i} className="glass rounded-2xl h-64 animate-pulse" />)}
+            {[1, 2, 3].map(i => (
+              <div key={i} className="rounded-2xl border border-foreground/10 overflow-hidden">
+                <div className="aspect-[4/5] bg-foreground/5 animate-pulse" />
+                <div className="p-3 h-12 bg-foreground/3 animate-pulse" />
+              </div>
+            ))}
           </div>
         ) : filtered.length === 0 ? (
-          <GlassCard className="p-10 text-center">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.2 }}>
-              <Waves className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            </motion.div>
+          <div className="border border-dashed border-foreground/15 rounded-2xl p-10 text-center">
+            <Waves className="w-8 h-8 text-foreground/20 mx-auto mb-3" />
             <p className="font-heading font-semibold mb-1">No posts yet</p>
-            <p className="text-sm text-muted-foreground mb-5">
-              Be the first to share a milestone with the community!
-            </p>
+            <p className="text-sm text-muted-foreground mb-5">Be the first to share a milestone!</p>
             {unsaredMilestones.length > 0 && (
-              <GlassButton variant="primary" onClick={() => setShowShare(true)} className="mx-auto flex items-center gap-2">
-                <Share2 className="w-4 h-4" /> Share Your First Milestone
-              </GlassButton>
+              <button onClick={() => setShowShare(true)} className="bg-foreground text-background rounded-full px-6 py-2.5 text-sm font-heading font-bold mx-auto flex items-center gap-2">
+                <Share2 className="w-4 h-4" /> Share Now
+              </button>
             )}
-          </GlassCard>
+          </div>
         ) : (
           <div>
             {filtered.map((post, i) => (
