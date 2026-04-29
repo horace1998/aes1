@@ -101,22 +101,17 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
                    key={`${wi}-${di}`}
                    onClick={() => date && onDateSelect(date)}
                    disabled={!date}
-                   className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm font-heading transition-all relative ${
+                   className={`aspect-square rounded-lg flex items-center justify-center text-sm font-heading transition-all relative ${
                      !date
                        ? 'cursor-default'
                        : isSelected
                        ? 'bg-foreground text-background font-bold'
+                       : dayTasks.length > 0
+                       ? 'bg-primary/20 text-foreground font-bold'
                        : 'text-foreground'
                    }`}
                  >
-                   {date && (
-                     <>
-                       <span className="text-xs">{format(date, 'd')}</span>
-                       {dayTasks.length > 0 && (
-                         <span className="text-xs mt-1 opacity-70">•</span>
-                       )}
-                     </>
-                   )}
+                   {date && <span className="text-xs">{format(date, 'd')}</span>}
                  </button>
               );
             })
@@ -124,21 +119,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-3">
-        <button
-          onClick={(e) => { e.preventDefault(); onNewTask?.(); }}
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground/60 hover:text-foreground transition-colors cursor-pointer"
-        >
-          <Clock className="w-4 h-4" /> Add Reminder
-        </button>
-        <button
-          onClick={(e) => { e.preventDefault(); onNewTask?.(); }}
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground hover:text-primary transition-colors cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> New Task
-        </button>
-      </div>
+
 
       {/* Task list for currently selected date */}
       {selectedDate && getDayTasks(selectedDate).length > 0 && (
@@ -146,35 +127,20 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
           <p className="text-[10px] font-heading font-bold text-foreground/50 mb-3">TASKS</p>
           <div className="space-y-2">
             {getDayTasks(selectedDate).map(task => (
-              <motion.button
+              <motion.div
                 key={task.id}
-                onClick={async () => {
-                  const newStatus = task.status === 'done' ? 'pending' : 'done';
-                  try {
-                    await base44.entities.Task.update(task.id, { status: newStatus });
-                    onDateSelect(selectedDate); // Trigger refresh
-                  } catch (error) {
-                    console.error('Failed to update task:', error);
-                  }
-                }}
-                className="w-full text-left flex items-start gap-2 p-2 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors cursor-pointer active:scale-95"
+                className="w-full text-left flex items-start gap-2 p-2 rounded-lg bg-foreground/5"
               >
-                <div className={`w-4 h-4 rounded mt-0.5 border-2 flex-shrink-0 ${
-                  task.status === 'done'
-                    ? 'bg-primary border-primary'
-                    : 'border-foreground/20'
-                }`} />
+                <div className="w-4 h-4 rounded mt-0.5 border-2 border-foreground/20 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-heading ${
-                    task.status === 'done' ? 'line-through text-foreground/50' : 'text-foreground'
-                  }`}>
+                  <p className="text-xs font-heading text-foreground">
                     {task.title}
                   </p>
                   {task.due_time && (
                     <p className="text-[10px] text-foreground/40 mt-0.5">{task.due_time}</p>
                   )}
                 </div>
-              </motion.button>
+              </motion.div>
             ))}
           </div>
         </div>

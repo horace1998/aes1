@@ -48,30 +48,22 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#1a1a1a' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#ffffff' }}>
       <PageShell goals={goals} user={user}>
         <div className="relative z-10">
           {/* Top bar */}
           <div className="flex items-center justify-between px-5 pt-6 pb-4">
             <button onClick={() => navigate(-1)} className="p-2">
-              <ArrowLeft className="w-5 h-5" style={{ color: '#fff' }} />
+              <ArrowLeft className="w-5 h-5" style={{ color: '#000' }} />
             </button>
             <button className="p-2">
-              <MoreVertical className="w-5 h-5" style={{ color: '#fff' }} />
+              <MoreVertical className="w-5 h-5" style={{ color: '#000' }} />
             </button>
           </div>
 
-          {/* Hero Image Section */}
-          {user.background_image_url && (
-            <div className="relative -mx-5 mb-0 h-96 overflow-hidden">
-              <img src={user.background_image_url} alt="hero" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black" />
-            </div>
-          )}
-
           <div className="px-5 relative">
-            {/* Avatar — positioned over hero */}
-            <div className="flex justify-center -mt-20 mb-4">
+            {/* Avatar */}
+            <div className="flex justify-center mb-4">
               <div
                 className="w-32 h-32 rounded-full border-4 border-black overflow-hidden"
                 style={{
@@ -85,10 +77,10 @@ export default function Profile() {
 
             {/* Profile Info */}
             <div className="text-center mb-6">
-              <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 48, color: '#fff', fontWeight: 700, lineHeight: 1, marginBottom: 2 }}>
+              <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 48, color: '#000', fontWeight: 700, lineHeight: 1, marginBottom: 2 }}>
                 {user.full_name || 'Station'}
               </h1>
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 12 }}>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 13, color: 'rgba(0,0,0,0.6)', marginBottom: 12 }}>
                 @{user.email.split('@')[0]}
               </p>
 
@@ -100,10 +92,10 @@ export default function Profile() {
                   { label: 'Posts', value: milestones.length },
                 ].map((stat) => (
                   <div key={stat.label}>
-                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#fff', fontWeight: 600 }}>
+                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#000', fontWeight: 600 }}>
                       {String(stat.value).padStart(3, '0')}
                     </p>
-                    <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>
+                    <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginTop: 4 }}>
                       {stat.label}
                     </p>
                   </div>
@@ -111,7 +103,7 @@ export default function Profile() {
               </div>
 
               {/* Bio */}
-              <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 16 }}>
+              <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: 'rgba(0,0,0,0.7)', lineHeight: 1.6, marginBottom: 16 }}>
                 Dedicated K-pop fan on a journey of growth
               </p>
             </div>
@@ -121,7 +113,7 @@ export default function Profile() {
 
             {/* Achievements */}
             <div className="mb-8">
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>
                 Achievements
               </p>
               <BadgeGrid badges={badges} />
@@ -129,7 +121,7 @@ export default function Profile() {
 
             {/* Gallery */}
             <div className="mb-8">
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>
                 Posts
               </p>
               <PhotoWall milestones={milestones} />
@@ -139,7 +131,7 @@ export default function Profile() {
             <button
               onClick={() => base44.auth.logout()}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl"
-              style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+              style={{ background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.2)', color: '#000', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
             >
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
