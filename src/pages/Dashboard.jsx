@@ -20,6 +20,7 @@ import { format, parseISO, isSameDay } from 'date-fns';
 import { Calendar, Clock, CheckCircle2, Circle, Share2 } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import CalendarWidget from '@/components/dashboard/CalendarWidget';
+import HeroDecorator from '@/components/dashboard/HeroDecorator';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -151,6 +152,9 @@ export default function Dashboard() {
 
         {/* Poster header */}
         <EditorialHeader user={user} />
+
+        {/* Hero Decorator */}
+        {user && <HeroDecorator user={user} />}
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} hologram />
