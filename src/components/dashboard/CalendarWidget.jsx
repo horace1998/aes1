@@ -66,14 +66,9 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
         >
           <ChevronLeft className="w-4 h-4 text-foreground" />
         </button>
-        <div className="flex items-end gap-3">
-          <h2 className="text-5xl font-display font-bold text-foreground">
-            {format(displayMonth, 'MMM').toUpperCase()}
-          </h2>
-          <p className="text-5xl font-display font-bold text-foreground pb-1">
-            {format(displayMonth, 'd')}
-          </p>
-        </div>
+        <h2 className="text-5xl font-display font-bold text-foreground">
+          {format(displayMonth, 'MMM').toUpperCase()}
+        </h2>
         <button
           onClick={() => setDisplayMonth(addMonths(displayMonth, 1))}
           className="p-2 hover:bg-foreground/10 rounded-lg transition-colors"

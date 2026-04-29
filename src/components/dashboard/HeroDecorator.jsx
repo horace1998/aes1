@@ -8,11 +8,8 @@ import GlassButton from '@/components/ui/GlassButton';
 
 export default function HeroDecorator({ user }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState({
-    mainBg: user?.hero_bg_url || null,
-    centerIcon: user?.hero_center_url || null,
-    supportingPhotos: user?.hero_support_urls || [],
-  });
+  const [bgUrl, setBgUrl] = useState(user?.hero_bg_url || null);
+  const [sideImages, setSideImages] = useState(user?.hero_side_urls || [null, null]);
   const [isUploading, setIsUploading] = useState(false);
   const queryClient = useQueryClient();
 
@@ -24,14 +21,19 @@ export default function HeroDecorator({ user }) {
     },
   });
 
-  const handleFileUpload = async (file, type) => {
+  const handleFileUpload = async (file, type, index = null) => {
     setIsUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setUploadedFiles(prev => ({
-        ...prev,
-        [type]: type === 'supportingPhotos' ? [...(prev[type] || []), file_url] : file_url,
-      }));
+      if (type === 'bg') {
+        setBgUrl(file_url);
+      } else {
+        setSideImages(prev => {
+          const newArr = [...prev];
+          newArr[index] = file_url;
+          return newArr;
+        });
+      }
     } finally {
       setIsUploading(false);
     }
@@ -39,21 +41,15 @@ export default function HeroDecorator({ user }) {
 
   const handleSaveDecorations = async () => {
     await updateUserMutation.mutateAsync({
-      hero_bg_url: uploadedFiles.mainBg,
-      hero_center_url: uploadedFiles.centerIcon,
-      hero_support_urls: uploadedFiles.supportingPhotos,
+      hero_bg_url: bgUrl,
+      hero_side_urls: sideImages,
     });
   };
 
-  const handleRemoveSupporting = (index) => {
-    setUploadedFiles(prev => ({
-      ...prev,
-      supportingPhotos: prev.supportingPhotos.filter((_, i) => i !== index),
-    }));
-  };
+  const centerImage = user?.background_image_url;
 
   // Display mode
-  if (!isEditing && (uploadedFiles.mainBg || uploadedFiles.centerIcon)) {
+  if (!isEditing && bgUrl) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -61,44 +57,41 @@ export default function HeroDecorator({ user }) {
         className="relative h-80 rounded-2xl overflow-hidden mb-6 group cursor-pointer"
         onClick={() => setIsEditing(true)}
       >
-        {/* B&W background with overlay */}
-        {uploadedFiles.mainBg && (
-          <img
-            src={uploadedFiles.mainBg}
-            alt="hero"
-            className="absolute inset-0 w-full h-full object-cover grayscale opacity-60"
-          />
-        )}
-        <div className="absolute inset-0 bg-black/30" />
+        {/* B&W background with black filter */}
+        <img
+          src={bgUrl}
+          alt="hero"
+          className="absolute inset-0 w-full h-full object-cover grayscale brightness-50"
+        />
 
-        {/* Center color icon */}
-        {uploadedFiles.centerIcon && (
+        {/* Center color idol image */}
+        {centerImage && (
           <div className="absolute inset-0 flex items-center justify-center">
             <img
-              src={uploadedFiles.centerIcon}
-              alt="icon"
-              className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-lg"
+              src={centerImage}
+              alt="idol"
+              className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-xl"
             />
           </div>
         )}
 
-        {/* Supporting photos bottom row */}
-        {uploadedFiles.supportingPhotos.length > 0 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {uploadedFiles.supportingPhotos.slice(0, 3).map((photo, i) => (
-              <img
-                key={i}
-                src={photo}
-                alt={`support-${i}`}
-                className="w-20 h-20 rounded-lg object-cover border border-white/30 grayscale"
-              />
-            ))}
+        {/* Left side image (half visible) */}
+        {sideImages[0] && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-32 h-48 overflow-hidden rounded-r-2xl shadow-lg">
+            <img src={sideImages[0]} alt="left" className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        {/* Right side image (half visible) */}
+        {sideImages[1] && (
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-32 h-48 overflow-hidden rounded-l-2xl shadow-lg">
+            <img src={sideImages[1]} alt="right" className="w-full h-full object-cover" />
           </div>
         )}
 
         {/* Hover edit indicator */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-          <p className="text-white text-sm font-heading">Edit Decorations</p>
+          <p className="text-white text-sm font-heading">Edit</p>
         </div>
       </motion.div>
     );
@@ -112,11 +105,8 @@ export default function HeroDecorator({ user }) {
         <button
           onClick={() => {
             setIsEditing(false);
-            setUploadedFiles({
-              mainBg: user?.hero_bg_url || null,
-              centerIcon: user?.hero_center_url || null,
-              supportingPhotos: user?.hero_support_urls || [],
-            });
+            setBgUrl(user?.hero_bg_url || null);
+            setSideImages(user?.hero_side_urls || [null, null]);
           }}
           className="text-muted-foreground hover:text-foreground transition-colors"
         >
@@ -128,88 +118,48 @@ export default function HeroDecorator({ user }) {
         {/* Main BG upload */}
         <div>
           <label className="block text-xs font-semibold mb-2 text-foreground/70">
-            Background (B&W filtered)
+            Background (Black Filter Applied)
           </label>
-          <div className="relative">
-            {uploadedFiles.mainBg && (
-              <img src={uploadedFiles.mainBg} alt="main" className="w-full h-32 object-cover rounded-lg mb-2 grayscale" />
-            )}
-            <label className="flex items-center justify-center w-full h-28 border-2 border-dashed border-foreground/20 rounded-lg hover:border-foreground/40 transition-colors cursor-pointer bg-foreground/2">
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'mainBg')}
-              />
-              <div className="text-center">
-                <Upload className="w-5 h-5 mx-auto text-foreground/50 mb-1" />
-                <p className="text-xs text-foreground/50">Choose image</p>
-              </div>
-            </label>
-          </div>
+          {bgUrl && (
+            <img src={bgUrl} alt="bg" className="w-full h-32 object-cover rounded-lg mb-2 grayscale brightness-50" />
+          )}
+          <label className="flex items-center justify-center w-full h-28 border-2 border-dashed border-foreground/20 rounded-lg hover:border-foreground/40 transition-colors cursor-pointer bg-foreground/2">
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'bg')}
+            />
+            <div className="text-center">
+              <Upload className="w-5 h-5 mx-auto text-foreground/50 mb-1" />
+              <p className="text-xs text-foreground/50">Upload background</p>
+            </div>
+          </label>
         </div>
 
-        {/* Center icon upload */}
+        {/* Side images */}
         <div>
           <label className="block text-xs font-semibold mb-2 text-foreground/70">
-            Center Icon (Full Color)
+            Side Images (Left & Right, shows half)
           </label>
-          <div className="relative">
-            {uploadedFiles.centerIcon && (
-              <img src={uploadedFiles.centerIcon} alt="center" className="w-24 h-24 object-cover rounded-full mx-auto mb-2 border border-foreground/20" />
-            )}
-            <label className="flex items-center justify-center w-full h-24 border-2 border-dashed border-foreground/20 rounded-lg hover:border-foreground/40 transition-colors cursor-pointer bg-foreground/2">
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'centerIcon')}
-              />
-              <div className="text-center">
-                <Upload className="w-5 h-5 mx-auto text-foreground/50 mb-1" />
-                <p className="text-xs text-foreground/50">Choose image</p>
+          <div className="flex gap-4">
+            {[0, 1].map((idx) => (
+              <div key={idx} className="flex-1">
+                <p className="text-xs text-foreground/50 mb-2">{idx === 0 ? 'Left' : 'Right'}</p>
+                {sideImages[idx] && (
+                  <img src={sideImages[idx]} alt={`side-${idx}`} className="w-full h-24 object-cover rounded-lg mb-2 border border-foreground/20" />
+                )}
+                <label className="flex items-center justify-center w-full h-20 border-2 border-dashed border-foreground/20 rounded-lg hover:border-foreground/40 transition-colors cursor-pointer bg-foreground/2">
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'side', idx)}
+                  />
+                  <Upload className="w-4 h-4 text-foreground/50" />
+                </label>
               </div>
-            </label>
-          </div>
-        </div>
-
-        {/* Supporting photos */}
-        <div>
-          <label className="block text-xs font-semibold mb-2 text-foreground/70">
-            Supporting Photos (up to 3)
-          </label>
-          <div className="flex gap-2 mb-2 flex-wrap">
-            <AnimatePresence>
-              {uploadedFiles.supportingPhotos.map((photo, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  className="relative"
-                >
-                  <img src={photo} alt={`support-${i}`} className="w-20 h-20 rounded-lg object-cover border border-foreground/20" />
-                  <button
-                    onClick={() => handleRemoveSupporting(i)}
-                    className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-0.5 hover:bg-destructive/90 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            {uploadedFiles.supportingPhotos.length < 3 && (
-              <label className="flex items-center justify-center w-20 h-20 border-2 border-dashed border-foreground/20 rounded-lg hover:border-foreground/40 transition-colors cursor-pointer bg-foreground/2">
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'supportingPhotos')}
-                />
-                <Upload className="w-4 h-4 text-foreground/50" />
-              </label>
-            )}
+            ))}
           </div>
         </div>
       </div>
