@@ -157,6 +157,31 @@ export default function Dashboard() {
         {/* Cheers received from circle members */}
         <CheerInbox user={user} />
 
+        {/* Current Goal Quick View */}
+        {activeGoals.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-6"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+                textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
+              }}>
+                Active Mission
+              </span>
+            </div>
+            <GlassCard variant="strong" className="p-4" animate={false}>
+              <p className="text-xs text-muted-foreground mb-1">{activeGoals[0].idol_group || activeGoals[0].idol_name}</p>
+              <p className="font-heading text-sm font-bold text-foreground">{activeGoals[0].title}</p>
+            </GlassCard>
+          </motion.div>
+        )}
+
         {/* Stats — filmstrip style */}
         <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>
           {[
@@ -201,7 +226,7 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.38 }}
           className="mb-8"
         >
           <div className="flex items-center gap-3 mb-4">
@@ -210,32 +235,38 @@ export default function Dashboard() {
               fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
               textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
             }}>
-              Agenda — To Do
+              Planning
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
           </div>
 
-          {/* Mini Calendar */}
-          <GlassCard variant="strong" className="p-3 mb-4" animate={false}>
-            <div className="grid grid-cols-7 gap-1">
-              {[...Array(35)].map((_, i) => {
-                const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i - 14);
-                const isSelected = isSameDay(date, selectedDate);
-                const dayTasks = tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), date));
-                const hasDone = dayTasks.some(t => t.status === 'done');
+          {/* Minimal Calendar — just current week */}
+          <GlassCard variant="strong" className="p-4 mb-4" animate={false}>
+            <div className="flex gap-1.5">
+              {[...Array(7)].map((_, i) => {
+                const date = new Date(selectedDate);
+                const firstDay = new Date(selectedDate.setDate(selectedDate.getDate() - selectedDate.getDay()));
+                const weekDate = new Date(firstDay);
+                weekDate.setDate(weekDate.getDate() + i);
+
+                const isSelected = isSameDay(weekDate, selectedDate);
+                const dayTasks = tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), weekDate));
 
                 return (
                   <button
                     key={i}
-                    onClick={() => setSelectedDate(date)}
-                    className={`aspect-square rounded text-xs font-heading flex flex-col items-center justify-center transition-all border ${
+                    onClick={() => setSelectedDate(weekDate)}
+                    className={`flex-1 rounded-lg p-2 text-center transition-all border ${
                       isSelected
                         ? 'bg-primary text-primary-foreground border-primary'
-                        : 'border-foreground/10 text-foreground'
+                        : 'border-foreground/10 text-foreground hover:bg-foreground/5'
                     }`}
                   >
-                    <span className="font-bold text-[10px]">{format(date, 'd')}</span>
-                    {hasDone && <span className="text-[6px] text-primary">✓</span>}
+                    <p className="text-[10px] font-heading font-bold">{format(weekDate, 'EEE').slice(0, 2)}</p>
+                    <p className="text-xs font-heading mt-0.5">{format(weekDate, 'd')}</p>
+                    {dayTasks.length > 0 && (
+                      <p className="text-[8px] mt-1" style={{ opacity: 0.6 }}>{dayTasks.length} tasks</p>
+                    )}
                   </button>
                 );
               })}
@@ -277,7 +308,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div style={{
-              textAlign: 'center', padding: '20px',
+              textAlign: 'center', padding: '16px',
               borderRadius: 12, background: 'rgba(0,0,0,0.03)',
               border: '1px solid rgba(0,0,0,0.07)',
             }}>
@@ -296,7 +327,7 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.42 }}
             className="mb-8"
           >
             <div className="flex items-center gap-3 mb-4">

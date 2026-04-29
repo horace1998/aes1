@@ -119,14 +119,15 @@ export default function Profile() {
           <BadgeGrid badges={badges} />
         </div>
 
-        {/* Profile image + nickname */}
-        <ProfileImageEditor user={user} />
-
-        {/* Focus manager */}
-        <FocusManager user={user} />
-
-        {/* Daily reminder */}
-        <ReminderSettings />
+        {/* Profile Management — nickname claim */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-8"
+        >
+          <ProfileImageEditor user={user} />
+        </motion.div>
 
         {/* Station ID */}
         <div className="py-5 mb-6 text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
