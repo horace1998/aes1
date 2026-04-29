@@ -58,11 +58,10 @@ export default function Missions() {
             className="mb-5"
           >
             <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-1">Squad up</p>
-            <h1 className="font-display text-5xl tracking-wide uppercase text-foreground flex items-center gap-2">
-              <Users className="w-7 h-7 text-violet-400" />
+            <h1 className="font-display text-5xl tracking-wide uppercase text-foreground">
               Missions
             </h1>
-            <p className="text-xs text-muted-foreground mt-1">Join fans worldwide on shared journeys 💜</p>
+            <p className="text-xs text-muted-foreground mt-1">Join fans worldwide on shared journeys</p>
           </motion.div>
 
           {/* Tabs */}
@@ -79,8 +78,8 @@ export default function Missions() {
                   onClick={() => setTab(t.id)}
                   className={`flex-1 rounded-xl py-2 text-[11px] font-heading font-semibold transition-all flex items-center justify-center gap-1 ${
                     tab === t.id
-                      ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
-                      : 'glass-subtle text-muted-foreground'
+                      ? 'bg-foreground text-background'
+                      : 'border border-foreground/15 text-muted-foreground'
                   }`}
                 >
                   <Icon className="w-3 h-3" />
@@ -99,8 +98,8 @@ export default function Missions() {
                   onClick={() => setFilterGroup(g)}
                   className={`rounded-full px-3 py-1.5 text-xs font-heading font-medium flex-shrink-0 transition-all ${
                     filterGroup === g
-                      ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
-                      : 'glass-subtle text-muted-foreground'
+                      ? 'bg-foreground text-background'
+                      : 'border border-foreground/15 text-muted-foreground'
                   }`}
                 >
                   {g === 'all' ? 'All Groups' : g}
@@ -116,7 +115,7 @@ export default function Missions() {
             </div>
           ) : filtered.length === 0 ? (
             <GlassCard className="p-8 text-center">
-              <Users className="w-10 h-10 text-violet-300 mx-auto mb-3" />
+              <Users className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="font-heading font-semibold mb-1">No missions yet</p>
               <p className="text-sm text-muted-foreground">
                 Create a goal and toggle "Public mission" to be the first!
