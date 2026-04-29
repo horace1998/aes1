@@ -9,7 +9,7 @@ export default function EditorialHeader({ user }) {
   const today = format(new Date(), 'MMM dd');
 
   return (
-    <div className="relative mb-6 overflow-visible pb-2">
+    <div className="relative mb-8 overflow-visible pb-6">
       {/* Huge ghost text behind */}
       <div
         className="absolute inset-0 flex items-center overflow-hidden pointer-events-none"
@@ -61,7 +61,8 @@ export default function EditorialHeader({ user }) {
         style={{
           fontFamily: 'Bebas Neue, Impact, sans-serif',
           fontSize: 'clamp(2.8rem, 12vw, 6rem)',
-          lineHeight: 1.02,
+          lineHeight: 1.1,
+          paddingBottom: '0.08em',
           letterSpacing: '0.02em',
           color: '#0d1117',
           fontWeight: 400,
