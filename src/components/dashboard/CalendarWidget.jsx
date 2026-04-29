@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, addMonths, subMonths } from 'date-fns';
 import { Clock, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 import GlassCard from '@/components/ui/GlassCard';
 
 export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect, onNewTask }) {
@@ -97,26 +98,26 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
 
               return (
                 <button
-                  key={`${wi}-${di}`}
-                  onClick={() => date && onDateSelect(date)}
-                  disabled={!date}
-                  className={`aspect-square rounded-lg flex items-center justify-center text-sm font-heading transition-all relative ${
-                    !date
-                      ? 'cursor-default'
-                      : isSelected
-                      ? 'bg-foreground text-background font-bold'
-                      : 'text-foreground'
-                  }`}
-                >
-                  {date && (
-                    <>
-                      <span className="text-xs">{format(date, 'd')}</span>
-                      {dayTasks.length > 0 && (
-                        <span className="absolute bottom-0.5 text-lg opacity-70">•</span>
-                      )}
-                    </>
-                  )}
-                </button>
+                   key={`${wi}-${di}`}
+                   onClick={() => date && onDateSelect(date)}
+                   disabled={!date}
+                   className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm font-heading transition-all relative ${
+                     !date
+                       ? 'cursor-default'
+                       : isSelected
+                       ? 'bg-foreground text-background font-bold'
+                       : 'text-foreground'
+                   }`}
+                 >
+                   {date && (
+                     <>
+                       <span className="text-xs">{format(date, 'd')}</span>
+                       {dayTasks.length > 0 && (
+                         <span className="text-xs mt-1 opacity-70">•</span>
+                       )}
+                     </>
+                   )}
+                 </button>
               );
             })
           )}
@@ -147,8 +148,14 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
             {getDayTasks(selectedDate).map(task => (
               <motion.button
                 key={task.id}
-                onClick={() => {
-                  // Toggle task status
+                onClick={async () => {
+                  const newStatus = task.status === 'done' ? 'pending' : 'done';
+                  try {
+                    await base44.entities.Task.update(task.id, { status: newStatus });
+                    onDateSelect(selectedDate); // Trigger refresh
+                  } catch (error) {
+                    console.error('Failed to update task:', error);
+                  }
                 }}
                 className="w-full text-left flex items-start gap-2 p-2 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors cursor-pointer active:scale-95"
               >

@@ -17,14 +17,16 @@ import HomeSplash from '@/components/dashboard/HomeSplash';
 import { leaveGoal } from '@/lib/leaveGoal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format, parseISO, isSameDay } from 'date-fns';
-import { Calendar, Clock, CheckCircle2, Circle, Share2 } from 'lucide-react';
+import { Calendar, Clock, CheckCircle2, Circle, Share2, Settings } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import CalendarWidget from '@/components/dashboard/CalendarWidget';
 import HeroDecorator from '@/components/dashboard/HeroDecorator';
+import SettingsModal from '@/components/SettingsModal';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['me'],
@@ -148,15 +150,11 @@ export default function Dashboard() {
            <div />
            <div className="flex items-center gap-3">
              <button
-               onClick={() => navigate('/profile')}
-               style={{
-                 padding: '8px 16px', borderRadius: 12,
-                 background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)',
-                 fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 700,
-                 cursor: 'pointer', color: '#000',
-               }}
+               onClick={() => setSettingsOpen(true)}
+               className="p-2 hover:bg-foreground/10 rounded-lg transition-colors"
+               title="Settings"
              >
-               Settings
+               <Settings className="w-5 h-5 text-foreground" />
              </button>
              <NotificationBell userEmail={user?.email} />
            </div>
@@ -387,6 +385,12 @@ export default function Dashboard() {
         score={getRankScore(totalCheckins, milestoneCount)}
         onClose={() => setLevelUpRank(null)}
         onShare={handleShareLevelUp}
+      />
+
+      <SettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        user={user}
       />
     </div>
   );
