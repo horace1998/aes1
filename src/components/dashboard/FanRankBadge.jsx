@@ -11,23 +11,23 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
     : 100;
 
   const showIdol = !!idolImageUrl;
-  const IDOL_H = 230; // px, how tall the idol floats above the card
-  const IDOL_OVERLAP = 80; // px that stick up above the card top
+  const IDOL_SIZE = 130; // px, circular idol diameter
+  const IDOL_OVERLAP = 70; // px that stick up above the card top
 
   return (
     <motion.div
       className="mb-7 relative"
-      style={{ paddingTop: showIdol ? IDOL_H - IDOL_OVERLAP : 0 }}
+      style={{ paddingTop: showIdol ? IDOL_SIZE - IDOL_OVERLAP : 0 }}
     >
       {/* ── Hologram idol cutout (circular) ── */}
       {showIdol && (
         <div
           className="absolute left-1/2 -translate-x-1/2 pointer-events-none overflow-hidden"
           style={{
-            top: 18,
+            top: 0,
             zIndex: 30,
-            width: 190,
-            height: 190,
+            width: IDOL_SIZE,
+            height: IDOL_SIZE,
             borderRadius: '50%',
             background: 'transparent',
             border: 'none',
@@ -61,7 +61,7 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
           background: 'linear-gradient(135deg, #0a1540 0%, #0d1f6b 45%, #1a3aad 100%)',
           border: '1px solid rgba(77, 127, 255, 0.4)',
           boxShadow: '0 8px 48px rgba(26, 58, 173, 0.55), inset 0 1px 0 rgba(255,255,255,0.07)',
-          padding: showIdol ? `${IDOL_H - IDOL_OVERLAP + 16}px 22px 18px` : '20px 22px 18px',
+          padding: showIdol ? `${IDOL_SIZE - IDOL_OVERLAP + 16}px 22px 18px` : '20px 22px 18px',
         }}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
