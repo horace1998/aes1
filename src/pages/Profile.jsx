@@ -89,9 +89,47 @@ export default function Profile() {
               className="mb-6 p-4 rounded-2xl"
               style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             >
-              <p style={{ color: '#fff', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12, marginBottom: 12 }}>Edit Profile (save via Settings)</p>
-              {/* Placeholder for edit controls — import EditProfile component if needed */}
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>Profile editing interface goes here</div>
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, display: 'block', marginBottom: 6 }}>Name</label>
+                <input
+                  type="text"
+                  value={user.full_name || ''}
+                  onChange={(e) => setUser({ ...user, full_name: e.target.value })}
+                  style={{
+                    width: '100%', padding: '8px 12px', borderRadius: 8,
+                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12,
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={async () => {
+                    await base44.auth.updateMe({ full_name: user.full_name });
+                    queryClient.invalidateQueries({ queryKey: ['me'] });
+                    setEditOpen(false);
+                  }}
+                  style={{
+                    flex: 1, padding: '8px 12px', borderRadius: 8,
+                    background: '#1a3aad', border: 'none', color: '#fff',
+                    fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setEditOpen(false)}
+                  style={{
+                    flex: 1, padding: '8px 12px', borderRadius: 8,
+                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff', fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           )}
 
