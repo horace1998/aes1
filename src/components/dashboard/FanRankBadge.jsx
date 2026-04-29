@@ -47,11 +47,11 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
       className="mb-7 relative"
       style={{ paddingTop: showIdol ? IDOL_H - IDOL_OVERLAP : 0 }}
     >
-      {/* ── Hologram idol cutout (no box) ── */}
+      {/* ── Hologram idol cutout (circular) ── */}
       {showIdol && (
         <div
           className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-          style={{ top: 0, zIndex: 30, width: 160, height: IDOL_H }}
+          style={{ top: 0, zIndex: 30, width: 160, height: 160, borderRadius: '50%' }}
           aria-hidden="true"
         >
           {processing && (

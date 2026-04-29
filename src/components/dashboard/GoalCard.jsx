@@ -30,6 +30,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
   const x = useMotionValue(0);
   const actionOpacity = useTransform(x, [0, 40, 100], [0, 0.4, 1]);
   const [confirming, setConfirming] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const isActive = goal.status === 'active';
   const canSwipe = isActive && !!onComplete;
 
@@ -101,7 +102,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                   )}
                   {isActive && onDelete && (
                     <button
-                      onClick={() => onDelete()}
+                      onClick={() => setConfirmingDelete(true)}
                       style={{
                         fontFamily: 'Space Grotesk, sans-serif',
                         fontSize: 8, fontWeight: 700, letterSpacing: '0.2em',
@@ -111,7 +112,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                       }}
                       title="Delete goal"
                     >
-                      Delete
+                      ✕
                     </button>
                   )}
                 </div>
@@ -188,7 +189,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
         </div>
       </motion.div>
 
-      {/* Confirm overlay */}
+      {/* Confirm overlay — complete */}
       <AnimatePresence>
         {confirming && (
           <motion.div
@@ -229,6 +230,53 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                 }}
               >
                 Confirm
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm overlay — delete */}
+      <AnimatePresence>
+        {confirmingDelete && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-between px-5 z-10"
+            style={{
+              borderRadius: 16,
+              background: 'rgba(255,255,255,0.97)',
+              border: '1px solid rgba(200,0,0,0.2)',
+              boxShadow: '0 4px 20px rgba(255,0,0,0.08)',
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#0d1117' }}>
+              Remove this goal?
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmingDelete(false)}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                  fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
+                  border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8,
+                  padding: '6px 12px', color: 'rgba(0,0,0,0.5)', background: 'transparent',
+                }}
+              >
+                Keep
+              </button>
+              <button
+                onClick={() => { onDelete?.(); setConfirmingDelete(false); }}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                  fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
+                  background: 'linear-gradient(135deg, rgba(200,0,0,0.8), rgba(150,0,0,0.8))',
+                  border: '1px solid rgba(200,0,0,0.3)', borderRadius: 8,
+                  padding: '6px 12px', color: '#fff',
+                }}
+              >
+                Remove
               </button>
             </div>
           </motion.div>
