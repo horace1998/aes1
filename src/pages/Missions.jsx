@@ -42,9 +42,12 @@ export default function Missions() {
   if (tab === 'trending') {
     filtered = [...filtered].sort((a, b) => (b.member_count || 0) - (a.member_count || 0));
   } else if (tab === 'mine') {
+    // Use active goals as source of truth (members list may be stale)
+    const activeMissionIds = new Set(
+      goals.filter(g => g.status === 'active' && g.mission_id).map(g => g.mission_id)
+    );
     filtered = filtered.filter(m =>
-      m.creator_email === user?.email ||
-      (m.members || []).some(mb => mb.user_email === user?.email)
+      m.creator_email === user?.email || activeMissionIds.has(m.id)
     );
   }
 
@@ -127,7 +130,7 @@ export default function Missions() {
           ) : (
             <div>
               {filtered.map((m, i) => (
-                <MissionCard key={m.id} mission={m} currentUser={user} index={i} />
+                <MissionCard key={m.id} mission={m} currentUser={user} userGoals={goals} index={i} />
               ))}
             </div>
           )}

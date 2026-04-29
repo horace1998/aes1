@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
@@ -11,13 +11,31 @@ import ReportDialog from '@/components/feed/ReportDialog';
 
 
 
-export default function MissionCard({ mission, currentUser, index = 0 }) {
+export default function MissionCard({ mission, currentUser, userGoals = [], index = 0 }) {
   const queryClient = useQueryClient();
   const [joining, setJoining] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
-  const isMember = (mission.members || []).some(m => m.user_email === currentUser?.email);
   const isCreator = mission.creator_email === currentUser?.email;
+
+  // Source of truth: does the user currently have an ACTIVE goal linked to this mission?
+  const hasActiveLinkedGoal = userGoals.some(
+    g => g.mission_id === mission.id && g.status === 'active'
+  );
+  const isInMembersList = (mission.members || []).some(m => m.user_email === currentUser?.email);
+
+  // True membership = creator OR has active linked goal
+  const isMember = isCreator || hasActiveLinkedGoal;
+
+  // Stale: in members list but no active goal — auto-cleanup so user can rejoin
+  useEffect(() => {
+    if (!currentUser || isCreator) return;
+    if (isInMembersList && !hasActiveLinkedGoal) {
+      base44.functions.invoke('leaveMission', { mission_id: mission.id })
+        .then(() => queryClient.invalidateQueries({ queryKey: ['missions'] }))
+        .catch(() => {});
+    }
+  }, [currentUser?.email, mission.id, isInMembersList, hasActiveLinkedGoal, isCreator]);
 
   const handleJoin = async () => {
     if (!currentUser || isMember || isCreator) return;

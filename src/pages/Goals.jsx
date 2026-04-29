@@ -42,8 +42,21 @@ export default function Goals() {
   });
 
   const completeMutation = useMutation({
-    mutationFn: (goal) => base44.entities.Goal.update(goal.id, { status: 'completed', progress: 100 }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+    mutationFn: async (goal) => {
+      await base44.entities.Goal.update(goal.id, { status: 'completed', progress: 100 });
+      if (goal.mission_id) {
+        try {
+          const mission = await base44.entities.Mission.get(goal.mission_id);
+          if (mission && mission.creator_email !== user?.email) {
+            await base44.functions.invoke('leaveMission', { mission_id: goal.mission_id });
+          }
+        } catch {}
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['missions'] });
+    },
   });
 
   const leaveMutation = useMutation({
