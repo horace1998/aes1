@@ -13,6 +13,7 @@ import TrendsSection from '@/components/dashboard/TrendsSection';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import CheerInbox from '@/components/circle/CheerInbox';
+import HomeSplash from '@/components/dashboard/HomeSplash';
 import { leaveGoal } from '@/lib/leaveGoal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
@@ -122,6 +123,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
+      <HomeSplash />
       <PageShell goals={goals} user={user}>
 
       <div className="relative z-10 px-5 pt-[3.5rem]">
