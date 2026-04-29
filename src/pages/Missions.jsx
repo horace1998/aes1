@@ -116,13 +116,35 @@ export default function Missions() {
             <div className="space-y-3">
               {[1, 2, 3].map(i => <div key={i} className="glass rounded-2xl h-36 animate-pulse" />)}
             </div>
-          ) : filtered.length === 0 ? (
+          ) : filtered.length === 0 && tab !== 'mine' ? (
             <GlassCard className="p-8 text-center">
               <Users className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="font-heading font-semibold mb-1">No missions yet</p>
               <p className="text-sm text-muted-foreground">
                 Create a goal and toggle "Public mission" to be the first!
               </p>
+            </GlassCard>
+          ) : tab === 'mine' && filtered.length === 0 ? (
+            <GlassCard className="p-8 text-center">
+              <Users className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="font-heading font-semibold mb-1">No active missions</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Create a public mission or join one to get started!
+              </p>
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setTimeout(() => document.querySelector('[data-scroll-to-goal]')?.click?.(), 300);
+                }}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 11,
+                  fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase',
+                  background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)',
+                  color: '#fff', borderRadius: 12, padding: '10px 20px',
+                }}
+              >
+                Create a Mission
+              </button>
             </GlassCard>
           ) : (
             <div>

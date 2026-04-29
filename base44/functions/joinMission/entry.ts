@@ -20,6 +20,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Already joined' }, { status: 400 });
     }
 
+    // Check 3-mission limit: count active goals that have mission_id
+    const userGoals = await base44.entities.Goal.filter({ status: 'active' });
+    const activeMissionCount = userGoals.filter(g => g.mission_id).length;
+    if (activeMissionCount >= 3) {
+      return Response.json({ error: 'Max 3 active missions — complete one to join another' }, { status: 400 });
+    }
+
     // Use the joiner's own focus if available, fallback to mission's
     const idolGroup = user.favorite_group || mission.idol_group || '';
     const idolName = user.favorite_idol || user.favorite_group || mission.idol_name || '';

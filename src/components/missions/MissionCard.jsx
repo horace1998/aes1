@@ -37,8 +37,17 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
     }
   }, [currentUser?.email, mission.id, isInMembersList, hasActiveLinkedGoal, isCreator]);
 
+  // Count active missions for this user (created + joined)
+  const activeMissions = userGoals.filter(g => g.status === 'active' && g.mission_id).length;
+  const isCreatorOfActiveMission = userGoals.some(g => g.status === 'active' && g.is_mission_creator);
+  const canJoin = activeMissions < 3;
+
   const handleJoin = async () => {
     if (!currentUser || isMember || isCreator) return;
+    if (!canJoin) {
+      toast.error('Max 3 active missions — complete one to join another');
+      return;
+    }
     setJoining(true);
     try {
       const res = await base44.functions.invoke('joinMission', { mission_id: mission.id });
@@ -117,9 +126,15 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
               </Link>
             </div>
           ) : (
-            <GlassButton variant="primary" onClick={handleJoin} disabled={joining} className="w-full py-2 text-xs">
-              {joining ? <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" /> : 'Join Mission'}
-            </GlassButton>
+           <GlassButton 
+             variant="primary" 
+             onClick={handleJoin} 
+             disabled={joining || !canJoin} 
+             className="w-full py-2 text-xs"
+             title={!canJoin ? 'Max 3 active missions — complete one to join another' : ''}
+           >
+             {joining ? <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" /> : !canJoin ? 'Max 3 missions' : 'Join Mission'}
+           </GlassButton>
           )}
         </GlassCard>
       </motion.div>

@@ -66,7 +66,7 @@ export default function CheerInbox({ user }) {
               <p style={{
                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
                  color: 'rgba(0,0,0,0.4)', letterSpacing: '0.15em',
-               }}>{formatDistanceToNow(new Date(c.updated_date || c.created_date), { addSuffix: true })}</p>
+               }}>{formatDistanceToNow(new Date(c.created_date), { addSuffix: true })}</p>
             </div>
             <p style={{
               fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic',

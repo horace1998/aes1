@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, X, Check, Pencil, ImagePlus, Trash2, Heart } from 'lucide-react';
@@ -10,6 +10,7 @@ import FocusPicker from '@/components/FocusPicker';
 export default function EditProfile({ user }) {
   const fileRef = useRef(null);
   const queryClient = useQueryClient();
+  const [isExpanded, setIsExpanded] = useState(false);
   
   // Nickname state
   const [nickname, setNickname] = useState(user?.full_name || '');
@@ -80,9 +81,31 @@ export default function EditProfile({ user }) {
       transition={{ delay: 0.15 }}
     >
       <GlassCard variant="strong" className="p-5 mb-6" animate={false}>
-        <h3 className="font-heading text-lg font-bold mb-6">Edit Profile</h3>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full flex items-center justify-between"
+        >
+          <h3 className="font-heading text-lg font-bold">Edit Profile</h3>
+          <span style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 12,
+            fontWeight: 700,
+            color: 'rgba(0,0,0,0.5)',
+            transition: 'transform 0.3s',
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}>▼</span>
+        </button>
 
-        <div className="space-y-6">
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mt-6"
+            >
+              <div className="space-y-6" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {/* ── Profile Image & Nickname ── */}
           <div>
             <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-3">
@@ -244,30 +267,33 @@ export default function EditProfile({ user }) {
           </div>
         </div>
 
-        <div className="flex gap-2 mt-6">
-          <GlassButton
-            variant="ghost"
-            className="flex-1 text-foreground"
-            onClick={() => {
-              // Reset to original values
-              setNickname(user?.full_name || '');
-              setBgUrl(user?.hero_bg_url || null);
-              setSideImages(user?.hero_side_urls || [null, null]);
-              setGroup(user?.favorite_group || '');
-              setBias(user?.favorite_idol && user.favorite_idol !== user.favorite_group ? user.favorite_idol : '');
-            }}
-          >
-            Reset
-          </GlassButton>
-          <GlassButton
-            variant="primary"
-            className="flex-1"
-            onClick={handleSaveAll}
-            disabled={isUploading || updateUserMutation.isPending}
-          >
-            {isUploading || updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
-          </GlassButton>
-        </div>
+              <div className="flex gap-2 mt-6">
+                <GlassButton
+                  variant="ghost"
+                  className="flex-1 text-foreground"
+                  onClick={() => {
+                    // Reset to original values
+                    setNickname(user?.full_name || '');
+                    setBgUrl(user?.hero_bg_url || null);
+                    setSideImages(user?.hero_side_urls || [null, null]);
+                    setGroup(user?.favorite_group || '');
+                    setBias(user?.favorite_idol && user.favorite_idol !== user.favorite_group ? user.favorite_idol : '');
+                  }}
+                >
+                  Reset
+                </GlassButton>
+                <GlassButton
+                  variant="primary"
+                  className="flex-1"
+                  onClick={handleSaveAll}
+                  disabled={isUploading || updateUserMutation.isPending}
+                >
+                  {isUploading || updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
+                </GlassButton>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </GlassCard>
     </motion.div>
   );
