@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Radio, Plus, Camera, CheckSquare, Trophy, User, Image } from 'lucide-react';
+import { Home, Users, Radio, Plus, Camera, CheckSquare, Trophy, User, Image, Calendar } from 'lucide-react';
 
 const NAV_ITEMS_LEFT = [
   { path: '/', icon: Home, label: 'Home' },
   { path: '/gallery', icon: Image, label: 'Wall' },
   { path: '/missions', icon: Users, label: 'Missions' },
+  { path: '/tasks', icon: Calendar, label: 'Plan' },
 ];
 const NAV_ITEMS_RIGHT = [
   { path: '/feed', icon: Radio, label: 'Feed' },

@@ -2,24 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import ThreeBackground from '@/components/ThreeBackground';
-import GlassCard from '@/components/ui/GlassCard';
+import { Calendar, Clock, CheckCircle2, Circle, Share2, Loader2 } from 'lucide-react';
+import { format, parseISO, isSameDay } from 'date-fns';
 import PageShell from '@/components/PageShell';
-import {
-  format, startOfMonth, endOfMonth, eachDayOfInterval,
-  isSameDay, addMonths, subMonths, parseISO
-} from 'date-fns';
-import { ChevronLeft, ChevronRight, CheckCircle2, Circle, Clock } from 'lucide-react';
-
-const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+import GlassCard from '@/components/ui/GlassCard';
+import GlassButton from '@/components/ui/GlassButton';
+import { toast } from 'sonner';
 
 export default function Tasks() {
   const queryClient = useQueryClient();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [user, setUser] = useState(null);
+  const [shareTaskId, setShareTaskId] = useState(null);
 
-  useEffect(() => { base44.auth.me().then(setUser); }, []);
+  useEffect(() => {
+    base44.auth.me().then(setUser);
+  }, []);
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['tasks'],
@@ -28,176 +26,246 @@ export default function Tasks() {
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
-    queryFn: () => base44.entities.Goal.list('-created_date'),
+    queryFn: () => base44.entities.Goal.list(),
   });
 
   const toggleTaskMutation = useMutation({
-    mutationFn: (task) =>
-      base44.entities.Task.update(task.id, { status: task.status === 'done' ? 'pending' : 'done' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+    mutationFn: async (task) => {
+      const newStatus = task.status === 'done' ? 'pending' : 'done';
+      await base44.entities.Task.update(task.id, { status: newStatus });
+      return { ...task, status: newStatus };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
   });
 
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(currentMonth);
-  const calDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
-
-  // pad to start on Sunday
-  const startPad = monthStart.getDay();
-  const paddedDays = [
-    ...Array(startPad).fill(null),
-    ...calDays,
-  ];
-
-  const tasksOnDate = (date) =>
-    tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), date));
-
-  const selectedTasks = tasksOnDate(selectedDate).sort((a, b) => {
-    if (!a.due_time) return 1;
-    if (!b.due_time) return -1;
-    return a.due_time.localeCompare(b.due_time);
+  const shareTaskMutation = useMutation({
+    mutationFn: async (task) => {
+      const goal = goals.find(g => g.id === task.goal_id);
+      if (!goal?.mission_id) {
+        toast.error('Goal not linked to a mission');
+        return;
+      }
+      const mission = await base44.entities.Mission.get(goal.mission_id);
+      await base44.entities.FeedPost.create({
+        user_email: user.email,
+        user_name: user.full_name || user.email.split('@')[0],
+        idol_name: goal.idol_name,
+        idol_group: goal.idol_group,
+        goal_title: goal.title,
+        caption: `Completed: ${task.title} ✨`,
+        support_circle_id: goal.mission_id,
+        post_type: 'circle_story',
+        cheers: [],
+      });
+      toast.success('Shared to circle! 💜');
+      setShareTaskId(null);
+    },
+    onError: () => toast.error('Could not share'),
   });
+
+  // Tasks for selected date
+  const tasksForDate = tasks.filter(t => {
+    if (!t.due_date) return false;
+    return isSameDay(parseISO(t.due_date), selectedDate);
+  });
+
+  // All upcoming tasks (next 30 days)
+  const upcomingTasks = tasks.filter(t => {
+    if (!t.due_date) return false;
+    const dueDate = parseISO(t.due_date);
+    const now = new Date();
+    return dueDate >= now && dueDate.getTime() - now.getTime() <= 30 * 24 * 60 * 60 * 1000;
+  }).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
   return (
-    <div className="min-h-screen relative pb-28">
+    <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
       <PageShell goals={goals} user={user}>
-      <ThreeBackground />
-      <div className="relative z-10 px-4 pt-14">
-
+      <div className="relative z-10 px-5 pt-[3.5rem]">
         {/* Header */}
-        <motion.h1
-          className="font-display text-5xl tracking-wide uppercase text-foreground mb-6 px-2"
-          initial={{ opacity: 0, y: -16 }}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          className="mb-6"
         >
-          Tasks
-        </motion.h1>
+          <p className="editorial-eyebrow mb-1">Agenda</p>
+          <h1 className="font-display text-4xl tracking-tight text-foreground" style={{ fontWeight: 800 }}>PLAN</h1>
+        </motion.div>
 
-        {/* Calendar */}
-        <GlassCard variant="strong" className="p-4 mb-4 rounded-3xl" animate={false}>
-          {/* Month nav */}
-          <div className="flex items-center justify-between mb-4">
-            <button onClick={() => setCurrentMonth(m => subMonths(m, 1))} className="glass-subtle rounded-full p-1.5">
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="font-heading font-bold text-base">
-              {format(currentMonth, 'MMMM yyyy')}
-            </span>
-            <button onClick={() => setCurrentMonth(m => addMonths(m, 1))} className="glass-subtle rounded-full p-1.5">
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Day headers */}
-          <div className="grid grid-cols-7 mb-2">
-            {DAYS.map(d => (
-              <div key={d} className="text-center text-[10px] font-heading font-semibold text-muted-foreground py-1">
-                {d}
-              </div>
-            ))}
-          </div>
-
-          {/* Day cells */}
-          <div className="grid grid-cols-7 gap-y-1">
-            {paddedDays.map((day, i) => {
-              if (!day) return <div key={`pad-${i}`} />;
-              const isSelected = isSameDay(day, selectedDate);
-              const isToday = isSameDay(day, new Date());
-              const hasTasks = tasksOnDate(day).length > 0;
-              const tasksDone = tasksOnDate(day).filter(t => t.status === 'done').length;
-              const allDone = hasTasks && tasksDone === tasksOnDate(day).length;
-
+        {/* Calendar picker */}
+        <GlassCard variant="strong" className="p-4 mb-6" animate={false}>
+          <p className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground mb-3">Select date</p>
+          <div className="grid grid-cols-7 gap-1.5">
+            {[...Array(35)].map((_, i) => {
+              const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i - 14);
+              const isToday = isSameDay(date, new Date());
+              const isSelected = isSameDay(date, selectedDate);
+              const dayTasks = tasks.filter(t => t.due_date && isSameDay(parseISO(t.due_date), date));
+              const hasDone = dayTasks.some(t => t.status === 'done');
+              
               return (
                 <button
-                  key={day.toISOString()}
-                  onClick={() => setSelectedDate(day)}
-                  className={`relative flex flex-col items-center justify-center rounded-xl py-1.5 transition-all ${
+                  key={i}
+                  onClick={() => setSelectedDate(date)}
+                  className={`aspect-square rounded-lg text-xs font-heading flex flex-col items-center justify-center transition-all border ${
                     isSelected
-                      ? 'bg-gradient-to-br from-violet-400 to-indigo-400 shadow-md shadow-violet-300/40'
-                      : isToday
-                      ? 'glass border border-violet-300/50'
-                      : 'hover:bg-white/40'
-                  }`}
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-foreground/10 text-foreground'
+                  } ${isToday ? 'ring-1 ring-primary' : ''}`}
                 >
-                  <span className={`text-sm font-heading font-semibold ${
-                    isSelected ? 'text-white' : isToday ? 'text-violet-500' : 'text-foreground'
-                  }`}>
-                    {format(day, 'd')}
-                  </span>
-                  {hasTasks && (
-                    <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${
-                      allDone ? 'bg-indigo-400' : isSelected ? 'bg-white' : 'bg-pink-400'
-                    }`} />
-                  )}
+                  <span className="font-bold">{format(date, 'd')}</span>
+                  {hasDone && <span className="text-[6px] text-primary">✓</span>}
                 </button>
               );
             })}
           </div>
         </GlassCard>
 
-        {/* Selected day tasks */}
-        <div className="px-1">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading">
-              {format(selectedDate, 'EEE, MMM d')}
-            </p>
-            <span className="text-xs text-muted-foreground">{selectedTasks.length} task{selectedTasks.length !== 1 ? 's' : ''}</span>
-          </div>
-
-          <AnimatePresence>
-            {selectedTasks.length === 0 ? (
-              <GlassCard className="p-6 text-center" animate={false}>
-                <p className="text-muted-foreground text-sm">No tasks for this day</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">Tap + to add one</p>
-              </GlassCard>
-            ) : (
-              <div className="space-y-2">
-                {selectedTasks.map((task, i) => (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ delay: i * 0.05 }}
+        {/* Timeline for selected date */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-6"
+        >
+          <p className="font-heading text-sm font-bold mb-3">
+            {format(selectedDate, 'MMM d, yyyy')}
+          </p>
+          
+          {tasksForDate.length === 0 ? (
+            <GlassCard variant="subtle" className="p-6 text-center" animate={false}>
+              <Calendar className="w-8 h-8 text-foreground/20 mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground">No tasks for this date</p>
+            </GlassCard>
+          ) : (
+            <div className="space-y-2">
+              {tasksForDate.map((task, i) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 * i }}
+                >
+                  <GlassCard
+                    variant={task.status === 'done' ? 'subtle' : 'strong'}
+                    className="p-3 flex items-start gap-3"
+                    animate={false}
                   >
-                    <GlassCard className="p-4 flex items-start gap-3" animate={false}>
-                      <button
-                        onClick={() => toggleTaskMutation.mutate(task)}
-                        className="mt-0.5 shrink-0"
+                    <button
+                      onClick={() => toggleTaskMutation.mutate(task)}
+                      className="mt-0.5 flex-shrink-0"
+                    >
+                      {task.status === 'done' ? (
+                        <CheckCircle2 className="w-5 h-5 text-primary" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-foreground/30" />
+                      )}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`text-sm font-heading ${
+                          task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'
+                        }`}
                       >
-                        {task.status === 'done'
-                          ? <CheckCircle2 className="w-5 h-5 text-indigo-400" />
-                          : <Circle className="w-5 h-5 text-muted-foreground" />
-                        }
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-heading font-semibold text-sm ${task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
-                          {task.title}
+                        {task.title}
+                      </p>
+                      {task.due_time && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                          <Clock className="w-3 h-3" />
+                          {task.due_time}
                         </p>
-                        {task.description && (
-                          <p className="text-xs text-muted-foreground mt-0.5 truncate">{task.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          {task.due_time && (
-                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                              <Clock className="w-3 h-3" />{task.due_time}
-                            </span>
-                          )}
-                          {task.goal_title && (
-                            <span className="text-[10px] glass-subtle rounded-full px-2 py-0.5 text-violet-500 font-heading font-medium">
-                              {task.goal_title}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </GlassCard>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </AnimatePresence>
-        </div>
+                      )}
+                    </div>
+                    {task.status === 'done' && task.goal_id && (
+                      <button
+                        onClick={() => setShareTaskId(task.id)}
+                        className="flex-shrink-0 text-primary hover:text-primary/80"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Upcoming timeline */}
+        {upcomingTasks.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <p className="font-heading text-sm font-bold mb-3">Coming up</p>
+            <div className="space-y-2">
+              {upcomingTasks.slice(0, 8).map((task, i) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 * i }}
+                >
+                  <button
+                    onClick={() => setSelectedDate(parseISO(task.due_date))}
+                    className="w-full text-left p-3 rounded-2xl glass-strong transition-all hover:border-primary/30"
+                  >
+                    <p className="text-xs text-muted-foreground font-heading">
+                      {format(parseISO(task.due_date), 'MMM d')}
+                    </p>
+                    <p className="text-sm font-heading text-foreground mt-1">{task.title}</p>
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
 
+      {/* Share modal */}
+      <AnimatePresence>
+        {shareTaskId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end"
+            onClick={() => setShareTaskId(null)}
+          >
+            <motion.div
+              initial={{ y: 300 }}
+              animate={{ y: 0 }}
+              exit={{ y: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full glass-strong rounded-t-3xl p-6"
+            >
+              <p className="font-heading font-bold mb-4">Share to circle?</p>
+              <p className="text-sm text-muted-foreground mb-6">
+                Post this achievement to your support circle 💜
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShareTaskId(null)}
+                  className="flex-1 px-4 py-3 rounded-2xl border border-foreground/15 font-heading text-sm"
+                >
+                  Cancel
+                </button>
+                <GlassButton
+                  variant="primary"
+                  onClick={() => shareTaskMutation.mutate(tasks.find(t => t.id === shareTaskId))}
+                  disabled={shareTaskMutation.isPending}
+                  className="flex-1"
+                >
+                  {shareTaskMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Share'}
+                </GlassButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       </PageShell>
     </div>
   );
