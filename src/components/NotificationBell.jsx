@@ -41,7 +41,7 @@ export default function NotificationBell({ userEmail }) {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gradient-to-r from-violet-400 to-pink-400 flex items-center justify-center text-[9px] font-bold text-white"
+            className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-foreground flex items-center justify-center text-[9px] font-bold text-background"
           >
             {unread}
           </motion.span>
@@ -60,34 +60,34 @@ export default function NotificationBell({ userEmail }) {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             >
               <GlassCard variant="strong" className="p-4 rounded-2xl max-h-96 overflow-y-auto no-scrollbar" animate={false}>
-                <p className="font-heading text-sm font-bold mb-3">Messages from your idols</p>
+                <p className="editorial-eyebrow mb-4">Messages — Dispatches</p>
                 {notifications.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">No messages yet</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3 -mt-3">
                     {notifications.map((n) => (
                       <div
                         key={n.id}
-                        className={`glass-subtle rounded-xl p-3 ${!n.is_read ? 'ring-1 ring-violet-300/50' : ''}`}
+                        className={`border-t border-foreground/10 pt-3 ${!n.is_read ? '' : 'opacity-70'}`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-heading font-semibold text-violet-500 uppercase tracking-wider">
+                          <span className="editorial-eyebrow text-foreground">
                             {n.idol_name}
                           </span>
-                          <span className="text-[9px] text-muted-foreground/60">
+                          <span className="text-[9px] text-muted-foreground tracking-wider uppercase">
                             {n.sent_date ? format(new Date(n.sent_date), 'MMM d') : ''}
                           </span>
                         </div>
-                        <p className="text-xs text-foreground leading-relaxed">{n.message}</p>
+                        <p className="editorial-italic text-sm text-foreground leading-relaxed">{n.message}</p>
                         {n.progress !== undefined && (
-                          <div className="mt-2 flex items-center gap-1">
-                            <div className="flex-1 h-1 rounded-full bg-white/30 overflow-hidden">
+                          <div className="mt-2 flex items-center gap-2">
+                            <div className="flex-1 h-px bg-foreground/15 relative">
                               <div
-                                className="h-full rounded-full bg-gradient-to-r from-violet-300 to-indigo-400"
-                                style={{ width: `${n.progress}%` }}
+                                className="absolute inset-y-0 left-0 bg-foreground"
+                                style={{ width: `${n.progress}%`, height: '2px', top: '-0.5px' }}
                               />
                             </div>
-                            <span className="text-[9px] text-muted-foreground">{n.progress}%</span>
+                            <span className="editorial-eyebrow">{n.progress}%</span>
                           </div>
                         )}
                       </div>

@@ -12,7 +12,7 @@ export default function PhotoWall({ milestones = [], emptyLabel = 'No milestones
   if (withPhotos.length === 0) {
     return (
       <div className="glass-subtle rounded-2xl p-8 text-center">
-        <Camera className="w-7 h-7 text-violet-300 mx-auto mb-2" />
+        <Camera className="w-6 h-6 text-foreground/30 mx-auto mb-2" strokeWidth={1.4} />
         <p className="text-xs text-muted-foreground font-heading">{emptyLabel}</p>
       </div>
     );

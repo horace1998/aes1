@@ -6,7 +6,7 @@ import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
 import PageShell from '@/components/PageShell';
-import { CheckCircle2, Flame, Target, LogOut, TrendingUp, Shield, Eye } from 'lucide-react';
+import { LogOut, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
@@ -77,23 +77,26 @@ export default function Profile() {
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-8">
+        {/* Stats — editorial four-column index */}
+        <div className="grid grid-cols-4 border-t border-b border-foreground/15 mb-8">
           {[
-            { label: 'Total Goals', value: goals.length, icon: Target, color: 'text-violet-400' },
-            { label: 'Completed', value: completedGoals, icon: CheckCircle2, color: 'text-indigo-400' },
-            { label: 'Check-ins', value: totalCheckins, icon: Flame, color: 'text-pink-400' },
-            { label: 'Streak', value: `${totalCheckins}d`, icon: TrendingUp, color: 'text-violet-500' },
+            { label: 'Goals', value: goals.length },
+            { label: 'Done', value: completedGoals },
+            { label: 'Entries', value: totalCheckins },
+            { label: 'Streak', value: `${totalCheckins}` },
           ].map((stat, i) => (
-            <GlassCard key={stat.label} className="p-4 text-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 + i * 0.08, type: 'spring' }}
+            <motion.div
+              key={stat.label}
+              className={`text-center py-4 ${i < 3 ? 'border-r border-foreground/15' : ''}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
             >
-              <stat.icon className={`w-5 h-5 ${stat.color} mx-auto mb-2`} />
-              <p className="font-heading text-2xl font-bold">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-            </GlassCard>
+              <p className="font-display text-2xl text-foreground" style={{ fontWeight: 600 }}>
+                {String(stat.value).padStart(2, '0')}
+              </p>
+              <p className="editorial-eyebrow mt-1">{stat.label}</p>
+            </motion.div>
           ))}
         </div>
 
@@ -118,19 +121,19 @@ export default function Profile() {
         <ReminderSettings />
 
         {/* Station ID */}
-        <GlassCard variant="strong" className="p-5 mb-6 text-center">
-          <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading mb-2">Station ID</p>
-          <p className="font-heading text-lg font-bold tracking-wider text-violet-500">
-            SYNK-{user.id?.slice(0, 8)?.toUpperCase() || '00000000'}
+        <div className="border-t border-b border-foreground/15 py-5 mb-6 text-center">
+          <p className="editorial-eyebrow mb-2">Station ID</p>
+          <p className="font-display text-lg tracking-[0.2em] text-foreground" style={{ fontWeight: 600 }}>
+            SYNK·{user.id?.slice(0, 8)?.toUpperCase() || '00000000'}
           </p>
-        </GlassCard>
+        </div>
 
         {/* Admin */}
         {user.role === 'admin' && (
           <Link to="/admin/moderation">
             <GlassButton
               variant="ghost"
-              className="w-full flex items-center justify-center gap-2 text-violet-500 mb-3"
+              className="w-full flex items-center justify-center gap-2 text-foreground mb-3"
             >
               <Shield className="w-4 h-4" /> Moderation Queue
             </GlassButton>

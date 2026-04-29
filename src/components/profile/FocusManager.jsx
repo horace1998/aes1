@@ -45,12 +45,12 @@ export default function FocusManager({ user }) {
       </div>
 
       {!editing ? (
-        <div className="flex items-center gap-2">
-          <Heart className="w-4 h-4 text-pink-400 fill-pink-400" />
+        <div className="flex items-center gap-3">
+          <Heart className="w-4 h-4 text-foreground" strokeWidth={1.5} />
           <div>
-            <p className="font-heading font-bold text-base">{subject}</p>
+            <p className="font-display text-lg text-foreground" style={{ fontWeight: 500 }}>{subject}</p>
             {user?.favorite_idol && user.favorite_idol !== user.favorite_group && (
-              <p className="text-[11px] text-muted-foreground">{user.favorite_group}</p>
+              <p className="editorial-eyebrow mt-0.5">{user.favorite_group}</p>
             )}
           </div>
         </div>
