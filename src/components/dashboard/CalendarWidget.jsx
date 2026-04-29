@@ -68,7 +68,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
         </button>
         <div className="flex items-end gap-3">
           <h2 className="text-5xl font-display font-bold text-foreground">
-            {format(displayMonth, 'MMMM')}
+            {format(displayMonth, 'MMM').toUpperCase()}
           </h2>
           <p className="text-5xl font-display font-bold text-foreground pb-1">
             {format(displayMonth, 'd')}
@@ -117,7 +117,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
                     <>
                       <span className="text-xs">{format(date, 'd')}</span>
                       {dayTasks.length > 0 && (
-                        <span className="absolute bottom-1 text-[8px] opacity-60">•</span>
+                        <span className="absolute bottom-0.5 text-sm opacity-70">•</span>
                       )}
                     </>
                   )}
