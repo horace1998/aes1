@@ -68,24 +68,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 3) AI moderation
+    // 3) AI moderation (explicit harm only)
     const result = await base44.integrations.Core.InvokeLLM({
       prompt: `You are the content moderator for a K-pop fan self-improvement community app.
 Users post about their personal goals, milestones, and supportive comments to fellow fans.
 
-Decide whether the following ${kind || 'post'} is allowed.
+Decide whether the following ${kind || 'post'} violates community guidelines.
 
-BLOCK if it contains:
+BLOCK ONLY if it contains:
 - Sexual / NSFW / 18+ content
-- Hate speech, slurs, harassment, threats
-- Politics, political figures, election content
+- Hate speech, slurs, harassment, or threats
 - Spam, scams, ads, links to external sites, crypto, gambling
 - Self-harm or dangerous content
-- Off-topic chit-chat unrelated to fandom or self-improvement (e.g. dating ads, random rants)
 
-ALLOW if it is:
-- A genuine personal goal, progress update, milestone, or supportive comment
-- About K-pop idols, fandom, fitness, study, wellness, creativity, lifestyle improvement
+ALLOW everything else, including:
+- Personal goals and progress updates (even vague ones)
+- Supportive comments
+- Any content related to K-pop, fandom, fitness, wellness, creativity, lifestyle
+- Casual or brief posts
 
 Respond strictly as JSON.
 
