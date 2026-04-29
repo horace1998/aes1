@@ -83,24 +83,24 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
 
               {!hasFocus ? (
                 <div className="text-center py-6">
-                  <Heart className="w-6 h-6 text-pink-400 mx-auto mb-2" />
+                  <Heart className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-1">No focus picked yet.</p>
                   <p className="text-xs text-muted-foreground">Set your group/bias in Profile first.</p>
                 </div>
               ) : (
                 <>
-                  <div className="iridescent rounded-xl p-4 glass mb-4 text-center">
+                  <div className="border border-foreground/15 rounded-xl p-4 mb-4 text-center">
                     <p className="text-[10px] text-muted-foreground font-heading uppercase tracking-wider mb-1.5">My Pledge</p>
                     <p className="font-heading text-sm font-bold text-foreground leading-snug">
-                      Before I meet <span className="text-violet-500">{idolName}</span>, I will{' '}
-                      <span className="text-indigo-500">{goal || '...'}</span>{' '}
+                      Before I meet <span className="text-foreground">{idolName}</span>, I will{' '}
+                      <span className="text-foreground">{goal || '...'}</span>{' '}
                       for the next{' '}
-                      <span className="text-violet-500">{timelineValue} {timelineUnit}</span>
+                      <span className="text-foreground">{timelineValue} {timelineUnit}</span>
                     </p>
                   </div>
 
                   <div className="space-y-3">
-                    <div className="glass-subtle rounded-xl p-3">
+                    <div className="border border-foreground/10 rounded-xl p-3">
                       <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">
                         <Target className="w-3 h-3 inline mr-1" />Goal
                       </label>
@@ -114,17 +114,17 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                       />
                     </div>
 
-                    <div className="glass-subtle rounded-xl p-3">
+                    <div className="border border-foreground/10 rounded-xl p-3">
                       <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-2">Timeline</label>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           <button
-                            className="w-7 h-7 rounded-full glass flex items-center justify-center text-sm font-bold"
+                            className="w-7 h-7 rounded-full border border-foreground/15 flex items-center justify-center text-sm font-bold"
                             onClick={() => setTimelineValue(Math.max(1, timelineValue - 1))}
                           >−</button>
                           <span className="font-heading font-bold text-xl w-8 text-center">{timelineValue}</span>
                           <button
-                            className="w-7 h-7 rounded-full glass flex items-center justify-center text-sm font-bold"
+                            className="w-7 h-7 rounded-full border border-foreground/15 flex items-center justify-center text-sm font-bold"
                             onClick={() => setTimelineValue(timelineValue + 1)}
                           >+</button>
                         </div>
@@ -134,8 +134,8 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                               key={unit}
                               className={`flex-1 rounded-lg py-1.5 text-[10px] font-heading font-medium capitalize transition-all ${
                                 timelineUnit === unit
-                                  ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white'
-                                  : 'glass text-muted-foreground'
+                                  ? 'bg-foreground text-background'
+                                  : 'border border-foreground/10 text-muted-foreground'
                               }`}
                               onClick={() => setTimelineUnit(unit)}
                             >
@@ -149,20 +149,20 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                     {/* Public mission toggle */}
                     <button
                       onClick={() => setMakePublic(p => !p)}
-                      className={`w-full rounded-xl p-3 flex items-center gap-3 text-left transition-all ${
-                        makePublic ? 'bg-gradient-to-r from-violet-100 to-pink-100 ring-1 ring-violet-300/60' : 'glass-subtle'
+                      className={`w-full rounded-xl p-3 flex items-center gap-3 text-left transition-all border ${
+                        makePublic ? 'border-foreground/40 bg-foreground/5' : 'border-foreground/10'
                       }`}
                     >
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        makePublic ? 'bg-gradient-to-br from-violet-400 to-pink-400' : 'glass'
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 border ${
+                        makePublic ? 'bg-foreground border-foreground' : 'border-foreground/15'
                       }`}>
-                        <Users className={`w-4 h-4 ${makePublic ? 'text-white' : 'text-violet-400'}`} />
+                        <Users className={`w-4 h-4 ${makePublic ? 'text-background' : 'text-foreground'}`} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-heading font-bold">Make this a public mission</p>
-                        <p className="text-[10px] text-muted-foreground">Other fans can join you on this journey 💜</p>
+                        <p className="text-[10px] text-muted-foreground">Other fans can join you on this journey</p>
                       </div>
-                      <div className={`w-9 h-5 rounded-full transition-all flex items-center ${makePublic ? 'bg-violet-400' : 'bg-slate-300'}`}>
+                      <div className={`w-9 h-5 rounded-full transition-all flex items-center ${makePublic ? 'bg-foreground' : 'bg-foreground/20'}`}>
                         <motion.div
                           className="w-4 h-4 bg-white rounded-full shadow-md"
                           animate={{ x: makePublic ? 18 : 2 }}
@@ -180,9 +180,9 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                           exit={{ opacity: 0, height: 0 }}
                           className="space-y-3 overflow-hidden"
                         >
-                          <div className="glass-subtle rounded-xl p-3">
+                          <div className="border border-foreground/10 rounded-xl p-3">
                             <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">
-                              <Sparkles className="w-3 h-3 inline mr-1" />Why join? (optional)
+                               <Sparkles className="w-3 h-3 inline mr-1" />Why join? (optional)
                             </label>
                             <textarea
                               rows={2}
@@ -194,17 +194,17 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                             />
                           </div>
 
-                          <div className="glass-subtle rounded-xl p-3">
+                          <div className="border border-foreground/10 rounded-xl p-3">
                             <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-2">Category</label>
                             <div className="flex gap-1.5 flex-wrap">
                               {CATEGORIES.map(c => (
                                 <button
                                   key={c.id}
                                   onClick={() => setCategory(c.id)}
-                                  className={`rounded-full px-2.5 py-1 text-[10px] font-heading font-medium transition-all ${
+                                  className={`rounded-full px-2.5 py-1 text-[10px] font-heading font-medium transition-all border ${
                                     category === c.id
-                                      ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white'
-                                      : 'glass text-muted-foreground'
+                                      ? 'bg-foreground text-background border-foreground'
+                                      : 'border-foreground/15 text-muted-foreground'
                                   }`}
                                 >
                                   {c.label}

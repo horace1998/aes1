@@ -63,7 +63,7 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
             <GlassCard variant="strong" className="p-5 rounded-3xl max-h-full overflow-y-auto no-scrollbar" animate={false}>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <Camera className="w-5 h-5 text-violet-400" />
+                  <Camera className="w-5 h-5 text-foreground" />
                   <h3 className="font-heading text-xl font-bold">Capture Milestone</h3>
                 </div>
                 <button
@@ -91,8 +91,8 @@ export default function MilestoneNativeCapture({ isOpen, onClose, goals = [] }) 
                         onClick={() => setSelectedGoal(g)}
                         className={`rounded-full px-3 py-1.5 text-xs font-heading font-semibold border transition-all ${
                           selectedGoal?.id === g.id
-                            ? 'bg-violet-400 text-white border-violet-300'
-                            : 'glass-subtle border-white/40 text-foreground'
+                            ? 'bg-foreground text-background border-foreground'
+                            : 'border-foreground/15 text-foreground'
                         }`}
                       >
                         {g.title}

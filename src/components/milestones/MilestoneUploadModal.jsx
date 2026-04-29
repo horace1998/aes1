@@ -49,7 +49,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -59,10 +59,10 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
             onClick={onClose}
           />
           <motion.div
-            className="relative w-full max-w-lg mx-4 mb-4"
-            initial={{ y: 400, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 400, opacity: 0 }}
+            className="relative w-full max-w-lg"
+            initial={{ y: 40, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 40, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>
@@ -93,13 +93,13 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                     transition={{ type: 'spring' }}
                   />
                 ) : (
-                  <div className="glass h-48 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-white/60 hover:border-violet-300/60 transition-colors">
+                  <div className="border-2 border-dashed border-foreground/20 rounded-2xl h-48 flex flex-col items-center justify-center gap-3 hover:border-foreground/40 transition-colors">
                     {uploading ? (
-                      <div className="w-8 h-8 border-[3px] border-violet-300 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-8 h-8 border-[3px] border-foreground border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
-                        <div className="w-12 h-12 rounded-full glass-strong flex items-center justify-center">
-                          <Upload className="w-5 h-5 text-violet-500" />
+                        <div className="w-12 h-12 rounded-full border border-foreground/15 flex items-center justify-center">
+                          <Upload className="w-5 h-5 text-foreground" />
                         </div>
                         <p className="text-sm text-muted-foreground text-center">
                           Tap to upload your<br />fandom asset
@@ -122,10 +122,10 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
                 {ASSET_TYPES.map(type => (
                   <button
                     key={type}
-                    className={`flex-1 rounded-xl py-2 text-[10px] font-heading font-semibold uppercase tracking-wider transition-all ${
+                    className={`flex-1 rounded-xl py-2 text-[10px] font-heading font-semibold uppercase tracking-wider transition-all border ${
                       assetType === type
-                        ? 'bg-gradient-to-r from-violet-400 to-indigo-400 text-white shadow-md'
-                        : 'glass-subtle text-muted-foreground'
+                        ? 'bg-foreground text-background border-foreground'
+                        : 'border-foreground/10 text-muted-foreground'
                     }`}
                     onClick={() => setAssetType(type)}
                   >
@@ -135,7 +135,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
               </div>
 
               {/* Caption */}
-              <div className="glass-subtle rounded-xl p-3 mb-5">
+              <div className="border border-foreground/10 rounded-xl p-3 mb-5">
                 <label className="text-[10px] tracking-widest uppercase text-muted-foreground font-heading block mb-1">
                   Caption
                 </label>
