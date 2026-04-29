@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { getFanRank, getNextRank, getRankScore } from '@/lib/fanRank';
 
-export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0 }) {
+export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, idolImageUrl }) {
   const rank = getFanRank(totalCheckins, milestoneCount);
   const score = getRankScore(totalCheckins, milestoneCount);
   const next = getNextRank(totalCheckins, milestoneCount);
@@ -13,7 +13,33 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0 }) 
 
   return (
     <motion.div
-      className="mb-7 relative overflow-hidden"
+      className="mb-7 relative"
+      style={{ paddingTop: idolImageUrl ? 72 : 0 }}
+    >
+      {/* Idol image — head pokes above the card */}
+      {idolImageUrl && (
+        <div
+          className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+          style={{ top: 0, zIndex: 20, width: 130, height: 180 }}
+          aria-hidden="true"
+        >
+          <img
+            src={idolImageUrl}
+            alt=""
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'top center',
+              borderRadius: '50% 50% 0 0',
+              filter: 'drop-shadow(0 -8px 24px rgba(26,58,173,0.6)) drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
+            }}
+          />
+        </div>
+      )}
+
+    <motion.div
+      className="relative overflow-hidden"
       style={{
         borderRadius: 20,
         background: 'linear-gradient(135deg, #0d1f6b 0%, #1a3aad 60%, #0a1540 100%)',
@@ -25,6 +51,9 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0 }) 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55 }}
     >
+      {/* Extra top padding when idol image is shown */}
+      {idolImageUrl && <div style={{ height: 50 }} />}
+
       {/* Big ghost rank text */}
       <div
         className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -97,6 +126,7 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0 }) 
       }}>
         {next ? `${next.pointsNeeded} pts to ${next.rank.label}` : '— apex tier —'}
       </p>
+    </motion.div>
     </motion.div>
   );
 }

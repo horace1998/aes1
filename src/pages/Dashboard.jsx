@@ -111,25 +111,20 @@ export default function Dashboard() {
               width: '100%', height: '100%',
               objectFit: 'cover', objectPosition: 'top center',
               borderBottomLeftRadius: 64,
-              opacity: 0.88,
+              opacity: 1,
             }}
           />
-          {/* Fade edges into white */}
+          {/* Fade left edge only */}
           <div style={{
             position: 'absolute', inset: 0,
             borderBottomLeftRadius: 64,
-            background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.55) 100%)',
+            background: 'linear-gradient(to left, transparent 20%, rgba(255,255,255,0.35) 100%)',
           }} />
+          {/* Fade bottom edge */}
           <div style={{
             position: 'absolute', inset: 0,
             borderBottomLeftRadius: 64,
-            background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.1) 35%, transparent 60%)',
-          }} />
-          {/* Subtle navy tint overlay */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            borderBottomLeftRadius: 64,
-            background: 'linear-gradient(135deg, rgba(26,58,173,0.08) 0%, transparent 60%)',
+            background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.05) 30%, transparent 55%)',
           }} />
         </div>
       )}
@@ -174,7 +169,7 @@ export default function Dashboard() {
         <EditorialHeader user={user} />
 
         {/* Fan Rank */}
-        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
+        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} />
 
         {/* Stats — filmstrip style */}
         <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>

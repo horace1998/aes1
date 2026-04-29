@@ -57,12 +57,11 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center px-4"
-          style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))', paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-none" />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
           <motion.div
             className="relative w-full max-w-lg max-h-full"
             initial={{ y: 60, opacity: 0, scale: 0.96 }}
