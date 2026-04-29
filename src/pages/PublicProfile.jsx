@@ -71,6 +71,22 @@ export default function PublicProfile() {
     );
   }
 
+  // Check privacy settings
+  if (profileUser.profile_visibility === 'private') {
+    return (
+      <div className="min-h-screen relative pb-28 px-6 pt-14">
+        <ThreeBackground />
+        <Link to="/feed" className="inline-flex items-center gap-2 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.5)' }}>
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
+        </Link>
+        <GlassCard variant="strong" className="p-10 text-center">
+          <p className="font-heading font-bold text-lg mb-1">Profile is Private</p>
+          <p className="text-xs text-muted-foreground">This member's profile is not publicly visible.</p>
+        </GlassCard>
+      </div>
+    );
+  }
+
   const displayName = profileUser.full_name || (email.split('@')[0]);
   const biasName = profileUser.favorite_idol;
   const groupName = profileUser.favorite_group;
@@ -120,6 +136,29 @@ export default function PublicProfile() {
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
+
+        {/* Followers / Following stats */}
+        <div className="grid grid-cols-3 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          {[
+            { label: 'Followers', value: profileUser.followers?.length || 0 },
+            { label: 'Following', value: profileUser.following?.length || 0 },
+            { label: 'Creations', value: milestones.length },
+          ].map((s, i) => (
+            <motion.div
+              key={s.label}
+              className="text-center py-4"
+              style={{ borderRight: i < 2 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05 }}
+            >
+              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#0d1117', fontWeight: 600 }}>
+                {String(s.value).padStart(3, '0')}
+              </p>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 3 }}>{s.label}</p>
+            </motion.div>
+          ))}
+        </div>
 
         {/* Stats — editorial four-column index */}
         <div className="grid grid-cols-4 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>

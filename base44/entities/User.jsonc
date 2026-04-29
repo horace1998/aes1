@@ -4,27 +4,55 @@
   "properties": {
     "role": {
       "type": "string",
-      "description": "The role of the user in the app",
       "enum": [
-        "admin",
-        "user"
-      ]
-    },
-    "onboarded": {
-      "type": "boolean",
-      "description": "Whether the user has completed onboarding",
-      "default": false
+        "user",
+        "admin"
+      ],
+      "default": "user"
     },
     "favorite_idol": {
-      "type": "string",
-      "description": "User's favorite idol name"
+      "type": "string"
     },
     "favorite_group": {
+      "type": "string"
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "background_image_url": {
+      "type": "string"
+    },
+    "profile_visibility": {
       "type": "string",
-      "description": "User's favorite idol group"
+      "enum": [
+        "public",
+        "private"
+      ],
+      "default": "public"
+    },
+    "followers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "following": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
     }
-  },
-  "required": [
-    "role"
-  ]
+  }
 }

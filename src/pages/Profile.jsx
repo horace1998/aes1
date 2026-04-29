@@ -78,12 +78,49 @@ export default function Profile() {
           <p className="text-xs" style={{ color: 'rgba(0,0,0,0.45)' }}>{user.email}</p>
         </motion.div>
 
+        {/* Profile Visibility Toggle */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.04 }}
+          className="mb-3 glass rounded-2xl p-4 flex items-center justify-between"
+        >
+          <div>
+            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 600, color: '#0d1117' }}>
+              Profile Visibility
+            </p>
+            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, color: 'rgba(0,0,0,0.5)', marginTop: 2 }}>
+              {user.profile_visibility === 'public' ? 'Public · Anyone can view' : 'Private · Only you can view'}
+            </p>
+          </div>
+          <button
+            onClick={async () => {
+              await base44.auth.updateMe({
+                profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public',
+              });
+              setUser({ ...user, profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public' });
+            }}
+            style={{
+              width: 48, height: 28, borderRadius: 14,
+              background: user.profile_visibility === 'public' ? '#1a3aad' : '#ccc',
+              border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.3s',
+            }}
+          >
+            <motion.div
+              animate={{ x: user.profile_visibility === 'public' ? 20 : 2 }}
+              style={{ width: 24, height: 24, borderRadius: 12, background: 'white', position: 'absolute', top: 2, left: 2 }}
+            />
+          </button>
+        </motion.div>
+
         {/* View public profile CTA */}
-        <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-3">
-          <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2">
-            <Eye className="w-4 h-4" /> View My Public Profile
-          </GlassButton>
-        </Link>
+        {user.profile_visibility === 'public' && (
+          <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-3">
+            <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2">
+              <Eye className="w-4 h-4" /> View My Public Profile
+            </GlassButton>
+          </Link>
+        )}
 
         {/* Edit Profile Button */}
         <motion.div
