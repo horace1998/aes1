@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, X } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import { getFanRank, getNextRank, getRankScore } from '@/lib/fanRank';
 
-export default function HeroDecorator({ user }) {
+export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount = 0 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [bgUrl, setBgUrl] = useState(user?.hero_bg_url || null);
   const [sideImages, setSideImages] = useState(user?.hero_side_urls || [null, null]);
@@ -47,6 +48,12 @@ export default function HeroDecorator({ user }) {
   };
 
   const centerImage = user?.background_image_url;
+  const rank = getFanRank(totalCheckins, milestoneCount);
+  const score = getRankScore(totalCheckins, milestoneCount);
+  const next = getNextRank(totalCheckins, milestoneCount);
+  const progress = next
+    ? Math.min(100, Math.round(((score - (rank.minScore || 0)) / (next.rank.minScore - (rank.minScore || 0))) * 100))
+    : 100;
 
   // Display mode
   if (!isEditing && bgUrl) {
@@ -54,7 +61,13 @@ export default function HeroDecorator({ user }) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative h-80 rounded-2xl overflow-hidden mb-6 group cursor-pointer"
+        className="relative rounded-2xl overflow-hidden mb-6 group cursor-pointer"
+        style={{
+          minHeight: 380,
+          background: 'linear-gradient(135deg, #0a1540 0%, #0d1f6b 45%, #1a3aad 100%)',
+          border: '1px solid rgba(77, 127, 255, 0.4)',
+          boxShadow: '0 8px 48px rgba(26, 58, 173, 0.55), inset 0 1px 0 rgba(255,255,255,0.07)',
+        }}
         onClick={() => setIsEditing(true)}
       >
         {/* B&W background with black filter */}
@@ -89,6 +102,47 @@ export default function HeroDecorator({ user }) {
           </div>
         )}
 
+        {/* Fan Rank info overlay — bottom right */}
+        <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-black/70 to-transparent p-6 relative z-10">
+          <div className="flex items-baseline gap-3 mb-2">
+            <h3 style={{
+              fontFamily: 'Bebas Neue, Impact, sans-serif',
+              fontSize: 'clamp(1.8rem, 8vw, 2.8rem)',
+              color: '#fff', lineHeight: 1, letterSpacing: '0.06em',
+            }}>
+              {rank.label}
+            </h3>
+            <p style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontStyle: 'italic', fontSize: 12,
+              color: 'rgba(255,255,255,0.6)',
+            }}>
+              {rank.description}
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
+            <div style={{ flex: 1, height: 2, borderRadius: 99, background: 'rgba(255,255,255,0.15)', marginRight: 12, overflow: 'hidden' }}>
+              <motion.div
+                style={{
+                  height: '100%', borderRadius: 99,
+                  background: 'linear-gradient(90deg, rgba(77,127,255,0.9), rgba(200,160,255,0.85))',
+                }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 1.1, ease: 'easeOut' }}
+              />
+            </div>
+            <span style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+              whiteSpace: 'nowrap',
+            }}>
+              {String(score).padStart(3, '0')} PTS
+            </span>
+          </div>
+        </div>
+
         {/* Hover edit indicator */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
           <p className="text-white text-sm font-heading">Edit</p>
@@ -101,7 +155,7 @@ export default function HeroDecorator({ user }) {
   return (
     <GlassCard variant="strong" className="p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-heading text-lg font-bold">Decorate Your Page</h3>
+        <h3 className="font-heading text-lg font-bold">Your Identity</h3>
         <button
           onClick={() => {
             setIsEditing(false);

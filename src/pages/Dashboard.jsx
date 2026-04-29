@@ -153,15 +153,20 @@ export default function Dashboard() {
         {/* Poster header */}
         <EditorialHeader user={user} />
 
-        {/* Identity Section — Hero + Fan Rank */}
+        {/* Identity Section — Hero + Fan Rank unified */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
           className="mb-6"
         >
-          {user && <HeroDecorator user={user} />}
-          <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} hologram />
+          {user && (
+            <HeroDecorator 
+              user={user} 
+              totalCheckins={totalCheckins} 
+              milestoneCount={milestoneCount}
+            />
+          )}
         </motion.div>
 
         {/* Cheers received from circle members */}
