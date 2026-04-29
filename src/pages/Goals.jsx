@@ -8,6 +8,7 @@ import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
 import { format } from 'date-fns';
+import { leaveGoal } from '@/lib/leaveGoal';
 
 const TABS = ['active', 'completed', 'all'];
 
@@ -43,6 +44,14 @@ export default function Goals() {
   const completeMutation = useMutation({
     mutationFn: (goal) => base44.entities.Goal.update(goal.id, { status: 'completed', progress: 100 }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: (goal) => leaveGoal(goal, user?.email),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['missions'] });
+    },
   });
 
   const filtered = activeTab === 'all' ? goals : goals.filter(g => g.status === activeTab);
@@ -100,6 +109,7 @@ export default function Goals() {
                 index={i}
                 onCheckin={(g) => checkinMutation.mutate(g)}
                 onComplete={(g) => completeMutation.mutate(g)}
+                onDelete={() => leaveMutation.mutate(goal)}
               />
             ))
           )}

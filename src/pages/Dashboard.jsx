@@ -13,6 +13,7 @@ import TrendsSection from '@/components/dashboard/TrendsSection';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import CheerInbox from '@/components/circle/CheerInbox';
+import { leaveGoal } from '@/lib/leaveGoal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
 
@@ -61,8 +62,11 @@ export default function Dashboard() {
   });
 
   const deleteGoalMutation = useMutation({
-    mutationFn: (goalId) => base44.entities.Goal.update(goalId, { status: 'abandoned' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
+    mutationFn: (goal) => leaveGoal(goal, user?.email),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['missions'] });
+    },
   });
 
   const { data: milestones = [] } = useQuery({
@@ -81,8 +85,8 @@ export default function Dashboard() {
     checkinMutation.mutate({ goal, prevRankId: currentRank.id });
   };
 
-  const handleDeleteGoal = (goalId) => {
-    deleteGoalMutation.mutate(goalId);
+  const handleDeleteGoal = (goal) => {
+    deleteGoalMutation.mutate(goal);
   };
 
   const handleShareLevelUp = async () => {
@@ -229,7 +233,7 @@ export default function Dashboard() {
                   index={i}
                   onCheckin={handleCheckin}
                   onComplete={(g) => completeMutation.mutate(g)}
-                  onDelete={() => handleDeleteGoal(goal.id)}
+                  onDelete={() => handleDeleteGoal(goal)}
                 />
               ))}
               {!canAddGoal && (

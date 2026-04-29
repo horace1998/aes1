@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -8,10 +8,12 @@ import PageShell from '@/components/PageShell';
 import CircleMembersList from '@/components/circle/CircleMembersList';
 import CircleStoryComposer from '@/components/circle/CircleStoryComposer';
 import CircleStoriesFeed from '@/components/circle/CircleStoriesFeed';
+import CircleMembersFeed from '@/components/circle/CircleMembersFeed';
 
 export default function SupportCircle() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [tab, setTab] = useState('stories'); // 'stories' | 'members_feed'
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
@@ -127,16 +129,37 @@ export default function SupportCircle() {
 
           <CircleMembersList members={allMembers} currentUser={user} circleId={mission.id} />
 
-          <div className="mb-3">
-            <p style={{
-              fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
-              fontWeight: 700, letterSpacing: '0.35em', textTransform: 'uppercase',
-              color: 'rgba(0,0,0,0.4)', marginBottom: 12,
-            }}>Stories</p>
+          {/* Tab switcher */}
+          <div className="flex gap-2 mb-4">
+            {[
+              { id: 'stories', label: 'Circle Stories' },
+              { id: 'members_feed', label: 'Member Feed · 7d' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className="flex-1 py-2 rounded-xl"
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 10,
+                  fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase',
+                  background: tab === t.id ? '#0d1117' : 'transparent',
+                  color: tab === t.id ? '#fff' : 'rgba(0,0,0,0.5)',
+                  border: tab === t.id ? '1px solid #0d1117' : '1px solid rgba(0,0,0,0.12)',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
           </div>
 
-          <CircleStoryComposer circleId={mission.id} mission={mission} currentUser={user} />
-          <CircleStoriesFeed circleId={mission.id} />
+          {tab === 'stories' ? (
+            <>
+              <CircleStoryComposer circleId={mission.id} mission={mission} currentUser={user} />
+              <CircleStoriesFeed circleId={mission.id} />
+            </>
+          ) : (
+            <CircleMembersFeed members={allMembers} />
+          )}
         </div>
       </PageShell>
     </div>
