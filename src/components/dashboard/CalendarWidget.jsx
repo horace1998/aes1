@@ -112,7 +112,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
                     <>
                       <span className="text-xs">{format(date, 'd')}</span>
                       {dayTasks.length > 0 && (
-                        <span className="absolute bottom-1.5 text-lg opacity-70">•</span>
+                        <span className="absolute bottom-0.5 text-lg opacity-70">•</span>
                       )}
                     </>
                   )}
@@ -126,13 +126,14 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
       {/* Action buttons */}
       <div className="flex gap-3">
         <button
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground/60 hover:text-foreground transition-colors"
+          onClick={(e) => { e.preventDefault(); onNewTask?.(); }}
+          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground/60 hover:text-foreground transition-colors cursor-pointer"
         >
           <Clock className="w-4 h-4" /> Add Reminder
         </button>
         <button
           onClick={(e) => { e.preventDefault(); onNewTask?.(); }}
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground hover:text-primary transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-heading text-foreground hover:text-primary transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" /> New Task
         </button>
@@ -147,9 +148,9 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
               <motion.button
                 key={task.id}
                 onClick={() => {
-                  // Open task edit modal — implement with your TaskModal
+                  // Toggle task status
                 }}
-                className="w-full text-left flex items-start gap-2 p-2 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors cursor-pointer"
+                className="w-full text-left flex items-start gap-2 p-2 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors cursor-pointer active:scale-95"
               >
                 <div className={`w-4 h-4 rounded mt-0.5 border-2 flex-shrink-0 ${
                   task.status === 'done'

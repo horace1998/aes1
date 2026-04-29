@@ -139,16 +139,28 @@ export default function Dashboard() {
 
       <div className="relative z-10 px-5 pt-[3.5rem]">
         {/* Top utility bar */}
-        <motion.div
-          className="flex items-center justify-end mb-1 pt-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center gap-3">
-            <NotificationBell userEmail={user?.email} />
-          </div>
-        </motion.div>
+         <motion.div
+           className="flex items-center justify-between mb-1 pt-3"
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           transition={{ duration: 0.5 }}
+         >
+           <div />
+           <div className="flex items-center gap-3">
+             <button
+               onClick={() => navigate('/profile')}
+               style={{
+                 padding: '8px 16px', borderRadius: 12,
+                 background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)',
+                 fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 700,
+                 cursor: 'pointer', color: '#000',
+               }}
+             >
+               Settings
+             </button>
+             <NotificationBell userEmail={user?.email} />
+           </div>
+         </motion.div>
 
         {/* Poster header */}
         <EditorialHeader user={user} />
@@ -238,19 +250,24 @@ export default function Dashboard() {
         {goals.length > 0 && <TrendsSection goals={goals} />}
 
         {/* Calendar Widget */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.38 }}
-          className="mb-8"
-        >
-          <CalendarWidget
-            tasks={tasks}
-            selectedDate={selectedDate}
-            onDateSelect={setSelectedDate}
-            onNewTask={() => {}}
-          />
-        </motion.div>
+         {/* Import from PageShell context */}
+         <motion.div
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           transition={{ delay: 0.38 }}
+           className="mb-8"
+         >
+           <CalendarWidget
+             tasks={tasks}
+             selectedDate={selectedDate}
+             onDateSelect={setSelectedDate}
+             onNewTask={() => {
+               // Trigger the FAB from NavActionContext
+               const handler = queryClient.getQueryData(['navActionHandler']);
+               if (handler) handler('task');
+             }}
+           />
+         </motion.div>
 
         {/* Milestones grid */}
         {milestones.length > 0 && (
