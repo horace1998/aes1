@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
@@ -76,31 +76,28 @@ export default function Goals() {
           ))}
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          >
-            {filtered.length === 0 ? (
-              <GlassCard className="p-8 text-center">
-                <p className="text-muted-foreground text-sm">No {activeTab} goals yet</p>
-              </GlassCard>
-            ) : (
-              filtered.map((goal, i) => (
-                <GoalCard
-                  key={goal.id}
-                  goal={goal}
-                  index={i}
-                  onCheckin={(g) => checkinMutation.mutate(g)}
-                  onComplete={(g) => completeMutation.mutate(g)}
-                />
-              ))
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
+          {filtered.length === 0 ? (
+            <GlassCard className="p-8 text-center">
+              <p className="text-muted-foreground text-sm">No {activeTab} goals yet</p>
+            </GlassCard>
+          ) : (
+            filtered.map((goal, i) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                index={i}
+                onCheckin={(g) => checkinMutation.mutate(g)}
+                onComplete={(g) => completeMutation.mutate(g)}
+              />
+            ))
+          )}
+        </motion.div>
       </div>
 
       </PageShell>
