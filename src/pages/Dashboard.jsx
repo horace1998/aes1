@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
-import { User as UserIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
@@ -13,7 +12,8 @@ import { Target, Flame, CheckCircle2 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
-import HeroBanner from '@/components/dashboard/HeroBanner';
+import HeroIdentity from '@/components/dashboard/HeroIdentity';
+import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
@@ -94,47 +94,28 @@ export default function Dashboard() {
     navigate('/feed');
   };
 
-  const greeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
-  };
-
   return (
     <div className="min-h-screen relative pb-28">
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-14">
-        {/* Header */}
+      <div className="relative z-10 px-6 pt-12">
+        {/* Top utility bar — bell + identity icon */}
         <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: -20 }}
+          className="flex items-center justify-between mb-2"
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">{greeting()}</p>
-              <h1 className="font-display text-4xl tracking-wide uppercase text-foreground">
-                {user?.full_name?.split(' ')[0] || 'Station'}
-              </h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <NotificationBell userEmail={user?.email} />
-              <Link
-                to="/profile"
-                className="w-10 h-10 rounded-full glass-strong flex items-center justify-center ring-2 ring-violet-300/40 hover:ring-violet-400 transition"
-              >
-                <UserIcon className="w-4 h-4 text-violet-500" />
-              </Link>
-            </div>
+          <p className="font-display text-lg tracking-[0.3em] text-foreground/80">SYNKIFY</p>
+          <div className="flex items-center gap-2">
+            <NotificationBell userEmail={user?.email} />
+            <HeroIdentity user={user} size={44} />
           </div>
         </motion.div>
 
-        {/* Hero Banner */}
-        <HeroBanner user={user} />
+        {/* Editorial magazine header */}
+        <EditorialHeader user={user} />
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
