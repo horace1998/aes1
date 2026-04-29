@@ -47,13 +47,13 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
           style={{
             opacity: actionOpacity,
             borderRadius: 16,
-            background: 'linear-gradient(90deg, rgba(26,58,173,0.25) 0%, transparent 100%)',
+            background: 'linear-gradient(90deg, rgba(26,58,173,0.1) 0%, transparent 100%)',
           }}
         >
           <span style={{
             fontFamily: 'Space Grotesk, sans-serif',
             fontSize: 9, fontWeight: 700, letterSpacing: '0.32em',
-            textTransform: 'uppercase', color: '#4d7fff',
+            textTransform: 'uppercase', color: '#1a3aad',
           }}>
             → Complete
           </span>
@@ -71,17 +71,13 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.06, 0.22) }}
       >
-        <div
-          style={{
-            borderRadius: 16,
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            padding: '16px 18px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
-          }}
-        >
+        <div style={{
+          borderRadius: 16,
+          background: 'rgba(255,255,255,0.9)',
+          border: '1px solid rgba(0,0,0,0.08)',
+          padding: '16px 18px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        }}>
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
               {/* Eyebrow */}
@@ -89,7 +85,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                 <span style={{
                   fontFamily: 'Space Grotesk, sans-serif',
                   fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
-                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+                  textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
                 }}>
                   {goal.idol_group || goal.idol_name}
                 </span>
@@ -97,7 +93,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                   <span style={{
                     fontFamily: 'Space Grotesk, sans-serif',
                     fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-                    textTransform: 'uppercase', color: 'rgba(77,127,255,0.7)',
+                    textTransform: 'uppercase', color: '#1a3aad',
                   }}>
                     ✓ Closed
                   </span>
@@ -108,7 +104,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
               <p style={{
                 fontFamily: 'Space Grotesk, sans-serif',
                 fontSize: 15, fontWeight: 500,
-                color: '#fff', lineHeight: 1.35,
+                color: '#0d1117', lineHeight: 1.35,
                 letterSpacing: '-0.01em',
               }} className="line-clamp-2">
                 {goal.title}
@@ -118,7 +114,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                 <p style={{
                   fontFamily: 'Cormorant Garamond, serif',
                   fontStyle: 'italic', fontSize: 12,
-                  color: 'rgba(255,255,255,0.4)', marginTop: 3,
+                  color: 'rgba(0,0,0,0.38)', marginTop: 3,
                 }}>
                   for {goal.idol_name}
                 </p>
@@ -126,7 +122,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
 
               {/* Progress */}
               <div className="mt-4">
-                <div style={{ height: 2, borderRadius: 99, background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+                <div style={{ height: 2, borderRadius: 99, background: 'rgba(0,0,0,0.08)', overflow: 'hidden' }}>
                   <motion.div
                     style={{
                       height: '100%', borderRadius: 99,
@@ -140,7 +136,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                 <div className="flex justify-between mt-2" style={{
                   fontFamily: 'Space Grotesk, sans-serif',
                   fontSize: 9, fontWeight: 600, letterSpacing: '0.22em',
-                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)',
+                  textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)',
                 }}>
                   <span>{goal.daily_checkins?.filter(c => c.completed).length || 0} entries · {progress}%</span>
                   <span>{daysLeft}d left</span>
@@ -156,18 +152,18 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                   borderRadius: 12,
                   background: todayChecked
                     ? 'linear-gradient(135deg, #1a3aad, #4d7fff)'
-                    : 'rgba(255,255,255,0.06)',
+                    : 'rgba(0,0,0,0.04)',
                   border: todayChecked
-                    ? '1px solid rgba(77,127,255,0.5)'
-                    : '1px solid rgba(255,255,255,0.12)',
-                  boxShadow: todayChecked ? '0 4px 16px rgba(26,58,173,0.4)' : 'none',
+                    ? '1px solid rgba(26,58,173,0.4)'
+                    : '1px solid rgba(0,0,0,0.1)',
+                  boxShadow: todayChecked ? '0 4px 16px rgba(26,58,173,0.3)' : 'none',
                 }}
                 whileTap={{ scale: 0.88 }}
                 onClick={() => !todayChecked && onCheckin?.(goal)}
               >
                 {todayChecked
                   ? <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
-                  : <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>+</span>
+                  : <span style={{ fontSize: 14, color: 'rgba(0,0,0,0.25)' }}>+</span>
                 }
               </motion.button>
             )}
@@ -182,15 +178,15 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
             className="absolute inset-0 flex items-center justify-between px-5 z-10"
             style={{
               borderRadius: 16,
-              background: 'rgba(13, 17, 35, 0.95)',
-              border: '1px solid rgba(26, 58, 173, 0.5)',
-              backdropFilter: 'blur(20px)',
+              background: 'rgba(255,255,255,0.97)',
+              border: '1px solid rgba(26,58,173,0.2)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#fff' }}>
+            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#0d1117' }}>
               Close this entry?
             </p>
             <div className="flex gap-2">
@@ -199,8 +195,8 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                 style={{
                   fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
                   fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
-                  border: '1px solid rgba(255,255,255,0.18)', borderRadius: 8,
-                  padding: '6px 12px', color: 'rgba(255,255,255,0.6)', background: 'transparent',
+                  border: '1px solid rgba(0,0,0,0.15)', borderRadius: 8,
+                  padding: '6px 12px', color: 'rgba(0,0,0,0.5)', background: 'transparent',
                 }}
               >
                 Cancel
@@ -211,7 +207,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
                   fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
                   fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
                   background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)',
-                  border: '1px solid rgba(77,127,255,0.4)', borderRadius: 8,
+                  border: '1px solid rgba(26,58,173,0.3)', borderRadius: 8,
                   padding: '6px 12px', color: '#fff',
                 }}
               >

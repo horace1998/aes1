@@ -127,8 +127,8 @@ export default function Dashboard() {
               key={stat.label}
               style={{
                 borderRadius: 12,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                background: 'rgba(0,0,0,0.03)',
+                border: '1px solid rgba(0,0,0,0.07)',
                 padding: '14px 10px',
                 textAlign: 'center',
               }}
@@ -138,14 +138,14 @@ export default function Dashboard() {
             >
               <p style={{
                 fontFamily: 'Bebas Neue, Impact, sans-serif',
-                fontSize: 34, color: '#fff', lineHeight: 1, letterSpacing: '0.03em',
+                fontSize: 34, color: '#0d1117', lineHeight: 1, letterSpacing: '0.03em',
               }}>
                 {String(stat.value).padStart(2, '0')}
               </p>
               <p style={{
                 fontFamily: 'Space Grotesk, sans-serif',
                 fontSize: 9, fontWeight: 700, letterSpacing: '0.28em',
-                textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)', marginTop: 5,
+                textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginTop: 5,
               }}>
                 {stat.label}
               </p>
@@ -171,10 +171,10 @@ export default function Dashboard() {
             }}>
               Chapter I — In Progress
             </span>
-            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
             <span style={{
               fontFamily: 'Bebas Neue, sans-serif', fontSize: 16,
-              color: 'rgba(77,127,255,0.7)', letterSpacing: '0.05em',
+              color: '#1a3aad', letterSpacing: '0.05em',
             }}>
               {String(activeGoals.length).padStart(2, '0')}
             </span>
@@ -194,8 +194,8 @@ export default function Dashboard() {
           ) : activeGoals.length === 0 ? (
             <div style={{
               textAlign: 'center', padding: '32px 0',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
+              borderTop: '1px solid rgba(0,0,0,0.08)',
+              borderBottom: '1px solid rgba(0,0,0,0.08)',
             }}>
               {/* iMessage style empty state */}
               <div className="inline-block chat-bubble-in mb-3" style={{ fontSize: 13 }}>
@@ -203,7 +203,7 @@ export default function Dashboard() {
               </div>
               <p style={{
                 fontFamily: 'Space Grotesk, sans-serif',
-                fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.2em',
+                fontSize: 11, color: 'rgba(0,0,0,0.35)', letterSpacing: '0.2em',
               }}>
                 Begin your first entry —
               </p>

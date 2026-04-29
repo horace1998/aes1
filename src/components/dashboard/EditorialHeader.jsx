@@ -20,7 +20,7 @@ export default function EditorialHeader({ user }) {
             fontFamily: 'Bebas Neue, Impact, sans-serif',
             fontSize: 'clamp(6rem, 30vw, 16rem)',
             lineHeight: 0.85,
-            color: 'rgba(255,255,255,0.04)',
+            color: 'rgba(0,0,0,0.04)',
             letterSpacing: '0.02em',
             whiteSpace: 'nowrap',
             marginLeft: '-0.05em',
@@ -63,7 +63,7 @@ export default function EditorialHeader({ user }) {
           fontSize: 'clamp(2.8rem, 12vw, 6rem)',
           lineHeight: 0.92,
           letterSpacing: '0.02em',
-          color: '#fff',
+          color: '#0d1117',
           fontWeight: 400,
         }}
         initial={{ opacity: 0, y: 16 }}

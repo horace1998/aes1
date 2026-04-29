@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload }) => {
   return (
     <div style={{
       background: 'rgba(13, 31, 107, 0.95)', border: '1px solid rgba(77,127,255,0.4)',
-      borderRadius: 8, padding: '6px 10px', backdropFilter: 'blur(12px)',
+      borderRadius: 8, padding: '6px 10px',
     }}>
       <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, color: '#fff', fontWeight: 600 }}>
         {payload[0].value} check-in{payload[0].value !== 1 ? 's' : ''}
@@ -51,34 +51,32 @@ export default function TrendsSection({ goals }) {
         <span style={{
           fontFamily: 'Space Grotesk, sans-serif',
           fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
-          textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+          textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
         }}>
           Almanac — Last Fortnight
         </span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
       </div>
 
-      <div
-        style={{
-          borderRadius: 16,
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          padding: '18px 18px 14px',
-        }}
-      >
+      <div style={{
+        borderRadius: 16,
+        background: 'rgba(0,0,0,0.02)',
+        border: '1px solid rgba(0,0,0,0.07)',
+        padding: '18px 18px 14px',
+      }}>
         {/* Stats row */}
         <div className="flex items-end justify-between mb-5">
           <div>
             <p style={{
               fontFamily: 'Bebas Neue, Impact, sans-serif',
-              fontSize: 44, color: '#fff', lineHeight: 1, letterSpacing: '0.02em',
+              fontSize: 44, color: '#0d1117', lineHeight: 1, letterSpacing: '0.02em',
             }}>
-              {consistency}<span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>%</span>
+              {consistency}<span style={{ fontSize: 18, color: 'rgba(0,0,0,0.3)' }}>%</span>
             </p>
             <p style={{
               fontFamily: 'Space Grotesk, sans-serif',
               fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2,
+              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginTop: 2,
             }}>
               Consistency
             </p>
@@ -86,14 +84,14 @@ export default function TrendsSection({ goals }) {
           <div className="text-right">
             <p style={{
               fontFamily: 'Bebas Neue, Impact, sans-serif',
-              fontSize: 44, color: '#4d7fff', lineHeight: 1, letterSpacing: '0.02em',
+              fontSize: 44, color: '#1a3aad', lineHeight: 1, letterSpacing: '0.02em',
             }}>
               {bestLabel}
             </p>
             <p style={{
               fontFamily: 'Space Grotesk, sans-serif',
               fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2,
+              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginTop: 2,
             }}>
               Most Productive
             </p>
@@ -111,10 +109,10 @@ export default function TrendsSection({ goals }) {
                     key={i}
                     fill={
                       entry.count === 0
-                        ? 'rgba(255,255,255,0.06)'
+                        ? 'rgba(0,0,0,0.07)'
                         : entry.count === maxCount
-                          ? '#4d7fff'
-                          : 'rgba(26, 58, 173, 0.6)'
+                          ? '#1a3aad'
+                          : 'rgba(26, 58, 173, 0.45)'
                     }
                   />
                 ))}
@@ -130,7 +128,7 @@ export default function TrendsSection({ goals }) {
               <span key={d.date} style={{
                 fontFamily: 'Space Grotesk, sans-serif',
                 fontSize: 8, fontWeight: 600, letterSpacing: '0.1em',
-                color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase',
+                color: 'rgba(0,0,0,0.25)', textTransform: 'uppercase',
               }}>
                 {d.label}
               </span>

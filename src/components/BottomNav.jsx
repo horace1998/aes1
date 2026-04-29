@@ -59,7 +59,7 @@ export default function BottomNav({ onSelect }) {
         <span
           className="text-[9px] pointer-events-none"
           style={{
-            color: isActive ? '#4d7fff' : 'rgba(255,255,255,0.3)',
+            color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.3)',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
             fontWeight: isActive ? 700 : 500,
@@ -134,7 +134,7 @@ export default function BottomNav({ onSelect }) {
                   </div>
                   <span style={{
                     fontFamily: 'Space Grotesk, sans-serif',
-                    fontSize: 10, color: 'rgba(255,255,255,0.7)',
+                    fontSize: 10, color: 'rgba(0,0,0,0.55)',
                     letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 600, pointerEvents: 'none',
                   }}>
                     {action.label}

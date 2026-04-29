@@ -8,23 +8,23 @@
   :root {
     /* Streetwear / K-pop collage — white base */
     --background: 0 0% 100%;
-    --foreground: 0 0% 96%;
-    --card: 220 15% 12%;
-    --card-foreground: 0 0% 96%;
-    --popover: 220 18% 10%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 225 70% 48%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 225 70% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 16%;
-    --secondary-foreground: 0 0% 90%;
-    --muted: 220 12% 18%;
-    --muted-foreground: 220 8% 55%;
-    --accent: 225 70% 55%;
+    --secondary: 220 12% 94%;
+    --secondary-foreground: 220 20% 10%;
+    --muted: 220 12% 95%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 225 70% 40%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 12% 20%;
-    --input: 220 12% 18%;
+    --border: 220 12% 88%;
+    --input: 220 12% 92%;
     --ring: 225 70% 55%;
     --chart-1: 225 70% 55%;
     --chart-2: 225 50% 70%;
