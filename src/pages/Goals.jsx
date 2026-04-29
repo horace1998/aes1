@@ -74,12 +74,15 @@ export default function Goals() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-[3.5rem]">
+      <div className="relative z-10 px-5 pt-[3.5rem]">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          className="mb-6"
         >
-          <h1 className="font-display text-5xl tracking-wide uppercase text-foreground mb-6">My Goals</h1>
+          <p className="editorial-eyebrow mb-1">Archive</p>
+          <h1 className="font-display text-4xl tracking-tight text-foreground" style={{ fontWeight: 800 }}>GOALS</h1>
         </motion.div>
 
         {/* Tabs */}

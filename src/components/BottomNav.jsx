@@ -47,37 +47,39 @@ export default function BottomNav({ onSelect }) {
         key={item.path}
         to={item.path}
         draggable={false}
-        className="relative flex flex-col items-center justify-center flex-1 h-full gap-1"
+        className="relative flex flex-col items-center justify-center flex-1 h-full gap-1 px-0"
         style={ns}
       >
-        <item.icon
-          className="w-[18px] h-[18px] pointer-events-none"
-          style={{
-            color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.35)',
-            transition: 'color 0.2s',
-          }}
-          strokeWidth={isActive ? 2 : 1.4}
-        />
-        <span
-          className="text-[9px] pointer-events-none"
-          style={{
-            color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.3)',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            fontWeight: isActive ? 700 : 500,
-            fontFamily: 'Space Grotesk, sans-serif',
-          }}
-        >
-          {item.label}
-        </span>
-        {isActive && (
-          <motion.div
-            layoutId="nav-indicator"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
-            style={{ background: '#1a3aad' }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        <div className="relative flex flex-col items-center gap-1 w-full">
+          <item.icon
+            className="w-[18px] h-[18px] pointer-events-none"
+            style={{
+              color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.35)',
+              transition: 'color 0.2s',
+            }}
+            strokeWidth={isActive ? 2 : 1.4}
           />
-        )}
+          <span
+            className="text-[9px] pointer-events-none"
+            style={{
+              color: isActive ? '#1a3aad' : 'rgba(0,0,0,0.3)',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              fontWeight: isActive ? 700 : 500,
+              fontFamily: 'Space Grotesk, sans-serif',
+            }}
+          >
+            {item.label}
+          </span>
+          {isActive && (
+            <motion.div
+              layoutId="nav-indicator"
+              className="absolute -bottom-1 w-4 h-0.5 rounded-full"
+              style={{ background: '#1a3aad', left: '50%', marginLeft: '-8px' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            />
+          )}
+        </div>
       </Link>
     );
   };
@@ -150,7 +152,7 @@ export default function BottomNav({ onSelect }) {
 
       {/* Nav bar */}
       <div
-        className="flex items-center max-w-sm mx-auto px-3"
+        className="flex items-center justify-center max-w-sm mx-auto px-3"
         style={{
           height: 64, position: 'relative', zIndex: 50,
           background: 'rgba(255,255,255,0.95)',
@@ -158,14 +160,15 @@ export default function BottomNav({ onSelect }) {
           border: '1px solid rgba(0,0,0,0.09)',
           borderRadius: 20,
           boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          gap: 0,
         }}
       >
-        <div className="flex flex-1 items-center h-full">
+        <div className="flex flex-1 items-center h-full justify-around">
           {NAV_ITEMS_LEFT.map(renderNavItem)}
         </div>
 
         {/* FAB center */}
-        <div className="flex items-center justify-center px-2" style={{ flexShrink: 0, ...ns }}>
+        <div className="flex items-center justify-center" style={{ flexShrink: 0, width: 70, ...ns }}>
           <motion.button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(v => !v); }}
             whileTap={{ scale: 0.88 }}
@@ -184,7 +187,7 @@ export default function BottomNav({ onSelect }) {
           </motion.button>
         </div>
 
-        <div className="flex flex-1 items-center h-full">
+        <div className="flex flex-1 items-center h-full justify-around">
           {NAV_ITEMS_RIGHT.map(renderNavItem)}
         </div>
       </div>

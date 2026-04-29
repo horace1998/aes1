@@ -60,15 +60,15 @@ export default function Profile() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-14">
-        {/* Profile Header */}
-        <motion.div
-          className="flex flex-col items-center text-center mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-        >
-          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Station Member</p>
+      <div className="relative z-10 px-5 pt-14">
+         {/* Profile Header */}
+         <motion.div
+           className="flex flex-col items-center text-center mb-6"
+           initial={{ opacity: 0, y: -20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+         >
+           <p className="editorial-eyebrow mb-3">Station Member</p>
           {user.background_image_url ? (
             <div className="w-32 h-32 rounded-full overflow-hidden border border-foreground/15">
               <img src={user.background_image_url} alt="profile" className="w-full h-full object-cover" />

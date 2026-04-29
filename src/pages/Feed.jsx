@@ -97,19 +97,17 @@ export default function Feed() {
       <PageShell goals={goals} user={user}>
       <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-[3.5rem]">
+      <div className="relative z-10 px-5 pt-[3.5rem]">
         {/* Header */}
         <motion.div
-          className="flex items-end justify-between mb-5"
+          className="mb-6 flex items-start justify-between"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
           <div>
             <p className="editorial-eyebrow mb-1">Community</p>
-            <h1 className="font-display text-foreground leading-none" style={{ fontSize: 'clamp(2.5rem,12vw,4.5rem)', fontWeight: 900, letterSpacing: '-0.03em' }}>
-              FAN<br />FEED
-            </h1>
+            <h1 className="font-display text-4xl tracking-tight text-foreground" style={{ fontWeight: 800 }}>FEED</h1>
           </div>
 
           {unsaredMilestones.length > 0 && (

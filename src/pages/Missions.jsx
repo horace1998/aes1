@@ -56,18 +56,15 @@ export default function Missions() {
       <PageShell goals={goals} user={user}>
         <ThreeBackground />
 
-        <div className="relative z-10 px-6 pt-[3.5rem]">
+        <div className="relative z-10 px-5 pt-[3.5rem]">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-            className="mb-5"
+            className="mb-6"
           >
-            <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-1">Squad up</p>
-            <h1 className="font-display text-5xl tracking-wide uppercase text-foreground">
-              Missions
-            </h1>
-            <p className="text-xs text-muted-foreground mt-1">Join fans worldwide on shared journeys</p>
+            <p className="editorial-eyebrow mb-1">Squad up</p>
+            <h1 className="font-display text-4xl tracking-tight text-foreground" style={{ fontWeight: 800 }}>MISSIONS</h1>
           </motion.div>
 
           {/* Tabs */}
