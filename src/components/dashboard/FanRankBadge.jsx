@@ -39,7 +39,7 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
   }, [idolImageUrl]);
 
   const showIdol = !!idolImageUrl;
-  const IDOL_H = 210; // px, how tall the idol floats above the card
+  const IDOL_H = 230; // px, how tall the idol floats above the card
   const IDOL_OVERLAP = 80; // px that stick up above the card top
 
   return (
@@ -52,14 +52,14 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
         <div
           className="absolute left-1/2 -translate-x-1/2 pointer-events-none overflow-hidden"
           style={{
-            top: 0,
+            top: 18,
             zIndex: 30,
-            width: 160,
-            height: 160,
+            width: 190,
+            height: 190,
             borderRadius: '50%',
-            background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.18), rgba(26,58,173,0.16) 58%, rgba(13,31,107,0.3))',
-            border: '1px solid rgba(77,127,255,0.35)',
-            boxShadow: '0 0 36px rgba(26,58,173,0.45)',
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
           }}
           aria-hidden="true"
         >
@@ -71,19 +71,7 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
 
           {cutoutUrl && (
             <>
-              {/* Holographic glow layers */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'radial-gradient(ellipse at 50% 90%, rgba(77,127,255,0.55) 0%, rgba(26,58,173,0.2) 50%, transparent 75%)',
-                filter: 'blur(18px)',
-                zIndex: 1,
-              }} />
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'radial-gradient(ellipse at 50% 60%, rgba(140,100,255,0.2) 0%, transparent 70%)',
-                filter: 'blur(10px)',
-                zIndex: 1,
-              }} />
+              {/* Clean circular idol image — no background glow */}
 
               {/* Iridescent shimmer overlay on the image */}
               <motion.div
@@ -107,24 +95,14 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
                   objectPosition: 'center',
                   borderRadius: '50%',
                   zIndex: 2,
-                  filter: `
-                    drop-shadow(0 -6px 18px rgba(77,127,255,0.8))
-                    drop-shadow(0 0 40px rgba(26,58,173,0.6))
-                    drop-shadow(0 8px 16px rgba(0,0,0,0.55))
-                  `,
+                  filter: 'none',
                 }}
                 initial={{ opacity: 0, scale: 0.92 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
               />
 
-              {/* Bottom fade so idol blends into card */}
-              <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                height: 42,
-                background: 'linear-gradient(to top, rgba(13,31,107,0.75) 0%, transparent 100%)',
-                zIndex: 4,
-              }} />
+
             </>
           )}
         </div>
