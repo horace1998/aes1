@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, LogOut } from 'lucide-react';
-import { differenceInDays, addDays, addWeeks, addMonths, format } from 'date-fns';
+import { differenceInDays, addDays, addWeeks, addMonths } from 'date-fns';
 
 function getEndDate(startDate, value, unit) {
   const start = new Date(startDate);
@@ -23,8 +23,6 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
   const progress = getProgress(goal.start_date || goal.created_date, goal.timeline_value, goal.timeline_unit);
   const endDate = getEndDate(goal.start_date || goal.created_date, goal.timeline_value, goal.timeline_unit);
   const daysLeft = Math.max(0, differenceInDays(endDate, new Date()));
-  const todayChecked = goal.daily_checkins?.some(c => c.date === format(new Date(), 'yyyy-MM-dd') && c.completed);
-
   const [confirmAction, setConfirmAction] = useState(null); // 'complete' | 'leave' | null
   const isActive = goal.status === 'active';
 
@@ -108,32 +106,6 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
             </div>
           </div>
 
-          {/* Daily check-in tap button */}
-          {isActive && onCheckin && (
-            <button
-              onClick={() => !todayChecked && onCheckin(goal)}
-              disabled={todayChecked}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center"
-              style={{
-                borderRadius: 12,
-                background: todayChecked
-                  ? 'linear-gradient(135deg, #1a3aad, #4d7fff)'
-                  : 'rgba(0,0,0,0.04)',
-                border: todayChecked
-                  ? '1px solid rgba(26,58,173,0.4)'
-                  : '1px solid rgba(0,0,0,0.1)',
-                boxShadow: todayChecked ? '0 4px 16px rgba(26,58,173,0.3)' : 'none',
-                cursor: todayChecked ? 'default' : 'pointer',
-              }}
-              aria-label={todayChecked ? 'Checked in today' : 'Check in for today'}
-            >
-              <Check
-                className="w-4 h-4"
-                style={{ color: todayChecked ? '#fff' : 'rgba(0,0,0,0.3)' }}
-                strokeWidth={2.5}
-              />
-            </button>
-          )}
         </div>
 
         {/* Action buttons — Complete / Leave */}
