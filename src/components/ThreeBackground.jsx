@@ -17,14 +17,15 @@ export default function ThreeBackground() {
 
     // Create pulsing orbs
     const orbs = [];
-    const colors = [0xc4b5fd, 0xddd6fe, 0xbae6fd, 0xe0f2fe, 0xfbcfe8, 0xfce7f3];
+    // Monochrome editorial — soft cream/ivory tones only
+    const colors = [0xf5f0e8, 0xe8e2d5, 0xdcd4c4, 0xeae4d6];
     
     colors.forEach((color, i) => {
       const geometry = new THREE.SphereGeometry(1.0 + Math.random() * 0.8, 32, 32);
       const material = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.22,
+        opacity: 0.12,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
@@ -59,7 +60,7 @@ export default function ThreeBackground() {
         orb.scale.setScalar(baseScale * pulse);
         orb.position.y = baseY + Math.sin(t * moveSpeed + offset) * 0.5;
         orb.position.x = baseX + Math.cos(t * moveSpeed * 0.7 + offset) * 0.3;
-        orb.material.opacity = 0.16 + 0.1 * Math.sin(t * speed * 0.5 + offset);
+        orb.material.opacity = 0.08 + 0.05 * Math.sin(t * speed * 0.5 + offset);
       });
 
       renderer.render(scene, camera);
@@ -88,7 +89,7 @@ export default function ThreeBackground() {
     <div
       ref={mountRef}
       className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ background: 'linear-gradient(135deg, #ede9fe 0%, #e0e7ff 25%, #e0f2fe 50%, #f5f3ff 75%, #fce7f3 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #f8f4ec 0%, #f1ebde 100%)' }}
     />
   );
 }

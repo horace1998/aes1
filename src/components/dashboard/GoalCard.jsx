@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
-import { CheckCircle, Circle, Flame, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { differenceInDays, addDays, addWeeks, addMonths, format } from 'date-fns';
 
 function getEndDate(startDate, value, unit) {
@@ -57,13 +57,10 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       {/* Swipe action background */}
       {canSwipe && (
         <motion.div
-          className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 flex items-center justify-start pl-6"
+          className="absolute inset-0 rounded-lg bg-foreground flex items-center justify-start pl-6"
           style={{ opacity: actionOpacity }}
         >
-          <div className="flex items-center gap-2 text-white font-heading font-semibold text-sm">
-            <Check className="w-5 h-5" />
-            Mark complete
-          </div>
+          <p className="editorial-eyebrow text-background">— Mark Complete</p>
         </motion.div>
       )}
 
@@ -77,58 +74,57 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       >
         <GlassCard
           variant="strong"
-          className="px-3.5 py-3"
-          initial={{ opacity: 0, y: 16, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 26, delay: Math.min(index * 0.05, 0.2) }}
+          className="px-5 py-4"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.2) }}
         >
-          <div className="flex items-start gap-2.5">
+          <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <p className="text-[9px] tracking-widest uppercase text-muted-foreground font-heading truncate">
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="editorial-eyebrow truncate">
                   {goal.idol_group || goal.idol_name}
                 </p>
                 {goal.status === 'completed' && (
-                  <CheckCircle className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+                  <p className="editorial-eyebrow text-foreground">— Closed</p>
                 )}
               </div>
-              <p className="font-heading text-xs font-bold text-foreground leading-snug line-clamp-2">
-                <span className="text-violet-500">{goal.idol_name}</span> · {goal.title}
+              <p className="font-display text-base text-foreground leading-snug line-clamp-2" style={{ fontWeight: 500 }}>
+                {goal.title}
               </p>
+              {goal.idol_name && goal.idol_name !== goal.idol_group && (
+                <p className="editorial-italic text-xs text-muted-foreground mt-0.5">for {goal.idol_name}</p>
+              )}
 
-              {/* Progress bar */}
-              <div className="mt-2">
-                <div className="h-1.5 rounded-full bg-white/30 overflow-hidden">
+              {/* Progress — minimal hairline */}
+              <div className="mt-3">
+                <div className="h-px bg-foreground/15 relative">
                   <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-violet-300 to-indigo-400"
+                    className="absolute inset-y-0 left-0 bg-foreground"
+                    style={{ height: '2px', top: '-0.5px' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ type: 'spring', stiffness: 120, damping: 22, delay: 0.15 }}
+                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
                   />
                 </div>
-                <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
-                  <span className="flex items-center gap-1">
-                    <Flame className="w-2.5 h-2.5 text-pink-400" />
-                    {goal.daily_checkins?.filter(c => c.completed).length || 0}d · {progress}%
-                  </span>
-                  <span>{daysLeft}d left</span>
+                <div className="flex justify-between editorial-eyebrow mt-2" style={{ fontSize: '9px', letterSpacing: '0.25em' }}>
+                  <span>{goal.daily_checkins?.filter(c => c.completed).length || 0} entries · {progress}%</span>
+                  <span>{daysLeft}d remaining</span>
                 </div>
               </div>
             </div>
 
             {isActive && (
               <motion.button
-                className={`rounded-full p-1.5 flex-shrink-0 transition-all ${
-                  todayChecked ? 'bg-emerald-500/20' : 'glass-subtle hover:bg-violet-300/20'
+                className={`flex-shrink-0 w-9 h-9 rounded-full border transition-all flex items-center justify-center ${
+                  todayChecked
+                    ? 'bg-foreground border-foreground'
+                    : 'border-foreground/30 hover:border-foreground'
                 }`}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => !todayChecked && onCheckin?.(goal)}
               >
-                {todayChecked ? (
-                  <CheckCircle className="w-4 h-4 text-emerald-500" />
-                ) : (
-                  <Circle className="w-4 h-4 text-muted-foreground" />
-                )}
+                {todayChecked && <Check className="w-4 h-4 text-background" strokeWidth={2.5} />}
               </motion.button>
             )}
           </div>
@@ -139,24 +135,24 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
       <AnimatePresence>
         {confirming && (
           <motion.div
-            className="absolute inset-0 rounded-2xl glass-strong flex items-center justify-between px-4 z-10"
+            className="absolute inset-0 rounded-lg glass-strong flex items-center justify-between px-5 z-10 border border-foreground/10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <p className="text-xs font-heading font-medium text-foreground">Mark this goal as completed?</p>
+            <p className="editorial-italic text-sm text-foreground">Close this entry?</p>
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="px-3 py-1.5 rounded-full text-[11px] font-heading font-medium glass-subtle"
+                className="editorial-eyebrow px-3 py-1.5 border border-foreground/20"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-3 py-1.5 rounded-full text-[11px] font-heading font-semibold bg-gradient-to-r from-emerald-400 to-emerald-500 text-white"
+                className="editorial-eyebrow px-3 py-1.5 bg-foreground text-background"
               >
-                Complete
+                Confirm
               </button>
             </div>
           </motion.div>

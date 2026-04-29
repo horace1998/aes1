@@ -14,9 +14,9 @@ const NAV_ITEMS_RIGHT = [
 ];
 
 const ACTIONS = [
-  { id: 'goal',      label: 'Goal',      icon: Trophy,      bg: 'linear-gradient(135deg,#c4b5fd,#a78bfa)', shadow: 'rgba(167,139,250,0.35)' },
-  { id: 'milestone', label: 'Milestone', icon: Camera,      bg: 'linear-gradient(135deg,#bae6fd,#93c5fd)', shadow: 'rgba(147,197,253,0.35)' },
-  { id: 'task',      label: 'Task',      icon: CheckSquare, bg: 'linear-gradient(135deg,#fbcfe8,#f9a8d4)', shadow: 'rgba(244,114,182,0.30)' },
+  { id: 'goal',      label: 'Entry',     icon: Trophy,      bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
+  { id: 'milestone', label: 'Capture',   icon: Camera,      bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
+  { id: 'task',      label: 'Note',      icon: CheckSquare, bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
 ];
 
 const ns = {
@@ -49,21 +49,26 @@ export default function BottomNav({ onSelect }) {
         style={ns}
       >
         <item.icon
-          className="w-5 h-5 pointer-events-none"
-          style={{ color: isActive ? '#6d4ed6' : 'rgba(90,85,120,0.55)', transition: 'color 0.2s' }}
-          strokeWidth={isActive ? 2.2 : 1.8}
+          className="w-[18px] h-[18px] pointer-events-none"
+          style={{ color: isActive ? '#0a0a0a' : 'rgba(0,0,0,0.35)', transition: 'color 0.2s' }}
+          strokeWidth={isActive ? 1.8 : 1.4}
         />
         <span
-          className="text-[9px] font-heading font-semibold pointer-events-none"
-          style={{ color: isActive ? '#6d4ed6' : 'rgba(90,85,120,0.5)', letterSpacing: '0.05em' }}
+          className="text-[9px] pointer-events-none"
+          style={{
+            color: isActive ? '#0a0a0a' : 'rgba(0,0,0,0.4)',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            fontWeight: isActive ? 600 : 500,
+          }}
         >
           {item.label}
         </span>
         {isActive && (
           <motion.div
             layoutId="dot"
-            className="absolute bottom-1.5 w-1 h-1 rounded-full"
-            style={{ background: '#6d4ed6' }}
+            className="absolute bottom-1 w-3 h-px"
+            style={{ background: '#0a0a0a' }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -120,22 +125,24 @@ export default function BottomNav({ onSelect }) {
                 >
                   <div
                     style={{
-                      width: 60, height: 60, borderRadius: 20,
+                      width: 58, height: 58, borderRadius: 6,
                       background: action.bg,
-                      boxShadow: `0 10px 28px ${action.shadow}`,
+                      boxShadow: `0 8px 22px ${action.shadow}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      position: 'relative', overflow: 'hidden',
+                      position: 'relative',
                     }}
                   >
-                    <span style={{
-                      position: 'absolute', inset: 0, borderRadius: 20, pointerEvents: 'none',
-                      background: 'linear-gradient(160deg,rgba(255,255,255,0.3) 0%,transparent 55%)',
-                    }} />
-                    <Icon style={{ width: 26, height: 26, color: '#fff', pointerEvents: 'none' }} />
+                    <Icon style={{ width: 22, height: 22, color: '#fff', pointerEvents: 'none' }} strokeWidth={1.6} />
                   </div>
                   <span
-                    className="font-heading font-semibold text-[11px]"
-                    style={{ color: '#3f3a5c', letterSpacing: '0.04em', pointerEvents: 'none' }}
+                    className="text-[10px]"
+                    style={{
+                      color: '#0a0a0a',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      pointerEvents: 'none',
+                    }}
                   >
                     {action.label}
                   </span>
@@ -150,13 +157,13 @@ export default function BottomNav({ onSelect }) {
       <div
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
-          height: 64, position: 'relative', zIndex: 50,
-          background: 'rgba(255,255,255,0.65)',
-          backdropFilter: 'blur(32px) saturate(150%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(150%)',
-          border: '1px solid rgba(255,255,255,0.85)',
-          borderRadius: 26,
-          boxShadow: '0 10px 32px rgba(150,140,200,0.12), inset 0 1px 0 rgba(255,255,255,0.95)',
+          height: 62, position: 'relative', zIndex: 50,
+          background: 'rgba(255,255,255,0.92)',
+          backdropFilter: 'blur(24px) saturate(115%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(115%)',
+          border: '1px solid rgba(0,0,0,0.08)',
+          borderRadius: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
         }}
       >
         <div className="flex flex-1 items-center h-full">
@@ -171,13 +178,9 @@ export default function BottomNav({ onSelect }) {
             animate={{ rotate: open ? 45 : 0 }}
             transition={{ type: 'spring', stiffness: 420, damping: 26 }}
             style={{
-              width: 48, height: 48, borderRadius: 15,
-              background: open
-                ? 'linear-gradient(135deg,#f9a8d4,#f472b6)'
-                : 'linear-gradient(135deg,#c4b5fd 0%,#a78bfa 55%,#8b7cf6 100%)',
-              boxShadow: open
-                ? '0 6px 20px rgba(244,114,182,0.35)'
-                : '0 6px 20px rgba(167,139,250,0.4)',
+              width: 46, height: 46, borderRadius: 6,
+              background: '#0a0a0a',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative', overflow: 'hidden',
@@ -185,11 +188,7 @@ export default function BottomNav({ onSelect }) {
               ...ns,
             }}
           >
-            <span style={{
-              position: 'absolute', inset: 0, borderRadius: 15, pointerEvents: 'none',
-              background: 'linear-gradient(160deg,rgba(255,255,255,0.28) 0%,transparent 55%)',
-            }} />
-            <Plus style={{ width: 22, height: 22, color: '#fff', pointerEvents: 'none' }} strokeWidth={2.5} />
+            <Plus style={{ width: 20, height: 20, color: '#fff', pointerEvents: 'none' }} strokeWidth={1.8} />
           </motion.button>
         </div>
 

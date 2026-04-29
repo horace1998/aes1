@@ -41,17 +41,16 @@ export default function HeroIdentity({ user, size = 44 }) {
         style={{
           width: size,
           height: size,
-          background: 'linear-gradient(135deg,#c4b5fd,#bae6fd,#fbcfe8)',
-          padding: 2,
-          boxShadow: '0 6px 18px rgba(167,139,250,0.30), inset 0 1px 0 rgba(255,255,255,0.8)',
+          background: 'rgba(0,0,0,0.85)',
+          padding: 1.5,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         }}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       >
         <div
           className="w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center relative"
-          style={{ background: 'rgba(255,255,255,0.9)' }}
         >
           {hero?.image_url ? (
             <>
@@ -67,15 +66,12 @@ export default function HeroIdentity({ user, size = 44 }) {
                 }}
               />
               {!imgReady && (
-                <div
-                  className="absolute inset-0 animate-pulse"
-                  style={{ background: 'radial-gradient(circle, rgba(196,181,253,0.4), transparent 70%)' }}
-                />
+                <div className="absolute inset-0 animate-pulse bg-foreground/5" />
               )}
             </>
           ) : (
-            <div className="flex items-center justify-center w-full h-full" title="Add hero image">
-              <ImagePlus className="w-4 h-4 text-violet-400" />
+            <div className="flex items-center justify-center w-full h-full bg-foreground/5" title="Add hero image">
+              <ImagePlus className="w-3.5 h-3.5 text-foreground/40" strokeWidth={1.5} />
             </div>
           )}
         </div>

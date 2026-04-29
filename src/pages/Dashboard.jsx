@@ -4,13 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
-import GlassCard from '@/components/ui/GlassCard';
 import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
-import { Target, Flame, CheckCircle2 } from 'lucide-react';
 import NotificationBell from '@/components/NotificationBell';
-import FanRankBadge from '@/components/dashboard/FanRankBadge';
+import FanRankBadge from '@/components/dashboard/FanRankBadge.jsx';
 import TrendsSection from '@/components/dashboard/TrendsSection';
 import HeroIdentity from '@/components/dashboard/HeroIdentity';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
@@ -100,17 +98,17 @@ export default function Dashboard() {
       <ThreeBackground />
 
       <div className="relative z-10 px-6 pt-12">
-        {/* Top utility bar — bell + identity icon */}
+        {/* Top utility bar — wordmark + bell + identity */}
         <motion.div
-          className="flex items-center justify-between mb-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          className="flex items-center justify-between mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <p className="font-display text-lg tracking-[0.3em] text-foreground/80">SYNKIFY</p>
-          <div className="flex items-center gap-2">
+          <p className="font-display text-base tracking-[0.4em] text-foreground" style={{ fontWeight: 700 }}>SYNKIFY</p>
+          <div className="flex items-center gap-3">
             <NotificationBell userEmail={user?.email} />
-            <HeroIdentity user={user} size={44} />
+            <HeroIdentity user={user} size={40} />
           </div>
         </motion.div>
 
@@ -120,22 +118,25 @@ export default function Dashboard() {
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        {/* Stats — editorial three-column index */}
+        <div className="grid grid-cols-3 mb-10 border-t border-b border-foreground/15">
           {[
-            { label: 'Active', value: activeGoals.length, icon: Target, color: 'text-violet-400' },
-            { label: 'Completed', value: completedCount, icon: CheckCircle2, color: 'text-indigo-400' },
-            { label: 'Check-ins', value: totalCheckins, icon: Flame, color: 'text-pink-400' },
+            { label: 'Active', value: activeGoals.length },
+            { label: 'Completed', value: completedCount },
+            { label: 'Entries', value: totalCheckins },
           ].map((stat, i) => (
-            <GlassCard key={stat.label} variant="default" className="p-4 text-center"
-              initial={{ opacity: 0, y: 20 }}
+            <motion.div
+              key={stat.label}
+              className={`text-center py-5 ${i < 2 ? 'border-r border-foreground/15' : ''}`}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.08, type: 'spring' }}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
             >
-              <stat.icon className={`w-4 h-4 ${stat.color} mx-auto mb-1`} />
-              <p className="font-heading text-2xl font-bold">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-            </GlassCard>
+              <p className="font-display text-3xl text-foreground" style={{ fontWeight: 600 }}>
+                {String(stat.value).padStart(2, '0')}
+              </p>
+              <p className="editorial-eyebrow mt-1">{stat.label}</p>
+            </motion.div>
           ))}
         </div>
 
@@ -148,22 +149,23 @@ export default function Dashboard() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-xs tracking-widest uppercase text-muted-foreground font-heading mb-4 mt-6">
-            Active Goals
-          </p>
+          <div className="flex items-center justify-between mb-5 mt-8">
+            <p className="editorial-eyebrow">Chapter I — In Progress</p>
+            <span className="editorial-rule flex-1 mx-4" />
+            <p className="editorial-eyebrow">{String(activeGoals.length).padStart(2, '0')}</p>
+          </div>
 
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[1, 2].map(i => (
-                <div key={i} className="glass rounded-2xl h-32 animate-pulse" />
+                <div key={i} className="glass rounded-lg h-24 animate-pulse" />
               ))}
             </div>
           ) : activeGoals.length === 0 ? (
-            <GlassCard className="p-8 text-center">
-              <Target className="w-8 h-8 text-violet-300 mx-auto mb-3" />
-              <p className="font-heading font-semibold mb-1">No active goals</p>
-              <p className="text-sm text-muted-foreground">Tap + to create your first goal</p>
-            </GlassCard>
+            <div className="text-center py-10 border-t border-b border-foreground/10">
+              <p className="editorial-italic text-lg text-foreground mb-1">An empty page awaits.</p>
+              <p className="text-xs text-muted-foreground tracking-wider">Begin your first entry —</p>
+            </div>
           ) : (
             activeGoals.map((goal, i) => (
               <GoalCard
