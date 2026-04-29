@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
-import IdolBackgroundManager from '@/components/dashboard/IdolBackgroundManager';
 import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
@@ -15,7 +14,6 @@ import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
-import { ImageIcon } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -37,7 +35,6 @@ export default function Dashboard() {
   });
 
   const [levelUpRank, setLevelUpRank] = useState(null);
-  const [showBgManager, setShowBgManager] = useState(false);
 
   const checkinMutation = useMutation({
     mutationFn: ({ goal, prevRankId }) => {
@@ -106,15 +103,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
-
-
-      {/* Background manager modal */}
-      <AnimatePresence>
-        {showBgManager && (
-          <IdolBackgroundManager user={user} onClose={() => setShowBgManager(false)} />
-        )}
-      </AnimatePresence>
-
       <PageShell goals={goals} user={user}>
 
       <div className="relative z-10 px-5 pt-[3.5rem]">
@@ -126,19 +114,6 @@ export default function Dashboard() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center gap-3">
-            <motion.button
-              onClick={() => setShowBgManager(true)}
-              whileTap={{ scale: 0.88 }}
-              style={{
-                width: 34, height: 34, borderRadius: 10,
-                background: user?.background_image_url ? 'rgba(26,58,173,0.1)' : 'rgba(0,0,0,0.05)',
-                border: user?.background_image_url ? '1px solid rgba(26,58,173,0.3)' : '1px solid rgba(0,0,0,0.1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-              title="Set idol background"
-            >
-              <ImageIcon style={{ width: 15, height: 15, color: user?.background_image_url ? '#1a3aad' : 'rgba(0,0,0,0.4)' }} />
-            </motion.button>
             <NotificationBell userEmail={user?.email} />
           </div>
         </motion.div>

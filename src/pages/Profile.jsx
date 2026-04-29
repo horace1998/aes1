@@ -9,7 +9,7 @@ import PageShell from '@/components/PageShell';
 import { LogOut, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
-import HeroImageManager from '@/components/profile/HeroImageManager';
+import ProfileImageEditor from '@/components/profile/ProfileImageEditor';
 import ReminderSettings from '@/components/profile/ReminderSettings';
 import FocusManager from '@/components/profile/FocusManager';
 import BiasMonogram from '@/components/profile/BiasMonogram';
@@ -21,9 +21,16 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
+  const refreshUser = () => base44.auth.me().then(setUser);
   useEffect(() => {
-    base44.auth.me().then(setUser);
+    refreshUser();
   }, []);
+
+  // Re-fetch user when 'me' query is invalidated (e.g. nickname / image updates)
+  const me = queryClient.getQueryData(['me']);
+  useEffect(() => {
+    if (me) setUser(me);
+  }, [me]);
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
@@ -62,7 +69,13 @@ export default function Profile() {
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
           <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Station Member</p>
-          <BiasMonogram biasName={user.favorite_idol} groupName={user.favorite_group} size="lg" />
+          {user.background_image_url ? (
+            <div className="w-32 h-32 rounded-full overflow-hidden border border-foreground/15">
+              <img src={user.background_image_url} alt="profile" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <BiasMonogram biasName={user.favorite_idol} groupName={user.favorite_group} size="lg" />
+          )}
           <h1 className="font-display text-3xl tracking-wide uppercase mt-4" style={{ color: '#0d1117' }}>{user.full_name || 'Station Member'}</h1>
           <p className="text-xs" style={{ color: 'rgba(0,0,0,0.45)' }}>{user.email}</p>
         </motion.div>
@@ -112,11 +125,11 @@ export default function Profile() {
           <BadgeGrid badges={badges} />
         </div>
 
+        {/* Profile image + nickname */}
+        <ProfileImageEditor user={user} />
+
         {/* Focus manager */}
         <FocusManager user={user} />
-
-        {/* Hero Image manager */}
-        <HeroImageManager user={user} />
 
         {/* Daily reminder */}
         <ReminderSettings />
