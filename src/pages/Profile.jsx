@@ -9,10 +9,7 @@ import PageShell from '@/components/PageShell';
 import { LogOut, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
-import ProfileImageEditor from '@/components/profile/ProfileImageEditor';
-import IdentityEditor from '@/components/profile/IdentityEditor';
-import ReminderSettings from '@/components/profile/ReminderSettings';
-import FocusManager from '@/components/profile/FocusManager';
+import EditProfile from '@/components/profile/EditProfile';
 import BiasMonogram from '@/components/profile/BiasMonogram';
 import BadgeGrid from '@/components/profile/BadgeGrid';
 import PhotoWall from '@/components/profile/PhotoWall';
@@ -82,11 +79,21 @@ export default function Profile() {
         </motion.div>
 
         {/* View public profile CTA */}
-        <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-6">
+        <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-3">
           <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2">
             <Eye className="w-4 h-4" /> View My Public Profile
           </GlassButton>
         </Link>
+
+        {/* Edit Profile Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="mb-6"
+        >
+          <EditProfile user={user} />
+        </motion.div>
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
@@ -119,26 +126,6 @@ export default function Profile() {
         <div className="mb-8">
           <BadgeGrid badges={badges} />
         </div>
-
-        {/* Identity Editor */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mb-8"
-        >
-          <IdentityEditor user={user} />
-        </motion.div>
-
-        {/* Profile Image Editor */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18 }}
-          className="mb-8"
-        >
-          <ProfileImageEditor user={user} />
-        </motion.div>
 
         {/* Station ID */}
         <div className="py-5 mb-6 text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
