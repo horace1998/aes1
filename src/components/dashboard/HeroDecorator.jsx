@@ -5,7 +5,6 @@ import { getFanRank, getNextRank, getRankScore } from '@/lib/fanRank';
 export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount = 0 }) {
   const bgUrl = user?.hero_bg_url;
   const sideImages = user?.hero_side_urls || [null, null];
-  const centerImage = user?.background_image_url;
   
   const rank = getFanRank(totalCheckins, milestoneCount);
   const score = getRankScore(totalCheckins, milestoneCount);
@@ -35,12 +34,12 @@ export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount 
         className="absolute inset-0 w-full h-full object-cover grayscale brightness-50"
       />
 
-      {/* Center color idol image */}
-      {centerImage && (
+      {/* Center color image (same as background, no filter) */}
+      {bgUrl && (
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src={centerImage}
-            alt="idol"
+            src={bgUrl}
+            alt="center"
             className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-xl"
           />
         </div>
