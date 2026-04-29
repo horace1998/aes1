@@ -25,7 +25,7 @@ import PublicProfile from '@/pages/PublicProfile';
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
+    <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
         <Route path="/onboarding" element={<PageTransition><Onboarding /></PageTransition>} />

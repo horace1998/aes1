@@ -50,8 +50,17 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
       {/* ── Hologram idol cutout (circular) ── */}
       {showIdol && (
         <div
-          className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-          style={{ top: 0, zIndex: 30, width: 160, height: 160, borderRadius: '50%' }}
+          className="absolute left-1/2 -translate-x-1/2 pointer-events-none overflow-hidden"
+          style={{
+            top: 0,
+            zIndex: 30,
+            width: 160,
+            height: 160,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.18), rgba(26,58,173,0.16) 58%, rgba(13,31,107,0.3))',
+            border: '1px solid rgba(77,127,255,0.35)',
+            boxShadow: '0 0 36px rgba(26,58,173,0.45)',
+          }}
           aria-hidden="true"
         >
           {processing && (
@@ -94,8 +103,9 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
                 style={{
                   position: 'absolute', inset: 0,
                   width: '100%', height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'bottom center',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  borderRadius: '50%',
                   zIndex: 2,
                   filter: `
                     drop-shadow(0 -6px 18px rgba(77,127,255,0.8))
@@ -111,8 +121,8 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
               {/* Bottom fade so idol blends into card */}
               <div style={{
                 position: 'absolute', bottom: 0, left: 0, right: 0,
-                height: 56,
-                background: 'linear-gradient(to top, #0d1f6b 0%, transparent 100%)',
+                height: 42,
+                background: 'linear-gradient(to top, rgba(13,31,107,0.75) 0%, transparent 100%)',
                 zIndex: 4,
               }} />
             </>

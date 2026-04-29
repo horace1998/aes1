@@ -64,7 +64,7 @@ export default function Dashboard() {
   });
 
   const deleteGoalMutation = useMutation({
-    mutationFn: (goalId) => base44.entities.Goal.delete(goalId),
+    mutationFn: (goalId) => base44.entities.Goal.update(goalId, { status: 'abandoned' }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
   });
 

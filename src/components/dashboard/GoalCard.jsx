@@ -252,7 +252,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
             exit={{ opacity: 0 }}
           >
             <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#0d1117' }}>
-              Remove this goal?
+              Hide this goal from active list?
             </p>
             <div className="flex gap-2">
               <button
@@ -276,7 +276,7 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
                   padding: '6px 12px', color: '#fff',
                 }}
               >
-                Remove
+                Hide
               </button>
             </div>
           </motion.div>
