@@ -6,31 +6,31 @@
 
 @layer base {
   :root {
-    /* Vogue editorial palette — warm cream paper, deep ink */
-    --background: 36 25% 96%;
+    /* Vogue editorial palette — pure white paper, deep ink */
+    --background: 0 0% 100%;
     --foreground: 0 0% 8%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 8%;
     --primary: 0 0% 8%;
-    --primary-foreground: 36 25% 96%;
-    --secondary: 36 15% 88%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 12%;
-    --muted: 36 15% 92%;
+    --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
-    --accent: 36 20% 85%;
+    --accent: 0 0% 92%;
     --accent-foreground: 0 0% 12%;
     --destructive: 0 50% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 36 12% 85%;
-    --input: 36 12% 85%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
     --ring: 0 0% 30%;
-    --chart-1: 0 0% 20%;
-    --chart-2: 0 0% 40%;
-    --chart-3: 0 0% 60%;
-    --chart-4: 36 20% 70%;
-    --chart-5: 0 0% 80%;
+    --chart-1: 0 0% 15%;
+    --chart-2: 0 0% 35%;
+    --chart-3: 0 0% 55%;
+    --chart-4: 0 0% 75%;
+    --chart-5: 0 0% 85%;
     --radius: 0.5rem;
     --font-heading: 'Playfair Display', 'Times New Roman', serif;
     --font-body: 'Inter', sans-serif;
@@ -183,16 +183,13 @@ body::-webkit-scrollbar,
   font-weight: 400;
 }
 
-/* Editorial paper texture — subtle warm cream backdrop */
+/* Editorial paper texture — pure white Vogue backdrop */
 .aurora-bg {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(0,0,0,0.025), transparent 50%),
-    radial-gradient(circle at 85% 90%, rgba(0,0,0,0.02), transparent 50%),
-    linear-gradient(180deg, hsl(36 28% 97%) 0%, hsl(36 22% 94%) 100%);
+  background: #ffffff;
 }
 
 /* Page-transition smoothing helper */
