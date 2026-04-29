@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageCircle } from 'lucide-react';
+import StoryReplies from '@/components/circle/StoryReplies';
 
-export default function CircleStoriesFeed({ circleId }) {
+export default function CircleStoriesFeed({ circleId, currentUser }) {
   const { data: stories = [], isLoading } = useQuery({
     queryKey: ['circle-stories', circleId],
     queryFn: () => base44.entities.FeedPost.filter(
       { support_circle_id: circleId, post_type: 'circle_story' },
-      '-created_date',
+      '-updated_date',
       50
     ),
     enabled: !!circleId,
@@ -73,10 +74,10 @@ export default function CircleStoriesFeed({ circleId }) {
                   fontWeight: 600, color: '#0d1117',
                 }}>{s.user_name || s.user_email?.split('@')[0]}</p>
                 <p style={{
-                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
-                  fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase',
-                  color: 'rgba(0,0,0,0.35)',
-                }}>{formatDistanceToNow(new Date(s.created_date), { addSuffix: true })}</p>
+                   fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                   fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase',
+                   color: 'rgba(0,0,0,0.35)',
+                 }}>{formatDistanceToNow(new Date(s.updated_date || s.created_date), { addSuffix: true })}</p>
               </div>
             </div>
 
@@ -92,6 +93,8 @@ export default function CircleStoriesFeed({ circleId }) {
                 <img src={s.asset_url} alt="" className="w-full max-h-80 object-cover" />
               </div>
             )}
+
+            {currentUser && <StoryReplies storyId={s.id} currentUser={currentUser} />}
           </motion.div>
         );
       })}

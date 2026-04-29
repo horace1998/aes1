@@ -10,6 +10,9 @@ import {
 
 export default function ReminderSettings() {
   const [settings, setSettings] = useState(getReminderSettings());
+  const [messageNotifications, setMessageNotifications] = useState(
+    localStorage.getItem('messageNotifications') !== 'false'
+  );
   const [permission, setPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
   );
@@ -17,6 +20,10 @@ export default function ReminderSettings() {
   useEffect(() => {
     saveReminderSettings(settings);
   }, [settings]);
+
+  useEffect(() => {
+    localStorage.setItem('messageNotifications', messageNotifications);
+  }, [messageNotifications]);
 
   const supported = permission !== 'unsupported';
 
@@ -84,21 +91,52 @@ export default function ReminderSettings() {
       </div>
 
       {isOn && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="flex items-center gap-3 pt-3 border-t border-white/40"
-        >
-          <Clock className="w-4 h-4 text-violet-400" />
-          <span className="text-xs font-heading text-muted-foreground flex-1">Remind me at</span>
-          <input
-            type="time"
-            value={timeStr}
-            onChange={handleTimeChange}
-            className="glass-subtle rounded-xl px-3 py-1.5 text-sm font-heading font-semibold text-foreground border-0 focus:ring-2 focus:ring-violet-300 outline-none"
-          />
-        </motion.div>
-      )}
-    </GlassCard>
-  );
-}
+         <motion.div
+           initial={{ opacity: 0, height: 0 }}
+           animate={{ opacity: 1, height: 'auto' }}
+           className="flex items-center gap-3 pt-3 border-t border-white/40"
+         >
+           <Clock className="w-4 h-4 text-violet-400" />
+           <span className="text-xs font-heading text-muted-foreground flex-1">Remind me at</span>
+           <input
+             type="time"
+             value={timeStr}
+             onChange={handleTimeChange}
+             className="glass-subtle rounded-xl px-3 py-1.5 text-sm font-heading font-semibold text-foreground border-0 focus:ring-2 focus:ring-violet-300 outline-none"
+           />
+         </motion.div>
+       )}
+
+      <div className="mt-4 pt-4 border-t border-white/40">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-heading font-semibold text-foreground">Message Notifications</p>
+            <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+              Get notified about new cheers and replies in your circle.
+            </p>
+          </div>
+          <motion.button
+            onClick={() => setMessageNotifications(!messageNotifications)}
+            whileTap={{ scale: 0.92 }}
+            className="relative flex-shrink-0"
+            style={{
+              width: 44, height: 26, borderRadius: 999,
+              background: messageNotifications ? 'linear-gradient(135deg,#c4b5fd,#a78bfa)' : 'rgba(120,110,170,0.2)',
+              border: 'none', cursor: 'pointer',
+              transition: 'background 0.25s',
+            }}
+          >
+            <motion.div
+              animate={{ x: messageNotifications ? 20 : 2 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              style={{
+                position: 'absolute', top: 2, width: 22, height: 22, borderRadius: 999,
+                background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              }}
+            />
+          </motion.button>
+        </div>
+      </div>
+      </GlassCard>
+      );
+      }

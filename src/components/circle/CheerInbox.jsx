@@ -64,9 +64,9 @@ export default function CheerInbox({ user }) {
                 from {c.sender_name || c.sender_email?.split('@')[0]}
               </p>
               <p style={{
-                fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
-                color: 'rgba(0,0,0,0.4)', letterSpacing: '0.15em',
-              }}>{formatDistanceToNow(new Date(c.created_date), { addSuffix: true })}</p>
+                 fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                 color: 'rgba(0,0,0,0.4)', letterSpacing: '0.15em',
+               }}>{formatDistanceToNow(new Date(c.updated_date || c.created_date), { addSuffix: true })}</p>
             </div>
             <p style={{
               fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic',

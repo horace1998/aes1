@@ -155,7 +155,7 @@ export default function SupportCircle() {
           {tab === 'stories' ? (
             <>
               <CircleStoryComposer circleId={mission.id} mission={mission} currentUser={user} />
-              <CircleStoriesFeed circleId={mission.id} />
+              <CircleStoriesFeed circleId={mission.id} currentUser={user} />
             </>
           ) : (
             <CircleMembersFeed members={allMembers} />
