@@ -51,6 +51,8 @@ export default function HeroEditor({ isOpen, onClose, hero, user }) {
         title_y: hero?.title_y ?? DEFAULTS.title_y,
       });
       setDraftImage(hero?.image_url || null);
+      // Auto-open upload dialog if no existing image
+      if (!hero?.image_url) setShowUpload(true);
     }
   }, [isOpen, hero?.id]);
 

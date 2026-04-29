@@ -97,23 +97,40 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
-      {/* Idol background overlay */}
+      {/* Idol background — right-side portrait panel */}
       {user?.background_image_url && (
         <div
-          className="fixed inset-0 pointer-events-none"
-          style={{ zIndex: 0 }}
+          className="fixed top-0 right-0 pointer-events-none"
+          style={{ zIndex: 0, width: '52vw', height: '70vh', maxWidth: 320 }}
           aria-hidden="true"
         >
           <img
             src={user.background_image_url}
             alt=""
-            className="w-full h-full object-cover object-top"
-            style={{ opacity: 0.13 }}
+            style={{
+              width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'top center',
+              borderBottomLeftRadius: 64,
+              opacity: 0.88,
+            }}
           />
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.82) 40%, rgba(255,255,255,0.95) 100%)' }}
-          />
+          {/* Fade edges into white */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            borderBottomLeftRadius: 64,
+            background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.55) 100%)',
+          }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            borderBottomLeftRadius: 64,
+            background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.1) 35%, transparent 60%)',
+          }} />
+          {/* Subtle navy tint overlay */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            borderBottomLeftRadius: 64,
+            background: 'linear-gradient(135deg, rgba(26,58,173,0.08) 0%, transparent 60%)',
+          }} />
         </div>
       )}
 

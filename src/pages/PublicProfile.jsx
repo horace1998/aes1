@@ -60,7 +60,7 @@ export default function PublicProfile() {
     return (
       <div className="min-h-screen relative pb-28 px-6 pt-14">
         <ThreeBackground />
-        <Link to="/feed" className="inline-flex items-center gap-2 editorial-eyebrow text-foreground mb-6">
+        <Link to="/feed" className="inline-flex items-center gap-2 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.5)' }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Back
         </Link>
         <GlassCard variant="strong" className="p-10 text-center">
@@ -81,7 +81,7 @@ export default function PublicProfile() {
 
       <div className="relative z-10 px-6 pt-14">
         {/* Back button */}
-        <Link to="/feed" className="inline-flex items-center gap-2 editorial-eyebrow text-foreground mb-6">
+        <Link to="/feed" className="inline-flex items-center gap-2 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.5)' }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Feed
         </Link>
 
@@ -91,7 +91,7 @@ export default function PublicProfile() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <p className="editorial-eyebrow mb-2">Station Member</p>
+          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 8 }}>Station Member</p>
         </motion.div>
 
         {/* Bias Monogram — the centerpiece */}
@@ -106,15 +106,15 @@ export default function PublicProfile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <h1 className="font-display text-4xl tracking-wide uppercase text-foreground">{displayName}</h1>
-          <div className="editorial-rule my-3 mx-auto max-w-[120px]" />
+          <h1 className="font-display text-4xl tracking-wide uppercase" style={{ color: '#0d1117' }}>{displayName}</h1>
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.12)', margin: '12px auto', maxWidth: 120 }} />
           {biasName ? (
-            <p className="editorial-eyebrow">
-              Stanning <span className="text-foreground">{groupName || biasName}</span>
-              {biasName && groupName ? <> · Bias <span className="text-foreground">{biasName}</span></> : null}
+            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)' }}>
+              Stanning <span style={{ color: '#0d1117' }}>{groupName || biasName}</span>
+              {biasName && groupName ? <> · Bias <span style={{ color: '#0d1117' }}>{biasName}</span></> : null}
             </p>
           ) : (
-            <p className="editorial-italic text-xs text-muted-foreground">Discovering their fandom</p>
+            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 13, color: 'rgba(0,0,0,0.45)' }}>Discovering their fandom</p>
           )}
         </motion.div>
 
@@ -122,7 +122,7 @@ export default function PublicProfile() {
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
 
         {/* Stats — editorial four-column index */}
-        <div className="grid grid-cols-4 border-t border-b border-foreground/15 mb-8">
+        <div className="grid grid-cols-4 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
           {[
             { label: 'Goals', value: goals.length },
             { label: 'Done', value: completedGoals },
@@ -131,22 +131,23 @@ export default function PublicProfile() {
           ].map((s, i) => (
             <motion.div
               key={s.label}
-              className={`text-center py-4 ${i < 3 ? 'border-r border-foreground/15' : ''}`}
+              className="text-center py-4"
+              style={{ borderRight: i < 3 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.05 }}
             >
-              <p className="font-display text-2xl text-foreground" style={{ fontWeight: 600 }}>
+              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#0d1117', fontWeight: 600 }}>
                 {String(s.value).padStart(2, '0')}
               </p>
-              <p className="editorial-eyebrow mt-1">{s.label}</p>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 3 }}>{s.label}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Photo Wall */}
         <div className="mb-8">
-          <p className="editorial-eyebrow mb-3">Milestone Wall</p>
+          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Milestone Wall</p>
           <PhotoWall milestones={milestones} emptyLabel="No milestones shared yet" />
         </div>
 

@@ -61,10 +61,10 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
         >
-          <p className="editorial-eyebrow mb-3">Station Member</p>
+          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Station Member</p>
           <BiasMonogram biasName={user.favorite_idol} groupName={user.favorite_group} size="lg" />
-          <h1 className="font-display text-3xl tracking-wide uppercase mt-4">{user.full_name || 'Station Member'}</h1>
-          <p className="text-xs text-muted-foreground">{user.email}</p>
+          <h1 className="font-display text-3xl tracking-wide uppercase mt-4" style={{ color: '#0d1117' }}>{user.full_name || 'Station Member'}</h1>
+          <p className="text-xs" style={{ color: 'rgba(0,0,0,0.45)' }}>{user.email}</p>
         </motion.div>
 
         {/* View public profile CTA */}
@@ -78,7 +78,7 @@ export default function Profile() {
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
 
         {/* Stats — editorial four-column index */}
-        <div className="grid grid-cols-4 border-t border-b border-foreground/15 mb-8">
+        <div className="grid grid-cols-4 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
           {[
             { label: 'Goals', value: goals.length },
             { label: 'Done', value: completedGoals },
@@ -87,22 +87,23 @@ export default function Profile() {
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
-              className={`text-center py-4 ${i < 3 ? 'border-r border-foreground/15' : ''}`}
+              className="text-center py-4"
+              style={{ borderRight: i < 3 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
             >
-              <p className="font-display text-2xl text-foreground" style={{ fontWeight: 600 }}>
+              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#0d1117', fontWeight: 600 }}>
                 {String(stat.value).padStart(2, '0')}
               </p>
-              <p className="editorial-eyebrow mt-1">{stat.label}</p>
+              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 3 }}>{stat.label}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Photo Wall */}
         <div className="mb-8">
-          <p className="editorial-eyebrow mb-3">Milestone Wall</p>
+          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Milestone Wall</p>
           <PhotoWall milestones={milestones} emptyLabel="Capture your first milestone to start your wall" />
         </div>
 
@@ -121,9 +122,9 @@ export default function Profile() {
         <ReminderSettings />
 
         {/* Station ID */}
-        <div className="border-t border-b border-foreground/15 py-5 mb-6 text-center">
-          <p className="editorial-eyebrow mb-2">Station ID</p>
-          <p className="font-display text-lg tracking-[0.2em] text-foreground" style={{ fontWeight: 600 }}>
+        <div className="py-5 mb-6 text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 8 }}>Station ID</p>
+          <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 18, letterSpacing: '0.2em', color: '#0d1117', fontWeight: 600 }}>
             SYNK·{user.id?.slice(0, 8)?.toUpperCase() || '00000000'}
           </p>
         </div>
