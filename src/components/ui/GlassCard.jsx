@@ -17,11 +17,13 @@ export default function GlassCard({ children, className, variant = 'default', an
     transition: { type: 'spring', stiffness: 300, damping: 30 },
   } : {};
 
+  const { style: incomingStyle, ...rest } = props;
   return (
     <Component
       className={cn(variants[variant], 'rounded-2xl', className)}
+      style={incomingStyle}
       {...animateProps}
-      {...props}
+      {...rest}
     >
       {children}
     </Component>

@@ -85,7 +85,8 @@ export default function GoalCard({ goal, onCheckin, onComplete, onDelete, index 
         drag={canSwipe ? 'x' : false}
         dragConstraints={{ left: -120, right: 120 }}
         dragElastic={0.12}
-        style={{ x }}
+        dragDirectionLock
+        style={{ x, touchAction: canSwipe ? 'pan-y' : 'auto' }}
         onDragEnd={handleDragEnd}
         animate={confirming ? { x: -110 } : confirmingDelete ? { x: 110 } : undefined}
         initial={{ opacity: 0, y: 14 }}

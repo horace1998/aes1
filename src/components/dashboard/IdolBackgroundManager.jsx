@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ImageIcon, Trash2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
+import ModalPortal from '@/components/ui/ModalPortal';
 
 export default function IdolBackgroundManager({ user, onClose }) {
   const fileRef = useRef(null);
@@ -37,16 +38,19 @@ export default function IdolBackgroundManager({ user, onClose }) {
   };
 
   return (
+    <ModalPortal lockScroll>
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
       <motion.div
-        className="relative w-full max-w-sm mx-auto mb-24"
-        initial={{ y: 60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 60, opacity: 0 }}
+        className="relative w-full max-w-sm"
+        style={{ maxHeight: 'calc(100dvh - 32px)' }}
+        initial={{ y: 24, opacity: 0, scale: 0.96 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 24, opacity: 0, scale: 0.96 }}
         transition={{ type: 'spring', stiffness: 340, damping: 30 }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -142,5 +146,6 @@ export default function IdolBackgroundManager({ user, onClose }) {
         </div>
       </motion.div>
     </div>
+    </ModalPortal>
   );
 }

@@ -256,9 +256,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
   user-select: none !important;
 }
 html, body {
-  touch-action: pan-x pan-y;
-  -ms-touch-action: pan-x pan-y;
-  overscroll-behavior: none;
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+  overscroll-behavior-y: none;
 }
 input, textarea, [contenteditable="true"] {
   -webkit-user-select: text !important;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
+import ModalPortal from '@/components/ui/ModalPortal';
 import { Flag, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
@@ -58,19 +59,22 @@ export default function ReportDialog({ isOpen, onClose, targetType, targetId, sn
   };
 
   return (
+    <ModalPortal lockScroll={isOpen}>
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-end justify-center"
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+          style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         >
           <motion.div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
           <motion.div
-            className="relative w-full max-w-lg mx-4 mb-4"
-            initial={{ y: 300, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 300, opacity: 0 }}
+            className="relative w-full max-w-lg"
+            style={{ maxHeight: 'calc(100dvh - 32px)' }}
+            initial={{ y: 24, opacity: 0, scale: 0.96 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 24, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>
+            <GlassCard variant="strong" className="p-6 rounded-3xl overflow-y-auto no-scrollbar" style={{ maxHeight: 'calc(100dvh - 32px)' }} animate={false}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Flag className="w-4 h-4 text-pink-500" />
@@ -118,5 +122,6 @@ export default function ReportDialog({ isOpen, onClose, targetType, targetId, sn
         </motion.div>
       )}
     </AnimatePresence>
+    </ModalPortal>
   );
 }

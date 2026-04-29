@@ -51,7 +51,8 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+          style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -59,12 +60,13 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
           <motion.div
             className="relative w-full max-w-lg"
-            initial={{ y: 40, opacity: 0, scale: 0.96 }}
+            style={{ maxHeight: 'calc(100dvh - 32px)' }}
+            initial={{ y: 24, opacity: 0, scale: 0.96 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 40, opacity: 0, scale: 0.96 }}
+            exit={{ y: 24, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            <GlassCard variant="strong" className="p-6 rounded-3xl" animate={false}>
+            <GlassCard variant="strong" className="p-6 rounded-3xl overflow-y-auto no-scrollbar" style={{ maxHeight: 'calc(100dvh - 32px)' }} animate={false}>
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="font-heading text-xl font-bold">Add Milestone</h3>

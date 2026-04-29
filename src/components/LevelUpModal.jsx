@@ -21,11 +21,11 @@ export default function LevelUpModal({ isOpen, rank, score, onClose, onShare }) 
       <AnimatePresence>
         {isOpen && rank && (
           <motion.div
-            className="fixed inset-0 z-[80] flex items-center justify-center px-6"
+            className="fixed inset-0 z-[110] flex items-center justify-center px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', height: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
             {/* Backdrop — pointer-events-none so only close button dismisses */}
             <div className="absolute inset-0 pointer-events-none" />
