@@ -15,13 +15,14 @@ const CATEGORIES = [
   { id: 'other', label: 'Other' },
 ];
 
-export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
+export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol, activeGoalCount = 0 }) {
   const [goal, setGoal] = useState('');
   const [description, setDescription] = useState('');
   const [timelineValue, setTimelineValue] = useState(7);
   const [timelineUnit, setTimelineUnit] = useState('days');
   const [makePublic, setMakePublic] = useState(false);
   const [category, setCategory] = useState('other');
+  const canCreateGoal = activeGoalCount < 3;
 
   const idolName = defaultIdol?.idol_name?.trim() || defaultIdol?.idol_group?.trim() || '';
   const idolGroup = defaultIdol?.idol_group?.trim() || defaultIdol?.idol_name?.trim() || '';
@@ -84,6 +85,12 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
                   <Heart className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-1">No focus picked yet.</p>
                   <p className="text-xs text-muted-foreground">Set your group/bias in Profile first.</p>
+                </div>
+              ) : !canCreateGoal ? (
+                <div className="text-center py-6">
+                  <Users className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground mb-1">Goal limit reached</p>
+                  <p className="text-xs text-muted-foreground">Complete or abandon a goal to create a new one. Max 3 active goals.</p>
                 </div>
               ) : (
                 <>
@@ -219,7 +226,7 @@ export default function NewGoalModal({ isOpen, onClose, onSave, defaultIdol }) {
 
               <div className="flex gap-3 mt-6">
                 <GlassButton variant="ghost" onClick={onClose} className="flex-1">Cancel</GlassButton>
-                <GlassButton variant="primary" onClick={handleSave} disabled={!goal.trim()} className="flex-1">
+                <GlassButton variant="primary" onClick={handleSave} disabled={!goal.trim() || !canCreateGoal} className="flex-1">
                   Create Goal
                 </GlassButton>
               </div>

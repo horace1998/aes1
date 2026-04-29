@@ -24,7 +24,6 @@ export default function Profile() {
     refreshUser();
   }, []);
 
-  // Re-fetch user when 'me' query is invalidated (e.g. nickname / image updates)
   const me = queryClient.getQueryData(['me']);
   useEffect(() => {
     if (me) setUser(me);
@@ -56,144 +55,175 @@ export default function Profile() {
   return (
     <div className="min-h-screen relative pb-28">
       <PageShell goals={goals} user={user}>
-      <ThreeBackground />
+        <ThreeBackground />
 
-      <div className="relative z-10 px-5 pt-14">
-         {/* Profile Header */}
-         <motion.div
-           className="flex flex-col items-center text-center mb-6"
-           initial={{ opacity: 0, y: -20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-         >
-           <p className="editorial-eyebrow mb-3">Station Member</p>
+        <div className="relative z-10 px-5 pt-14">
+          {/* Header with background image overlay */}
           {user.background_image_url ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border border-foreground/15">
-              <img src={user.background_image_url} alt="profile" className="w-full h-full object-cover" />
+            <div className="relative -mx-5 mb-8 h-56 rounded-b-3xl overflow-hidden">
+              <img src={user.background_image_url} alt="profile-bg" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/80" />
             </div>
-          ) : (
-            <BiasMonogram biasName={user.favorite_idol} groupName={user.favorite_group} size="lg" />
-          )}
-          <h1 className="font-display text-3xl tracking-wide uppercase mt-4" style={{ color: '#0d1117' }}>{user.full_name || 'Station Member'}</h1>
-          <p className="text-xs" style={{ color: 'rgba(0,0,0,0.45)' }}>{user.email}</p>
-        </motion.div>
+          ) : null}
 
-        {/* Profile Visibility Toggle */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.04 }}
-          className="mb-3 glass rounded-2xl p-4 flex items-center justify-between"
-        >
-          <div>
-            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, fontWeight: 600, color: '#0d1117' }}>
-              Profile Visibility
-            </p>
-            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, color: 'rgba(0,0,0,0.5)', marginTop: 2 }}>
-              {user.profile_visibility === 'public' ? 'Public · Anyone can view' : 'Private · Only you can view'}
-            </p>
+          {/* Edit Profile button (top right) */}
+          <div className="flex justify-between items-start mb-6 -mt-12 relative z-10">
+            <div />
+            <EditProfile user={user} />
           </div>
-          <button
-            onClick={async () => {
-              await base44.auth.updateMe({
-                profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public',
-              });
-              setUser({ ...user, profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public' });
-            }}
-            style={{
-              width: 48, height: 28, borderRadius: 14,
-              background: user.profile_visibility === 'public' ? '#1a3aad' : '#ccc',
-              border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.3s',
-            }}
+
+          {/* Profile info card — merged layout */}
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            <motion.div
-              animate={{ x: user.profile_visibility === 'public' ? 20 : 2 }}
-              style={{ width: 24, height: 24, borderRadius: 12, background: 'white', position: 'absolute', top: 2, left: 2 }}
-            />
-          </button>
-        </motion.div>
+            <GlassCard variant="strong" className="p-6 rounded-3xl">
+              {/* Profile header with handle */}
+              <div className="text-center mb-4">
+                <h1 className="font-display text-3xl tracking-wide uppercase mb-2" style={{ color: '#0d1117' }}>
+                  {user.full_name || 'Station Member'}
+                </h1>
+                <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase' }}>
+                  @{user.email.split('@')[0]}
+                </p>
+              </div>
 
-        {/* View public profile CTA */}
-        {user.profile_visibility === 'public' && (
-          <Link to={`/u/${encodeURIComponent(user.email)}`} className="block mb-3">
-            <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2">
-              <Eye className="w-4 h-4" /> View My Public Profile
-            </GlassButton>
-          </Link>
-        )}
-
-        {/* Edit Profile Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
-          className="mb-6"
-        >
-          <EditProfile user={user} />
-        </motion.div>
-
-        {/* Fan Rank */}
-        <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
-
-        {/* Stats — editorial four-column index */}
-        <div className="grid grid-cols-4 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-          {[
-            { label: 'Goals', value: goals.length },
-            { label: 'Done', value: completedGoals },
-            { label: 'Entries', value: totalCheckins },
-            { label: 'Streak', value: `${totalCheckins}` },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              className="text-center py-4"
-              style={{ borderRight: i < 3 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
-            >
-              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#0d1117', fontWeight: 600 }}>
-                {String(stat.value).padStart(2, '0')}
+              {/* Bio / description placeholder */}
+              <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 13, color: 'rgba(0,0,0,0.6)', textAlign: 'center', marginBottom: 12 }}>
+                Dedicated K-pop fan on a journey of growth
               </p>
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 3 }}>{stat.label}</p>
-            </motion.div>
-          ))}
+
+              {/* Followers / Following / Creations stats */}
+              <div className="grid grid-cols-3 gap-0 mb-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+                {[
+                  { label: 'Followers', value: user.followers?.length || 0 },
+                  { label: 'Following', value: user.following?.length || 0 },
+                  { label: 'Creations', value: milestones.length },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    className="text-center py-3"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.08 + i * 0.05 }}
+                  >
+                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 20, color: '#0d1117', fontWeight: 600 }}>
+                      {String(stat.value).padStart(3, '0')}
+                    </p>
+                    <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 2 }}>
+                      {stat.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Profile Visibility Toggle */}
+              <motion.div
+                className="flex items-center justify-between p-3 rounded-xl bg-foreground/5 border border-foreground/10 mb-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.24 }}
+              >
+                <div>
+                  <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, color: '#0d1117' }}>
+                    PROFILE VISIBILITY
+                  </p>
+                  <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, color: 'rgba(0,0,0,0.5)', marginTop: 2 }}>
+                    {user.profile_visibility === 'public' ? '✓ Public' : '🔒 Private'}
+                  </p>
+                </div>
+                <button
+                  onClick={async () => {
+                    await base44.auth.updateMe({
+                      profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public',
+                    });
+                    setUser({ ...user, profile_visibility: user.profile_visibility === 'public' ? 'private' : 'public' });
+                  }}
+                  style={{
+                    width: 48, height: 28, borderRadius: 14,
+                    background: user.profile_visibility === 'public' ? '#1a3aad' : '#ccc',
+                    border: 'none', cursor: 'pointer', position: 'relative', transition: 'all 0.3s',
+                  }}
+                >
+                  <motion.div
+                    animate={{ x: user.profile_visibility === 'public' ? 20 : 2 }}
+                    style={{ width: 24, height: 24, borderRadius: 12, background: 'white', position: 'absolute', top: 2, left: 2 }}
+                  />
+                </button>
+              </motion.div>
+
+              {/* View public profile link */}
+              {user.profile_visibility === 'public' && (
+                <Link to={`/u/${encodeURIComponent(user.email)}`} className="block">
+                  <GlassButton variant="secondary" className="w-full flex items-center justify-center gap-2 text-sm">
+                    <Eye className="w-4 h-4" /> See Profile
+                  </GlassButton>
+                </Link>
+              )}
+            </GlassCard>
+          </motion.div>
+
+          {/* Fan Rank — dedicated section */}
+          <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
+
+          {/* Stats — editorial four-column index */}
+          <div className="grid grid-cols-4 mb-8" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+            {[
+              { label: 'Goals', value: goals.length },
+              { label: 'Done', value: completedGoals },
+              { label: 'Entries', value: totalCheckins },
+              { label: 'Streak', value: `${totalCheckins}` },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className="text-center py-4"
+                style={{ borderRight: i < 3 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
+              >
+                <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: '#0d1117', fontWeight: 600 }}>
+                  {String(stat.value).padStart(2, '0')}
+                </p>
+                <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 8, fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.38)', marginTop: 3 }}>{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Trophy Case */}
+          <div className="mb-8">
+            <BadgeGrid badges={badges} />
+          </div>
+
+          {/* Photo Wall */}
+          <div className="mb-8">
+            <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 12 }}>Milestone Wall</p>
+            <PhotoWall milestones={milestones} />
+          </div>
+
+          {/* Admin */}
+          {user.role === 'admin' && (
+            <Link to="/admin/moderation">
+              <GlassButton
+                variant="ghost"
+                className="w-full flex items-center justify-center gap-2 text-foreground mb-3"
+              >
+                <Shield className="w-4 h-4" /> Moderation Queue
+              </GlassButton>
+            </Link>
+          )}
+
+          {/* Sign out */}
+          <GlassButton
+            variant="ghost"
+            className="w-full flex items-center justify-center gap-2 text-muted-foreground"
+            onClick={() => base44.auth.logout()}
+          >
+            <LogOut className="w-4 h-4" /> Sign Out
+          </GlassButton>
         </div>
-
-        {/* Trophy Case */}
-        <div className="mb-8">
-          <BadgeGrid badges={badges} />
-        </div>
-
-        {/* Station ID */}
-        <div className="py-5 mb-6 text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-          <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)', marginBottom: 8 }}>Station ID</p>
-          <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 18, letterSpacing: '0.2em', color: '#0d1117', fontWeight: 600 }}>
-            SYNK·{user.id?.slice(0, 8)?.toUpperCase() || '00000000'}
-          </p>
-        </div>
-
-        {/* Admin */}
-        {user.role === 'admin' && (
-          <Link to="/admin/moderation">
-            <GlassButton
-              variant="ghost"
-              className="w-full flex items-center justify-center gap-2 text-foreground mb-3"
-            >
-              <Shield className="w-4 h-4" /> Moderation Queue
-            </GlassButton>
-          </Link>
-        )}
-
-        {/* Actions */}
-        <GlassButton
-          variant="ghost"
-          className="w-full flex items-center justify-center gap-2 text-muted-foreground"
-          onClick={() => base44.auth.logout()}
-        >
-          <LogOut className="w-4 h-4" /> Sign Out
-        </GlassButton>
-      </div>
-
       </PageShell>
     </div>
   );

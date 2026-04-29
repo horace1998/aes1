@@ -105,6 +105,7 @@ export default function PageShell({ children, goals = [], user }) {
         onClose={() => setShowGoal(false)}
         onSave={handleSaveGoal}
         defaultIdol={user ? { idol_name: user.favorite_idol, idol_group: user.favorite_group } : null}
+        activeGoalCount={goals.filter(g => g.status === 'active').length}
       />
 
       <MilestoneNativeCapture
