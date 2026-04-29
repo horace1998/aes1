@@ -93,32 +93,31 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen relative pb-28">
+    <div className="min-h-screen relative pb-32" style={{ background: '#0d1117' }}>
       <PageShell goals={goals} user={user}>
-      <ThreeBackground />
 
-      <div className="relative z-10 px-6 pt-[3.5rem]">
-        {/* Top utility bar — bell + identity (wordmark is in RootChrome sticky bar) */}
+      <div className="relative z-10 px-5 pt-[3.5rem]">
+        {/* Top utility bar */}
         <motion.div
-          className="flex items-center justify-end mb-4"
+          className="flex items-center justify-end mb-1 pt-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center gap-3">
             <NotificationBell userEmail={user?.email} />
-            <HeroIdentity user={user} size={36} />
+            <HeroIdentity user={user} size={34} />
           </div>
         </motion.div>
 
-        {/* Editorial magazine header */}
+        {/* Poster header */}
         <EditorialHeader user={user} />
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} />
 
-        {/* Stats — editorial three-column index */}
-        <div className="grid grid-cols-3 mb-10 border-t border-b border-foreground/15">
+        {/* Stats — filmstrip style */}
+        <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>
           {[
             { label: 'Active', value: activeGoals.length },
             { label: 'Completed', value: completedCount },
@@ -126,15 +125,30 @@ export default function Dashboard() {
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
-              className={`text-center py-5 ${i < 2 ? 'border-r border-foreground/15' : ''}`}
+              style={{
+                borderRadius: 12,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                padding: '14px 10px',
+                textAlign: 'center',
+              }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
+              transition={{ delay: 0.08 + i * 0.07, duration: 0.45 }}
             >
-              <p className="font-display text-3xl text-foreground" style={{ fontWeight: 600 }}>
+              <p style={{
+                fontFamily: 'Bebas Neue, Impact, sans-serif',
+                fontSize: 34, color: '#fff', lineHeight: 1, letterSpacing: '0.03em',
+              }}>
                 {String(stat.value).padStart(2, '0')}
               </p>
-              <p className="editorial-eyebrow mt-1">{stat.label}</p>
+              <p style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 9, fontWeight: 700, letterSpacing: '0.28em',
+                textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)', marginTop: 5,
+              }}>
+                {stat.label}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -146,24 +160,53 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.28 }}
         >
-          <div className="flex items-center justify-between mb-5 mt-8">
-            <p className="editorial-eyebrow">Chapter I — In Progress</p>
-            <span className="editorial-rule flex-1 mx-4" />
-            <p className="editorial-eyebrow">{String(activeGoals.length).padStart(2, '0')}</p>
+          {/* Section label */}
+          <div className="flex items-center gap-3 mb-4">
+            <span style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+            }}>
+              Chapter I — In Progress
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+            <span style={{
+              fontFamily: 'Bebas Neue, sans-serif', fontSize: 16,
+              color: 'rgba(77,127,255,0.7)', letterSpacing: '0.05em',
+            }}>
+              {String(activeGoals.length).padStart(2, '0')}
+            </span>
           </div>
 
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2].map(i => (
-                <div key={i} className="glass rounded-lg h-24 animate-pulse" />
+                <div key={i} style={{
+                  height: 96, borderRadius: 16,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                }} />
               ))}
             </div>
           ) : activeGoals.length === 0 ? (
-            <div className="text-center py-10 border-t border-b border-foreground/10">
-              <p className="editorial-italic text-lg text-foreground mb-1">An empty page awaits.</p>
-              <p className="text-xs text-muted-foreground tracking-wider">Begin your first entry —</p>
+            <div style={{
+              textAlign: 'center', padding: '32px 0',
+              borderTop: '1px solid rgba(255,255,255,0.07)',
+              borderBottom: '1px solid rgba(255,255,255,0.07)',
+            }}>
+              {/* iMessage style empty state */}
+              <div className="inline-block chat-bubble-in mb-3" style={{ fontSize: 13 }}>
+                An empty page awaits.
+              </div>
+              <p style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.2em',
+              }}>
+                Begin your first entry —
+              </p>
             </div>
           ) : (
             activeGoals.map((goal, i) => (

@@ -1,110 +1,142 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { format, subDays, eachDayOfInterval } from 'date-fns';
+import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { format, subDays } from 'date-fns';
 
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-function computeTrends(goals) {
-  const last14 = eachDayOfInterval({ start: subDays(new Date(), 13), end: new Date() });
-
-  const dailyCounts = last14.map(day => {
-    const dateStr = format(day, 'yyyy-MM-dd');
-    const count = goals.reduce((sum, g) =>
-      sum + (g.daily_checkins?.filter(c => c.date === dateStr && c.completed).length || 0), 0);
-    return { date: format(day, 'MMM d'), day: format(day, 'EEE'), count, dateStr };
-  });
-
-  const byWeekday = Array(7).fill(0);
-  goals.forEach(g => {
-    g.daily_checkins?.forEach(c => {
-      if (c.completed) byWeekday[new Date(c.date).getDay()]++;
+function buildLast14(goals) {
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = format(subDays(new Date(), i), 'yyyy-MM-dd');
+    const label = format(subDays(new Date(), i), 'EEE').charAt(0);
+    let count = 0;
+    goals.forEach(g => {
+      if (g.daily_checkins?.some(c => c.date === d && c.completed)) count++;
     });
-  });
-  const topDayIdx = byWeekday.indexOf(Math.max(...byWeekday));
-
-  const daysWithCheckin = dailyCounts.filter(d => d.count > 0).length;
-  const consistencyScore = Math.round((daysWithCheckin / 14) * 100);
-
-  return { dailyCounts, topDayIdx, consistencyScore };
+    days.push({ date: d, label, count });
+  }
+  return days;
 }
 
 const CustomTooltip = ({ active, payload }) => {
-  if (active && payload?.length) {
-    return (
-      <div className="bg-background border border-foreground/20 px-3 py-2 rounded-sm">
-        <p className="editorial-eyebrow">{payload[0].payload.date}</p>
-        <p className="font-display text-sm text-foreground" style={{ fontWeight: 600 }}>
-          {payload[0].value} {payload[0].value === 1 ? 'entry' : 'entries'}
-        </p>
-      </div>
-    );
-  }
-  return null;
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: 'rgba(13, 31, 107, 0.95)', border: '1px solid rgba(77,127,255,0.4)',
+      borderRadius: 8, padding: '6px 10px', backdropFilter: 'blur(12px)',
+    }}>
+      <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, color: '#fff', fontWeight: 600 }}>
+        {payload[0].value} check-in{payload[0].value !== 1 ? 's' : ''}
+      </p>
+    </div>
+  );
 };
 
 export default function TrendsSection({ goals }) {
-  const { dailyCounts, topDayIdx, consistencyScore } = useMemo(() => computeTrends(goals), [goals]);
-  const maxCount = Math.max(...dailyCounts.map(d => d.count), 1);
+  const data = buildLast14(goals);
+  const maxCount = Math.max(...data.map(d => d.count), 1);
+  const activeDays = data.filter(d => d.count > 0).length;
+  const consistency = Math.round((activeDays / 14) * 100);
+  const bestDay = data.reduce((best, d) => d.count > best.count ? d : best, data[0]);
+  const bestLabel = bestDay?.count > 0 ? format(new Date(bestDay.date), 'EEE').toUpperCase() : '—';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5 }}
       className="mb-8"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, delay: 0.15 }}
     >
-      <div className="flex items-center justify-between mb-5">
-        <p className="editorial-eyebrow">Almanac — Last Fortnight</p>
-        <span className="editorial-rule flex-1 mx-4" />
-        <p className="editorial-eyebrow">II</p>
+      {/* Section header */}
+      <div className="flex items-center gap-3 mb-5">
+        <span style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+        }}>
+          Almanac — Last Fortnight
+        </span>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
       </div>
 
-      {/* Two stats — editorial pair */}
-      <div className="grid grid-cols-2 border-t border-b border-foreground/15 mb-6">
-        <div className="text-center py-5 border-r border-foreground/15">
-          <p className="font-display text-3xl text-foreground" style={{ fontWeight: 600 }}>
-            {String(consistencyScore).padStart(2, '0')}<span className="text-base text-muted-foreground">%</span>
-          </p>
-          <p className="editorial-eyebrow mt-1">Consistency</p>
+      <div
+        style={{
+          borderRadius: 16,
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          padding: '18px 18px 14px',
+        }}
+      >
+        {/* Stats row */}
+        <div className="flex items-end justify-between mb-5">
+          <div>
+            <p style={{
+              fontFamily: 'Bebas Neue, Impact, sans-serif',
+              fontSize: 44, color: '#fff', lineHeight: 1, letterSpacing: '0.02em',
+            }}>
+              {consistency}<span style={{ fontSize: 18, color: 'rgba(255,255,255,0.4)' }}>%</span>
+            </p>
+            <p style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2,
+            }}>
+              Consistency
+            </p>
+          </div>
+          <div className="text-right">
+            <p style={{
+              fontFamily: 'Bebas Neue, Impact, sans-serif',
+              fontSize: 44, color: '#4d7fff', lineHeight: 1, letterSpacing: '0.02em',
+            }}>
+              {bestLabel}
+            </p>
+            <p style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2,
+            }}>
+              Most Productive
+            </p>
+          </div>
         </div>
-        <div className="text-center py-5">
-          <p className="font-display text-3xl text-foreground tracking-wide uppercase" style={{ fontWeight: 600 }}>
-            {DAY_LABELS[topDayIdx]}
-          </p>
-          <p className="editorial-eyebrow mt-1">Most Productive</p>
-        </div>
-      </div>
 
-      {/* Chart — pure monochrome */}
-      <div>
-        <p className="editorial-eyebrow mb-3">Daily Cadence</p>
-        <ResponsiveContainer width="100%" height={110}>
-          <BarChart data={dailyCounts} barSize={8} margin={{ top: 4, right: 0, left: -32, bottom: 0 }}>
-            <XAxis
-              dataKey="day"
-              tick={{ fontSize: 9, fill: 'rgba(26,42,94,0.5)', fontFamily: 'Inter', letterSpacing: '0.2em' }}
-              tickLine={false}
-              axisLine={{ stroke: 'rgba(26,42,94,0.15)' }}
-            />
-            <YAxis hide allowDecimals={false} />
-            <Tooltip content={<CustomTooltip />} cursor={false} />
-            <Bar dataKey="count">
-              {dailyCounts.map((entry, i) => (
-                <Cell
-                  key={i}
-                  fill={
-                    entry.count === 0
-                      ? 'rgba(26,42,94,0.08)'
-                      : entry.count === maxCount
-                        ? '#1a2a5e'
-                        : 'rgba(26,42,94,0.45)'
-                  }
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {/* Bar chart */}
+        <div style={{ height: 64 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} barSize={12} barGap={3}>
+              <Tooltip content={<CustomTooltip />} cursor={false} />
+              <Bar dataKey="count" radius={[4, 4, 2, 2]}>
+                {data.map((entry, i) => (
+                  <Cell
+                    key={i}
+                    fill={
+                      entry.count === 0
+                        ? 'rgba(255,255,255,0.06)'
+                        : entry.count === maxCount
+                          ? '#4d7fff'
+                          : 'rgba(26, 58, 173, 0.6)'
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Day labels */}
+        <div className="flex justify-between mt-2 px-0.5">
+          {data.map((d, i) => (
+            (i % 2 === 0) && (
+              <span key={d.date} style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 8, fontWeight: 600, letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase',
+              }}>
+                {d.label}
+              </span>
+            )
+          ))}
+        </div>
       </div>
     </motion.div>
   );

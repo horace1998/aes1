@@ -13,52 +13,90 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0 }) 
 
   return (
     <motion.div
-      className="mb-8 rounded-xl overflow-hidden relative"
-      style={{ background: '#1a2a5e', border: '1px solid rgba(26,42,94,0.2)' }}
-      initial={{ opacity: 0, y: 8 }}
+      className="mb-7 relative overflow-hidden"
+      style={{
+        borderRadius: 20,
+        background: 'linear-gradient(135deg, #0d1f6b 0%, #1a3aad 60%, #0a1540 100%)',
+        border: '1px solid rgba(77, 127, 255, 0.35)',
+        boxShadow: '0 8px 40px rgba(26, 58, 173, 0.45)',
+        padding: '20px 22px 16px',
+      }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.55 }}
     >
-      {/* Ticket notch decoration */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white" />
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3 h-3 rounded-full bg-white" />
-
-      {/* Dashed divider */}
-      <div className="absolute left-4 right-4 top-1/2 h-px" style={{ borderTop: '1px dashed rgba(255,255,255,0.15)' }} />
-
-      <div className="px-5 pt-4 pb-2">
-        <div className="flex items-baseline justify-between mb-1">
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 500, letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
-            Fan Rank
-          </p>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 500, letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
-            {String(score).padStart(3, '0')} PTS
-          </p>
-        </div>
-        <div className="flex items-baseline justify-between gap-4">
-          <h3 className="font-display text-white tracking-widest uppercase" style={{ fontSize: 'clamp(1.6rem, 8vw, 2.5rem)', fontWeight: 900, letterSpacing: '0.08em' }}>
-            {rank.label}
-          </h3>
-          <p className="editorial-italic text-sm text-right" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            {rank.description}
-          </p>
-        </div>
+      {/* Big ghost rank text */}
+      <div
+        className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+        aria-hidden="true"
+        style={{
+          fontFamily: 'Bebas Neue, Impact, sans-serif',
+          fontSize: 80,
+          lineHeight: 1,
+          color: 'rgba(255,255,255,0.06)',
+          letterSpacing: '0.04em',
+        }}
+      >
+        {rank.label}
       </div>
 
-      <div className="px-5 pb-4">
-        <div className="h-px relative overflow-visible" style={{ background: 'rgba(255,255,255,0.15)' }}>
-          <motion.div
-            className="absolute inset-y-0 left-0"
-            style={{ background: 'rgba(255,255,255,0.8)', height: '2px', top: '-1px' }}
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
-          />
-        </div>
-        <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 500, letterSpacing: '0.32em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', textAlign: 'right', marginTop: 8 }}>
-          {next ? `${next.pointsNeeded} PTS TO ${next.rank.label}` : '— APEX TIER —'}
+      {/* Header row */}
+      <div className="flex items-start justify-between mb-1 relative">
+        <span style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: 9, fontWeight: 700, letterSpacing: '0.38em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+        }}>
+          Fan Rank
+        </span>
+        <span style={{
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+        }}>
+          {String(score).padStart(3, '0')} PTS
+        </span>
+      </div>
+
+      {/* Rank title */}
+      <div className="flex items-baseline gap-3 mb-4 relative">
+        <h3
+          style={{
+            fontFamily: 'Bebas Neue, Impact, sans-serif',
+            fontSize: 'clamp(2.2rem, 10vw, 3.5rem)',
+            color: '#fff',
+            lineHeight: 1,
+            letterSpacing: '0.06em',
+          }}
+        >
+          {rank.label}
+        </h3>
+        <p style={{
+          fontFamily: 'Cormorant Garamond, serif',
+          fontStyle: 'italic', fontSize: 13,
+          color: 'rgba(255,255,255,0.5)',
+        }}>
+          {rank.description}
         </p>
       </div>
+
+      {/* Progress bar */}
+      <div style={{ height: 3, borderRadius: 99, background: 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+        <motion.div
+          style={{ height: '100%', borderRadius: 99, background: 'rgba(255,255,255,0.75)' }}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        />
+      </div>
+      <p style={{
+        fontFamily: 'Space Grotesk, sans-serif',
+        fontSize: 9, fontWeight: 600, letterSpacing: '0.3em',
+        textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+        textAlign: 'right', marginTop: 7,
+      }}>
+        {next ? `${next.pointsNeeded} pts to ${next.rank.label}` : '— apex tier —'}
+      </p>
     </motion.div>
   );
 }

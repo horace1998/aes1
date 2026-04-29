@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@200;300;400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,79 +6,69 @@
 
 @layer base {
   :root {
-    /* White editorial — clean collage / idol magazine aesthetic */
-    --background: 0 0% 100%;
-    --foreground: 220 20% 10%;
-    --card: 0 0% 98%;
-    --card-foreground: 220 20% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
-    --primary: 222 60% 28%;
+    /* Dark streetwear / K-pop collage */
+    --background: 220 18% 8%;
+    --foreground: 0 0% 96%;
+    --card: 220 15% 12%;
+    --card-foreground: 0 0% 96%;
+    --popover: 220 18% 10%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 225 70% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 220 20% 10%;
-    --muted: 220 12% 96%;
-    --muted-foreground: 220 10% 50%;
-    --accent: 222 60% 28%;
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 220 12% 18%;
+    --muted-foreground: 220 8% 55%;
+    --accent: 225 70% 55%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 70% 45%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 12% 88%;
-    --input: 220 12% 92%;
-    --ring: 222 60% 28%;
-    --chart-1: 222 60% 28%;
-    --chart-2: 222 40% 50%;
-    --chart-3: 220 15% 65%;
-    --chart-4: 220 10% 80%;
-    --chart-5: 220 8% 90%;
-    --radius: 0.5rem;
-    --font-heading: 'Playfair Display', 'Times New Roman', serif;
-    --font-body: 'Inter', sans-serif;
-    --font-display: 'Playfair Display', 'Times New Roman', serif;
-    --font-serif-light: 'Cormorant Garamond', 'Times New Roman', serif;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 12% 20%;
+    --input: 220 12% 18%;
+    --ring: 225 70% 55%;
+    --chart-1: 225 70% 55%;
+    --chart-2: 225 50% 70%;
+    --chart-3: 220 15% 45%;
+    --chart-4: 220 10% 30%;
+    --chart-5: 220 8% 20%;
+    --radius: 0.75rem;
+    --font-heading: 'Bebas Neue', 'Impact', sans-serif;
+    --font-body: 'Space Grotesk', 'Inter', sans-serif;
+    --font-display: 'Bebas Neue', 'Impact', sans-serif;
+    --font-serif-light: 'Cormorant Garamond', serif;
+    --navy: #1a3aad;
+    --navy-dark: #0d1f6b;
+    --navy-glow: rgba(26, 58, 173, 0.35);
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 225 70% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 16%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 220 12% 20%;
+    --sidebar-ring: 225 70% 55%;
   }
 
   .dark {
-    --background: 240 15% 8%;
-    --foreground: 0 0% 95%;
-    --card: 240 15% 12%;
-    --card-foreground: 0 0% 95%;
-    --popover: 240 15% 12%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 260 60% 60%;
+    --background: 220 18% 8%;
+    --foreground: 0 0% 96%;
+    --card: 220 15% 12%;
+    --card-foreground: 0 0% 96%;
+    --popover: 220 18% 10%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 225 70% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 175 50% 50%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 10% 18%;
-    --muted-foreground: 240 5% 60%;
-    --accent: 300 40% 65%;
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 220 12% 18%;
+    --muted-foreground: 220 8% 55%;
+    --accent: 225 70% 55%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
-    --ring: 260 60% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 12% 20%;
+    --input: 220 12% 18%;
+    --ring: 225 70% 55%;
   }
 }
 
@@ -90,105 +80,174 @@
     @apply bg-background text-foreground;
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    background: #0d1117;
   }
 }
 
-/* White editorial card — clean collage / magazine aesthetic */
+/* ── GLASS: dark frosted panels ── */
 .glass {
-  background: #ffffff;
-  border: 1px solid rgba(220, 225, 235, 0.9);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .glass-strong {
-  background: #ffffff;
-  border: 1px solid rgba(210, 218, 230, 0.95);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .glass-subtle {
-  background: rgba(245, 246, 250, 0.9);
-  border: 1px solid rgba(220, 225, 235, 0.7);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-navy {
+  background: rgba(26, 58, 173, 0.18);
+  border: 1px solid rgba(26, 58, 173, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .iridescent {
-  background: rgba(245, 248, 255, 0.95);
+  background: linear-gradient(135deg, rgba(26, 58, 173, 0.15) 0%, rgba(100, 60, 200, 0.1) 50%, rgba(26, 58, 173, 0.15) 100%);
 }
 
 .iridescent-border {
-  border: 1px solid rgba(200, 215, 240, 0.8);
+  border: 1px solid rgba(26, 58, 173, 0.35);
 }
 
-/* Hide scrollbar (utility class + global) */
+/* ── SCROLLBAR HIDE ── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Globally hide ALL scrollbars (Webkit + Firefox + IE) for a clean editorial look */
 html, body, * {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0 !important;
-  display: none !important;
+html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
+  width: 0 !important; height: 0 !important; display: none !important;
 }
 
-/* Editorial typography */
+/* ── TYPOGRAPHY ── */
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.01em;
-  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 .font-heading {
   font-family: var(--font-heading);
-  letter-spacing: -0.005em;
+  letter-spacing: 0.02em;
 }
 .font-serif-light {
   font-family: var(--font-serif-light);
   font-weight: 300;
 }
-.editorial-rule {
-  height: 1px;
-  background: rgba(0, 0, 0, 0.12);
+
+/* Oversized poster text */
+.mega-text {
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-size: clamp(5rem, 22vw, 14rem);
+  line-height: 0.88;
+  letter-spacing: 0.01em;
+  color: rgba(255,255,255,0.06);
+  pointer-events: none;
+  user-select: none;
 }
-.editorial-rule-thick {
-  height: 2px;
-  background: rgba(0, 0, 0, 0.85);
+
+/* iMessage-style chat bubble */
+.chat-bubble-in {
+  background: #1a3aad;
+  border-radius: 18px 18px 18px 4px;
+  color: #fff;
+  font-family: var(--font-body);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  box-shadow: 0 4px 20px rgba(26, 58, 173, 0.4);
 }
+.chat-bubble-out {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px 18px 4px 18px;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-body);
+  padding: 10px 16px;
+  font-size: 14px;
+  backdrop-filter: blur(12px);
+}
+
+/* Film strip cell */
+.filmstrip-cell {
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* Editorial rule */
+.editorial-rule { height: 1px; background: rgba(255,255,255,0.12); }
+.editorial-rule-thick { height: 2px; background: rgba(255,255,255,0.8); }
+
+/* Eyebrow label */
 .editorial-eyebrow {
   font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.32em;
+  font-weight: 600;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(30, 40, 70, 0.45);
+  color: rgba(255,255,255,0.38);
 }
 .editorial-italic {
   font-family: var(--font-serif-light);
   font-style: italic;
-  font-weight: 400;
 }
 
-/* White editorial backdrop */
+/* Navy glow utility */
+.navy-glow {
+  box-shadow: 0 0 30px rgba(26, 58, 173, 0.5), 0 0 60px rgba(26, 58, 173, 0.2);
+}
+
+/* Page background aurora */
 .aurora-bg {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
-  background: #ffffff;
+  background: #0d1117;
+}
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 58, 173, 0.25) 0%, transparent 70%);
+}
+.aurora-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  left: -15%;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 58, 173, 0.12) 0%, transparent 70%);
 }
 
-/* Page-transition smoothing helper */
+/* Dreamy fade mask */
 .dreamy-fade-mask {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
 }
 
-/* Prevent ALL selection and tap highlights globally */
+/* No select / tap highlight */
 *, *::before, *::after {
   -webkit-tap-highlight-color: transparent !important;
   -webkit-touch-callout: none !important;
@@ -196,15 +255,11 @@ body::-webkit-scrollbar,
   -moz-user-select: none !important;
   user-select: none !important;
 }
-
-/* Disable pinch-zoom and double-tap zoom across the whole app */
 html, body {
   touch-action: pan-x pan-y;
   -ms-touch-action: pan-x pan-y;
   overscroll-behavior: none;
 }
-
-/* Re-enable selection only on explicit text inputs */
 input, textarea, [contenteditable="true"] {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;

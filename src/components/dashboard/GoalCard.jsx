@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
-import GlassCard from '@/components/ui/GlassCard';
 import { Check } from 'lucide-react';
 import { differenceInDays, addDays, addWeeks, addMonths, format } from 'date-fns';
 
@@ -35,125 +34,186 @@ export default function GoalCard({ goal, onCheckin, onComplete, index = 0 }) {
   const canSwipe = isActive && !!onComplete;
 
   const handleDragEnd = (_, info) => {
-    if (info.offset.x > SWIPE_THRESHOLD) {
-      setConfirming(true);
-    } else {
-      x.set(0);
-    }
-  };
-
-  const handleConfirm = () => {
-    onComplete?.(goal);
-    setConfirming(false);
-  };
-
-  const handleCancel = () => {
-    setConfirming(false);
-    x.set(0);
+    if (info.offset.x > SWIPE_THRESHOLD) setConfirming(true);
+    else x.set(0);
   };
 
   return (
-    <div className="relative mb-2.5">
-      {/* Swipe action background */}
+    <div className="relative mb-3">
+      {/* Swipe action reveal */}
       {canSwipe && (
         <motion.div
-          className="absolute inset-0 rounded-xl flex items-center justify-start pl-6"
-          style={{ opacity: actionOpacity, background: 'rgba(26,42,94,0.08)' }}
+          className="absolute inset-0 flex items-center justify-start pl-5"
+          style={{
+            opacity: actionOpacity,
+            borderRadius: 16,
+            background: 'linear-gradient(90deg, rgba(26,58,173,0.25) 0%, transparent 100%)',
+          }}
         >
-          <p className="editorial-eyebrow" style={{ color: '#1a2a5e' }}>— Mark Complete</p>
+          <span style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 9, fontWeight: 700, letterSpacing: '0.32em',
+            textTransform: 'uppercase', color: '#4d7fff',
+          }}>
+            → Complete
+          </span>
         </motion.div>
       )}
 
       <motion.div
         drag={canSwipe ? 'x' : false}
         dragConstraints={{ left: 0, right: 120 }}
-        dragElastic={0.15}
+        dragElastic={0.12}
         style={{ x }}
         onDragEnd={handleDragEnd}
         animate={confirming ? { x: 110 } : undefined}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.06, 0.22) }}
       >
-        <GlassCard
-          variant="strong"
-          className="px-5 py-4 rounded-xl"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.2) }}
+        <div
+          style={{
+            borderRadius: 16,
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            padding: '16px 18px',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+          }}
         >
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="editorial-eyebrow truncate">
+              {/* Eyebrow */}
+              <div className="flex items-center justify-between mb-2">
+                <span style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
+                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+                }}>
                   {goal.idol_group || goal.idol_name}
-                </p>
+                </span>
                 {goal.status === 'completed' && (
-                  <p className="editorial-eyebrow text-foreground">— Closed</p>
+                  <span style={{
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
+                    textTransform: 'uppercase', color: 'rgba(77,127,255,0.7)',
+                  }}>
+                    ✓ Closed
+                  </span>
                 )}
               </div>
-              <p className="font-display text-base text-foreground leading-snug line-clamp-2" style={{ fontWeight: 500 }}>
+
+              {/* Title */}
+              <p style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 15, fontWeight: 500,
+                color: '#fff', lineHeight: 1.35,
+                letterSpacing: '-0.01em',
+              }} className="line-clamp-2">
                 {goal.title}
               </p>
+
               {goal.idol_name && goal.idol_name !== goal.idol_group && (
-                <p className="editorial-italic text-xs text-muted-foreground mt-0.5">for {goal.idol_name}</p>
+                <p style={{
+                  fontFamily: 'Cormorant Garamond, serif',
+                  fontStyle: 'italic', fontSize: 12,
+                  color: 'rgba(255,255,255,0.4)', marginTop: 3,
+                }}>
+                  for {goal.idol_name}
+                </p>
               )}
 
-              {/* Progress — minimal hairline */}
-              <div className="mt-3">
-                <div className="h-px bg-foreground/15 relative">
+              {/* Progress */}
+              <div className="mt-4">
+                <div style={{ height: 2, borderRadius: 99, background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
                   <motion.div
-                    className="absolute inset-y-0 left-0"
-                    style={{ height: '2px', top: '-0.5px', background: '#1a2a5e' }}
+                    style={{
+                      height: '100%', borderRadius: 99,
+                      background: 'linear-gradient(90deg, #1a3aad, #4d7fff)',
+                    }}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
                   />
                 </div>
-                <div className="flex justify-between editorial-eyebrow mt-2" style={{ fontSize: '9px', letterSpacing: '0.25em' }}>
+                <div className="flex justify-between mt-2" style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontSize: 9, fontWeight: 600, letterSpacing: '0.22em',
+                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)',
+                }}>
                   <span>{goal.daily_checkins?.filter(c => c.completed).length || 0} entries · {progress}%</span>
-                  <span>{daysLeft}d remaining</span>
+                  <span>{daysLeft}d left</span>
                 </div>
               </div>
             </div>
 
+            {/* Check-in button */}
             {isActive && (
               <motion.button
-                className="flex-shrink-0 w-9 h-9 rounded-full transition-all flex items-center justify-center"
+                className="flex-shrink-0 w-10 h-10 flex items-center justify-center"
                 style={{
-                  background: todayChecked ? '#1a2a5e' : 'transparent',
-                  border: todayChecked ? '1.5px solid #1a2a5e' : '1.5px solid rgba(0,0,0,0.2)',
+                  borderRadius: 12,
+                  background: todayChecked
+                    ? 'linear-gradient(135deg, #1a3aad, #4d7fff)'
+                    : 'rgba(255,255,255,0.06)',
+                  border: todayChecked
+                    ? '1px solid rgba(77,127,255,0.5)'
+                    : '1px solid rgba(255,255,255,0.12)',
+                  boxShadow: todayChecked ? '0 4px 16px rgba(26,58,173,0.4)' : 'none',
                 }}
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.88 }}
                 onClick={() => !todayChecked && onCheckin?.(goal)}
               >
-                {todayChecked && <Check className="w-4 h-4 text-white" strokeWidth={2.5} />}
+                {todayChecked
+                  ? <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
+                  : <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>+</span>
+                }
               </motion.button>
             )}
           </div>
-        </GlassCard>
+        </div>
       </motion.div>
 
-      {/* Confirm dialog */}
+      {/* Confirm overlay */}
       <AnimatePresence>
         {confirming && (
           <motion.div
-            className="absolute inset-0 rounded-xl flex items-center justify-between px-5 z-10"
-            style={{ background: '#fff', border: '1px solid rgba(26,42,94,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+            className="absolute inset-0 flex items-center justify-between px-5 z-10"
+            style={{
+              borderRadius: 16,
+              background: 'rgba(13, 17, 35, 0.95)',
+              border: '1px solid rgba(26, 58, 173, 0.5)',
+              backdropFilter: 'blur(20px)',
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <p className="editorial-italic text-sm" style={{ color: '#111827' }}>Close this entry?</p>
+            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 14, color: '#fff' }}>
+              Close this entry?
+            </p>
             <div className="flex gap-2">
               <button
-                onClick={handleCancel}
-                className="editorial-eyebrow px-3 py-1.5"
-                style={{ border: '1px solid rgba(0,0,0,0.18)', borderRadius: 4 }}
+                onClick={() => { setConfirming(false); x.set(0); }}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                  fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
+                  border: '1px solid rgba(255,255,255,0.18)', borderRadius: 8,
+                  padding: '6px 12px', color: 'rgba(255,255,255,0.6)', background: 'transparent',
+                }}
               >
                 Cancel
               </button>
               <button
-                onClick={handleConfirm}
-                className="editorial-eyebrow px-3 py-1.5 text-white"
-                style={{ background: '#1a2a5e', borderRadius: 4 }}
+                onClick={() => { onComplete?.(goal); setConfirming(false); }}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
+                  fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase',
+                  background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)',
+                  border: '1px solid rgba(77,127,255,0.4)', borderRadius: 8,
+                  padding: '6px 12px', color: '#fff',
+                }}
               >
                 Confirm
               </button>

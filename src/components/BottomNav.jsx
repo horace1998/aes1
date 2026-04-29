@@ -5,18 +5,18 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Users, Radio, Plus, Camera, CheckSquare, Trophy, User } from 'lucide-react';
 
 const NAV_ITEMS_LEFT = [
-  { path: '/',         icon: Home,  label: 'Home'     },
+  { path: '/', icon: Home, label: 'Home' },
   { path: '/missions', icon: Users, label: 'Missions' },
 ];
 const NAV_ITEMS_RIGHT = [
-  { path: '/feed',    icon: Radio, label: 'Feed'    },
-  { path: '/profile', icon: User,  label: 'Profile' },
+  { path: '/feed', icon: Radio, label: 'Feed' },
+  { path: '/profile', icon: User, label: 'Profile' },
 ];
 
 const ACTIONS = [
-  { id: 'goal',      label: 'Entry',     icon: Trophy,      bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
-  { id: 'milestone', label: 'Capture',   icon: Camera,      bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
-  { id: 'task',      label: 'Note',      icon: CheckSquare, bg: '#0a0a0a', shadow: 'rgba(0,0,0,0.18)' },
+  { id: 'goal', label: 'Entry', icon: Trophy },
+  { id: 'milestone', label: 'Capture', icon: Camera },
+  { id: 'task', label: 'Note', icon: CheckSquare },
 ];
 
 const ns = {
@@ -50,25 +50,29 @@ export default function BottomNav({ onSelect }) {
       >
         <item.icon
           className="w-[18px] h-[18px] pointer-events-none"
-          style={{ color: isActive ? '#1a2a5e' : 'rgba(0,0,0,0.28)', transition: 'color 0.2s' }}
-          strokeWidth={isActive ? 1.8 : 1.4}
+          style={{
+            color: isActive ? '#4d7fff' : 'rgba(255,255,255,0.3)',
+            transition: 'color 0.2s',
+          }}
+          strokeWidth={isActive ? 2 : 1.4}
         />
         <span
           className="text-[9px] pointer-events-none"
           style={{
-            color: isActive ? '#1a2a5e' : 'rgba(0,0,0,0.35)',
-            letterSpacing: '0.18em',
+            color: isActive ? '#4d7fff' : 'rgba(255,255,255,0.3)',
+            letterSpacing: '0.2em',
             textTransform: 'uppercase',
-            fontWeight: isActive ? 600 : 500,
+            fontWeight: isActive ? 700 : 500,
+            fontFamily: 'Space Grotesk, sans-serif',
           }}
         >
           {item.label}
         </span>
         {isActive && (
           <motion.div
-            layoutId="dot"
-            className="absolute bottom-1 w-3 h-px"
-            style={{ background: '#1a2a5e' }}
+            layoutId="nav-indicator"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
+            style={{ background: '#1a3aad' }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -77,9 +81,9 @@ export default function BottomNav({ onSelect }) {
   };
 
   const content = (
-    <div className="fixed bottom-0 left-0 right-0 z-[60] px-4 pb-5" style={ns}>
+    <div className="fixed bottom-0 left-0 right-0 z-[60] px-3 pb-4" style={ns}>
 
-      {/* ── BACKDROP to close ── */}
+      {/* Backdrop */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -89,20 +93,20 @@ export default function BottomNav({ onSelect }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+            style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
           />
         )}
       </AnimatePresence>
 
-      {/* ── POPUP OPTIONS ── */}
+      {/* Action popup */}
       <AnimatePresence>
         {open && (
           <motion.div
             key="popup"
-            className="flex items-end justify-center gap-4 mb-4"
-            initial={{ opacity: 0, y: 24 }}
+            className="flex items-end justify-center gap-5 mb-4"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 16 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
             style={{ zIndex: 50, position: 'relative' }}
           >
@@ -112,38 +116,27 @@ export default function BottomNav({ onSelect }) {
                 <motion.button
                   key={action.id}
                   onClick={(e) => handleAction(e, action.id)}
-                  initial={{ opacity: 0, y: 20, scale: 0.85 }}
+                  initial={{ opacity: 0, y: 24, scale: 0.8 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.85 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 28, delay: i * 0.05 }}
-                  whileTap={{ scale: 0.88 }}
-                  style={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                    cursor: 'pointer', background: 'none', border: 'none', zIndex: 50,
-                    ...ns,
-                  }}
+                  exit={{ opacity: 0, y: 16, scale: 0.8 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 28, delay: i * 0.06 }}
+                  whileTap={{ scale: 0.85 }}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer', background: 'none', border: 'none', ...ns }}
                 >
-                  <div
-                    style={{
-                      width: 58, height: 58, borderRadius: 6,
-                      background: '#1a2a5e',
-                      boxShadow: `0 8px 22px rgba(26,42,94,0.25)`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    <Icon style={{ width: 22, height: 22, color: '#fff', pointerEvents: 'none' }} strokeWidth={1.6} />
+                  <div style={{
+                    width: 60, height: 60, borderRadius: 16,
+                    background: 'linear-gradient(135deg, #1a3aad 0%, #0d1f6b 100%)',
+                    boxShadow: '0 8px 32px rgba(26, 58, 173, 0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '1px solid rgba(77, 127, 255, 0.3)',
+                  }}>
+                    <Icon style={{ width: 24, height: 24, color: '#fff', pointerEvents: 'none' }} strokeWidth={1.8} />
                   </div>
-                  <span
-                    className="text-[10px]"
-                    style={{
-                      color: '#1a2a5e',
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      pointerEvents: 'none',
-                    }}
-                  >
+                  <span style={{
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    fontSize: 10, color: 'rgba(255,255,255,0.7)',
+                    letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 600, pointerEvents: 'none',
+                  }}>
                     {action.label}
                   </span>
                 </motion.button>
@@ -153,24 +146,23 @@ export default function BottomNav({ onSelect }) {
         )}
       </AnimatePresence>
 
-      {/* ── NAV BAR ── */}
+      {/* Nav bar */}
       <div
         className="flex items-center max-w-sm mx-auto px-3"
         style={{
-          height: 62, position: 'relative', zIndex: 50,
-          background: 'rgba(255,255,255,0.97)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(0,0,0,0.09)',
-          borderRadius: 8,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          height: 64, position: 'relative', zIndex: 50,
+          background: 'rgba(18, 22, 35, 0.92)',
+          backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 20,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.05) inset',
         }}
       >
         <div className="flex flex-1 items-center h-full">
           {NAV_ITEMS_LEFT.map(renderNavItem)}
         </div>
 
-        {/* Center + button */}
+        {/* FAB center */}
         <div className="flex items-center justify-center px-2" style={{ flexShrink: 0, ...ns }}>
           <motion.button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(v => !v); }}
@@ -178,17 +170,15 @@ export default function BottomNav({ onSelect }) {
             animate={{ rotate: open ? 45 : 0 }}
             transition={{ type: 'spring', stiffness: 420, damping: 26 }}
             style={{
-              width: 46, height: 46, borderRadius: 6,
-              background: '#1a2a5e',
-              boxShadow: '0 4px 14px rgba(26,42,94,0.3)',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', overflow: 'hidden',
-              transition: 'background 0.25s, box-shadow 0.25s',
+              width: 50, height: 50, borderRadius: 14,
+              background: 'linear-gradient(135deg, #1a3aad 0%, #0d1f6b 100%)',
+              boxShadow: '0 6px 24px rgba(26, 58, 173, 0.6)',
+              border: '1px solid rgba(77, 127, 255, 0.4)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               ...ns,
             }}
           >
-            <Plus style={{ width: 20, height: 20, color: '#fff', pointerEvents: 'none' }} strokeWidth={1.8} />
+            <Plus style={{ width: 22, height: 22, color: '#fff', pointerEvents: 'none' }} strokeWidth={2} />
           </motion.button>
         </div>
 
