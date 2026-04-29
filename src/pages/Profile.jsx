@@ -8,7 +8,7 @@ import GlassButton from '@/components/ui/GlassButton';
 import PageShell from '@/components/PageShell';
 import { CheckCircle2, Flame, Target, LogOut, TrendingUp, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import FanRankBadge from '@/components/dashboard/FanRankBadge.jsx';
+import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import HeroImageManager from '@/components/profile/HeroImageManager';
 import ReminderSettings from '@/components/profile/ReminderSettings';
 import FocusManager from '@/components/profile/FocusManager';

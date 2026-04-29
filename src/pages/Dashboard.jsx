@@ -8,7 +8,7 @@ import GoalCard from '@/components/dashboard/GoalCard';
 import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
 import NotificationBell from '@/components/NotificationBell';
-import FanRankBadge from '@/components/dashboard/FanRankBadge.jsx';
+import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
 import HeroIdentity from '@/components/dashboard/HeroIdentity';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';

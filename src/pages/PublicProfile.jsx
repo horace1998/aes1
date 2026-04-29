@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import ThreeBackground from '@/components/ThreeBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import FanRankBadge from '@/components/dashboard/FanRankBadge.jsx';
+import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import BiasMonogram from '@/components/profile/BiasMonogram';
 import BadgeGrid from '@/components/profile/BadgeGrid';
 import PhotoWall from '@/components/profile/PhotoWall';
