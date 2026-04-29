@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import { Users, Sparkles, Calendar, Loader2, Check, Flag } from 'lucide-react';
+import { Users, Sparkles, Calendar, Loader2, Check, Flag, ArrowRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import ReportDialog from '@/components/feed/ReportDialog';
 
 
@@ -79,13 +80,23 @@ export default function MissionCard({ mission, currentUser, index = 0 }) {
             </span>
           </div>
 
-          {isCreator ? (
-            <div className="border border-foreground/15 rounded-xl py-2 text-center text-[11px] font-heading text-muted-foreground">
-              Your mission · {mission.member_count || 1} joined
-            </div>
-          ) : isMember ? (
-            <div className="border border-foreground/15 rounded-xl py-2 text-center text-[11px] font-heading text-foreground flex items-center justify-center gap-1">
-              <Check className="w-3.5 h-3.5" /> Joined
+          {isCreator || isMember ? (
+            <div className="flex gap-2">
+              <div className="flex-1 border border-foreground/15 rounded-xl py-2 text-center text-[11px] font-heading text-foreground flex items-center justify-center gap-1">
+                {isCreator ? `Your mission · ${mission.member_count || 1} joined` : (<><Check className="w-3.5 h-3.5" /> Joined</>)}
+              </div>
+              <Link
+                to={`/circle/${mission.id}`}
+                className="flex items-center justify-center gap-1 px-3 rounded-xl"
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontSize: 10,
+                  fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase',
+                  background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)',
+                  color: '#fff',
+                }}
+              >
+                Circle <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
           ) : (
             <GlassButton variant="primary" onClick={handleJoin} disabled={joining} className="w-full py-2 text-xs">

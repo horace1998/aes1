@@ -78,10 +78,11 @@ export default function Feed() {
     setShowShare(false);
   };
 
-  // Hide blocked / pending posts from public view (creator can still see their own)
+  // Hide blocked / pending posts AND circle-only stories from public view (creator can still see their own)
   const visiblePosts = posts.filter(p =>
     p.moderation_status !== 'blocked' &&
-    (p.moderation_status !== 'pending' || p.user_email === user?.email)
+    (p.moderation_status !== 'pending' || p.user_email === user?.email) &&
+    p.post_type !== 'circle_story'
   );
 
   const groups = ['all', ...new Set(visiblePosts.map(p => p.idol_group).filter(Boolean))];

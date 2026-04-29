@@ -21,6 +21,7 @@ import Tasks from '@/pages/Tasks';
 import Missions from '@/pages/Missions';
 import AdminModeration from '@/pages/AdminModeration';
 import PublicProfile from '@/pages/PublicProfile';
+import SupportCircle from '@/pages/SupportCircle';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -38,6 +39,7 @@ const AnimatedRoutes = () => {
         <Route path="/missions" element={<PageTransition><Missions /></PageTransition>} />
         <Route path="/admin/moderation" element={<PageTransition><AdminModeration /></PageTransition>} />
         <Route path="/u/:email" element={<PageTransition><PublicProfile /></PageTransition>} />
+        <Route path="/circle/:id" element={<PageTransition><SupportCircle /></PageTransition>} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AnimatePresence>

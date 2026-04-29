@@ -12,6 +12,7 @@ import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
+import CheerInbox from '@/components/circle/CheerInbox';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { format } from 'date-fns';
 
@@ -123,6 +124,9 @@ export default function Dashboard() {
 
         {/* Fan Rank */}
         <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestoneCount} idolImageUrl={user?.background_image_url} hologram />
+
+        {/* Cheers received from circle members */}
+        <CheerInbox user={user} />
 
         {/* Stats — filmstrip style */}
         <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>
