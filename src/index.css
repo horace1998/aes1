@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    /* Dark streetwear / K-pop collage */
-    --background: 220 18% 8%;
+    /* Streetwear / K-pop collage — white base */
+    --background: 0 0% 100%;
     --foreground: 0 0% 96%;
     --card: 220 15% 12%;
     --card-foreground: 0 0% 96%;
@@ -80,35 +80,35 @@
     @apply bg-background text-foreground;
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    background: #0d1117;
+    background: #ffffff;
   }
 }
 
-/* ── GLASS: dark frosted panels ── */
+/* ── GLASS: light frosted panels ── */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.07);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.09);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,1);
 }
 
 .glass-subtle {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(245, 247, 252, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .glass-navy {
-  background: rgba(26, 58, 173, 0.18);
-  border: 1px solid rgba(26, 58, 173, 0.4);
+  background: rgba(26, 58, 173, 0.12);
+  border: 1px solid rgba(26, 58, 173, 0.3);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -218,7 +218,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
   inset: 0;
   z-index: -5;
   pointer-events: none;
-  background: #0d1117;
+  background: #ffffff;
 }
 .aurora-bg::before {
   content: '';
@@ -228,7 +228,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
   width: 60%;
   height: 60%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26, 58, 173, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(26, 58, 173, 0.08) 0%, transparent 70%);
 }
 .aurora-bg::after {
   content: '';
@@ -238,7 +238,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
   width: 50%;
   height: 50%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(26, 58, 173, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(26, 58, 173, 0.05) 0%, transparent 70%);
 }
 
 /* Dreamy fade mask */

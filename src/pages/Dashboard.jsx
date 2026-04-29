@@ -93,7 +93,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen relative pb-32" style={{ background: '#0d1117' }}>
+    <div className="min-h-screen relative pb-32" style={{ background: '#ffffff' }}>
       <PageShell goals={goals} user={user}>
 
       <div className="relative z-10 px-5 pt-[3.5rem]">
