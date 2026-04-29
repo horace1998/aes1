@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay } from 'date-fns';
-import { Clock, Plus } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, addMonths, subMonths } from 'date-fns';
+import { Clock, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 
 export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect, onNewTask }) {
   const [viewMode, setViewMode] = useState('monthly');
+  const [displayMonth, setDisplayMonth] = useState(selectedDate);
 
-  const monthStart = startOfMonth(selectedDate);
-  const monthEnd = endOfMonth(selectedDate);
+  const monthStart = startOfMonth(displayMonth);
+  const monthEnd = endOfMonth(displayMonth);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   // Grid layout: pad start of month
@@ -30,7 +31,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
   return (
     <GlassCard variant="strong" className="p-6 mb-6" animate={false}>
       {/* Header with toggle */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex gap-2">
           <button
             onClick={() => setViewMode('weekly')}
@@ -57,14 +58,28 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
         <div className="w-6 h-6 rounded-full border border-foreground/20" />
       </div>
 
-      {/* Month & Date display */}
-      <div className="flex items-end justify-between mb-6">
-        <h2 className="text-5xl font-display font-bold text-foreground">
-          {format(selectedDate, 'MMMM')}
-        </h2>
-        <p className="text-5xl font-display font-bold text-foreground">
-          {format(selectedDate, 'd')}
-        </p>
+      {/* Month navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => setDisplayMonth(subMonths(displayMonth, 1))}
+          className="p-2 hover:bg-foreground/10 rounded-lg transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4 text-foreground" />
+        </button>
+        <div className="flex items-end gap-3">
+          <h2 className="text-5xl font-display font-bold text-foreground">
+            {format(displayMonth, 'MMMM')}
+          </h2>
+          <p className="text-5xl font-display font-bold text-foreground pb-1">
+            {format(displayMonth, 'd')}
+          </p>
+        </div>
+        <button
+          onClick={() => setDisplayMonth(addMonths(displayMonth, 1))}
+          className="p-2 hover:bg-foreground/10 rounded-lg transition-colors"
+        >
+          <ChevronRight className="w-4 h-4 text-foreground" />
+        </button>
       </div>
 
       {/* Calendar grid */}
@@ -90,7 +105,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
                   key={`${wi}-${di}`}
                   onClick={() => date && onDateSelect(date)}
                   disabled={!date}
-                  className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm font-heading transition-all ${
+                  className={`aspect-square rounded-lg flex items-center justify-center text-sm font-heading transition-all relative ${
                     !date
                       ? 'cursor-default'
                       : isSelected
@@ -102,7 +117,7 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
                     <>
                       <span className="text-xs">{format(date, 'd')}</span>
                       {dayTasks.length > 0 && (
-                        <span className="text-[8px] mt-0.5 opacity-60">•</span>
+                        <span className="absolute bottom-1 text-[8px] opacity-60">•</span>
                       )}
                     </>
                   )}
@@ -129,8 +144,8 @@ export default function CalendarWidget({ tasks = [], selectedDate, onDateSelect,
         </button>
       </div>
 
-      {/* Task list for selected date */}
-      {getDayTasks(selectedDate).length > 0 && (
+      {/* Task list for currently selected date */}
+      {selectedDate && getDayTasks(selectedDate).length > 0 && (
         <div className="mt-6 pt-6 border-t border-foreground/10">
           <p className="text-[10px] font-heading font-bold text-foreground/50 mb-3">TASKS</p>
           <div className="space-y-2">
