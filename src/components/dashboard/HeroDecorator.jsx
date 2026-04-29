@@ -21,7 +21,7 @@ export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount 
       animate={{ opacity: 1 }}
       className="relative rounded-2xl overflow-hidden mb-6"
       style={{
-        minHeight: 532,
+        minHeight: 426,
         background: 'linear-gradient(135deg, #0a1540 0%, #0d1f6b 45%, #1a3aad 100%)',
         border: '1px solid rgba(77, 127, 255, 0.4)',
         boxShadow: '0 8px 48px rgba(26, 58, 173, 0.55), inset 0 1px 0 rgba(255,255,255,0.07)',
