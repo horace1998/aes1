@@ -10,6 +10,7 @@ import { LogOut, Shield, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import ProfileImageEditor from '@/components/profile/ProfileImageEditor';
+import IdentityEditor from '@/components/profile/IdentityEditor';
 import ReminderSettings from '@/components/profile/ReminderSettings';
 import FocusManager from '@/components/profile/FocusManager';
 import BiasMonogram from '@/components/profile/BiasMonogram';
@@ -119,11 +120,21 @@ export default function Profile() {
           <BadgeGrid badges={badges} />
         </div>
 
-        {/* Profile Management — nickname claim */}
+        {/* Identity Editor */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
+          className="mb-8"
+        >
+          <IdentityEditor user={user} />
+        </motion.div>
+
+        {/* Profile Image Editor */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
           className="mb-8"
         >
           <ProfileImageEditor user={user} />
