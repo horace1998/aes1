@@ -11,7 +11,6 @@ import PageShell from '@/components/PageShell';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import TrendsSection from '@/components/dashboard/TrendsSection';
-import HeroIdentity from '@/components/dashboard/HeroIdentity';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
@@ -141,7 +140,6 @@ export default function Dashboard() {
               <ImageIcon style={{ width: 15, height: 15, color: user?.background_image_url ? '#1a3aad' : 'rgba(0,0,0,0.4)' }} />
             </motion.button>
             <NotificationBell userEmail={user?.email} />
-            <HeroIdentity user={user} size={34} />
           </div>
         </motion.div>
 
