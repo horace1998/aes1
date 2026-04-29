@@ -1,42 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { getFanRank, getNextRank, getRankScore } from '@/lib/fanRank';
-
-/**
- * Removes the background from an image URL using @imgly/background-removal
- * and returns a new object URL with a transparent PNG.
- */
-async function removeBackground(imageUrl) {
-  const { removeBackground: removeBg } = await import('@imgly/background-removal');
-  const blob = await removeBg(imageUrl, {
-    publicPath: 'https://unpkg.com/@imgly/background-removal@1.7.0/dist/',
-    model: 'small',
-    output: { format: 'image/png', quality: 0.9 },
-  });
-  return URL.createObjectURL(blob);
-}
 
 export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, idolImageUrl }) {
   const rank = getFanRank(totalCheckins, milestoneCount);
   const score = getRankScore(totalCheckins, milestoneCount);
   const next = getNextRank(totalCheckins, milestoneCount);
-  const [cutoutUrl, setCutoutUrl] = useState(null);
-  const [processing, setProcessing] = useState(false);
-  const prevUrl = useRef(null);
-
   const progress = next
     ? Math.min(100, Math.round(((score - (rank.minScore || 0)) / (next.rank.minScore - (rank.minScore || 0))) * 100))
     : 100;
-
-  useEffect(() => {
-    if (!idolImageUrl || idolImageUrl === prevUrl.current) return;
-    prevUrl.current = idolImageUrl;
-    setCutoutUrl(null);
-    setProcessing(true);
-    removeBackground(idolImageUrl)
-      .then((url) => { setCutoutUrl(url); setProcessing(false); })
-      .catch(() => { setCutoutUrl(idolImageUrl); setProcessing(false); });
-  }, [idolImageUrl]);
 
   const showIdol = !!idolImageUrl;
   const IDOL_H = 230; // px, how tall the idol floats above the card
@@ -63,48 +35,21 @@ export default function FanRankBadge({ totalCheckins = 0, milestoneCount = 0, id
           }}
           aria-hidden="true"
         >
-          {processing && (
-            <div className="absolute inset-0 flex items-end justify-center pb-4">
-              <div className="w-6 h-6 rounded-full border-2 border-blue-400/60 border-t-transparent animate-spin" />
-            </div>
-          )}
-
-          {cutoutUrl && (
-            <>
-              {/* Clean circular idol image — no background glow */}
-
-              {/* Iridescent shimmer overlay on the image */}
-              <motion.div
-                style={{
-                  position: 'absolute', inset: 0, zIndex: 3,
-                  background: 'linear-gradient(135deg, rgba(77,127,255,0.18) 0%, rgba(200,100,255,0.12) 40%, rgba(77,200,255,0.15) 80%, transparent 100%)',
-                  mixBlendMode: 'screen',
-                }}
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-              />
-
-              {/* The cutout image */}
-              <motion.img
-                src={cutoutUrl}
-                alt=""
-                style={{
-                  position: 'absolute', inset: 0,
-                  width: '100%', height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center',
-                  borderRadius: '50%',
-                  zIndex: 2,
-                  filter: 'none',
-                }}
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-              />
-
-
-            </>
-          )}
+          <motion.img
+            src={idolImageUrl}
+            alt=""
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              borderRadius: '50%',
+            }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          />
         </div>
       )}
 
