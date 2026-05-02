@@ -63,7 +63,7 @@ export default function SettingsModal({ isOpen, onClose, user }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <motion.div
               className="relative w-full max-w-md"
               style={{ maxHeight: '90dvh' }}

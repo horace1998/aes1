@@ -57,7 +57,7 @@ export default function MilestoneUploadModal({ isOpen, onClose, onSaved, goal })
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <motion.div
             className="relative w-full max-w-lg"
             style={{ maxHeight: 'calc(100dvh - 32px)' }}
