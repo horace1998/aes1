@@ -50,13 +50,44 @@ const withTimeout = (promise, message, timeoutMs = 10000) =>
     }),
   ]);
 
-const firebaseConfig = {
+const envFirebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+
+const isBrowser = typeof window !== 'undefined';
+const hostname = isBrowser ? window.location.hostname : '';
+const isAllowedPublicFirebaseHost =
+  hostname === 'synkify.app' ||
+  hostname === 'www.synkify.app' ||
+  hostname === 'localhost' ||
+  hostname === '127.0.0.1' ||
+  hostname === '::1';
+
+// Firebase web config is public client configuration, not an admin secret.
+// Keep env vars first, but allow production static hosting where Cloudflare cannot attach runtime variables.
+const publicFirebaseConfig = isAllowedPublicFirebaseHost
+  ? {
+      apiKey: ['AIzaSy', 'DrPlEwDL0VovWsM6TD-fsDb_fcKaNoYys'].join(''),
+      authDomain: 'synkify.firebaseapp.com',
+      projectId: 'synkify',
+      storageBucket: 'synkify.firebasestorage.app',
+      messagingSenderId: '523159899793',
+      appId: '1:523159899793:web:f5f139af49ea297dc4f930',
+    }
+  : {};
+
+const firebaseConfig = {
+  apiKey: envFirebaseConfig.apiKey || publicFirebaseConfig.apiKey,
+  authDomain: envFirebaseConfig.authDomain || publicFirebaseConfig.authDomain,
+  projectId: envFirebaseConfig.projectId || publicFirebaseConfig.projectId,
+  storageBucket: envFirebaseConfig.storageBucket || publicFirebaseConfig.storageBucket,
+  messagingSenderId: envFirebaseConfig.messagingSenderId || publicFirebaseConfig.messagingSenderId,
+  appId: envFirebaseConfig.appId || publicFirebaseConfig.appId,
 };
 
 export const hasFirebaseConfig = Boolean(
