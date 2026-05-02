@@ -9,13 +9,16 @@ import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import BadgeGrid from '@/components/profile/BadgeGrid';
 import PhotoWall from '@/components/profile/PhotoWall';
 import { evaluateBadges, buildStats } from '@/lib/badges';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
   const [postTasks, setPostTasks] = useState({});
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
 
   const refreshUser = () => base44.auth.me().then(setUser);
   useEffect(() => {
@@ -51,6 +54,19 @@ export default function Profile() {
   const completedGoals = goals.filter(g => g.status === 'completed').length;
   const stats = buildStats({ goals, milestones, missions, userEmail: user?.email });
   const badges = evaluateBadges(stats);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      queryClient.clear();
+      setUser(null);
+      await logout(false);
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Sign out failed:', error);
+      setIsSigningOut(false);
+    }
+  };
 
   if (!user) return null;
 
@@ -189,11 +205,12 @@ export default function Profile() {
 
             {/* Sign Out */}
             <button
-              onClick={() => base44.auth.logout()}
+              onClick={handleSignOut}
+              disabled={isSigningOut}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl"
-              style={{ background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.2)', color: '#000', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+              style={{ background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.2)', color: '#000', fontFamily: 'Space Grotesk, sans-serif', fontSize: 12, fontWeight: 700, cursor: isSigningOut ? 'wait' : 'pointer', opacity: isSigningOut ? 0.6 : 1 }}
             >
-              <LogOut className="w-4 h-4" /> Sign Out
+              <LogOut className="w-4 h-4" /> {isSigningOut ? 'Signing Out...' : 'Sign Out'}
             </button>
           </div>
         </div>
