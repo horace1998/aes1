@@ -56,6 +56,20 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
 
+      if (base44.isMissingFirebaseConfig) {
+        setUser(null);
+        setIsAuthenticated(false);
+        setAuthChecked(true);
+        setAppPublicSettings({ id: 'missing-firebase', public_settings: {} });
+        setAuthError({
+          type: 'missing_firebase_config',
+          message: 'Production Firebase config is missing. Add the VITE_FIREBASE_* build variables in Cloudflare.',
+        });
+        setIsLoadingPublicSettings(false);
+        setIsLoadingAuth(false);
+        return;
+      }
+
       if (base44.isLocal) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
