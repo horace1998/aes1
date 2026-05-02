@@ -61,13 +61,9 @@ export default function PageShell({ children, goals = [], user }) {
       }
     }
 
-    const created = await base44.entities.Goal.create({
-      ...goalData,
-      is_mission_creator: !!make_public,
-    });
-
+    let mission = null;
     if (make_public && user) {
-      const mission = await base44.entities.Mission.create({
+      mission = await base44.entities.Mission.create({
         title: goalData.title,
         description: description || '',
         creator_email: user.email,
@@ -86,11 +82,15 @@ export default function PageShell({ children, goals = [], user }) {
         status: 'active',
         moderation_status: 'approved',
       });
-      // Link goal back to mission
-      try { await base44.entities.Goal.update(created.id, { mission_id: mission.id }); } catch {}
       queryClient.invalidateQueries({ queryKey: ['missions'] });
       toast.success('Mission published! Other fans can now join 💜');
     }
+
+    await base44.entities.Goal.create({
+      ...goalData,
+      mission_id: mission?.id || '',
+      is_mission_creator: !!make_public,
+    });
 
     queryClient.invalidateQueries({ queryKey: ['goals'] });
     setShowGoal(false);

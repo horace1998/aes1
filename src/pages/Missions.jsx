@@ -42,12 +42,23 @@ export default function Missions() {
   if (tab === 'trending') {
     filtered = [...filtered].sort((a, b) => (b.member_count || 0) - (a.member_count || 0));
   } else if (tab === 'mine') {
-    // Use active goals as source of truth (members list may be stale)
+    const userEmail = user?.email?.toLowerCase();
+
+    // Use multiple ownership signals because older mission goals may not have mission_id backfilled.
     const activeMissionIds = new Set(
       goals.filter(g => g.status === 'active' && g.mission_id).map(g => g.mission_id)
     );
+    const activePublicGoalFingerprints = new Set(
+      goals
+        .filter(g => g.status === 'active' && g.is_mission_creator)
+        .map(g => `${g.title || ''}|${g.idol_name || ''}|${g.idol_group || ''}`)
+    );
+
     filtered = filtered.filter(m =>
-      m.creator_email === user?.email || activeMissionIds.has(m.id)
+      m.creator_email?.toLowerCase() === userEmail ||
+      activeMissionIds.has(m.id) ||
+      (m.members || []).some(member => member.user_email?.toLowerCase() === userEmail) ||
+      activePublicGoalFingerprints.has(`${m.title || ''}|${m.idol_name || ''}|${m.idol_group || ''}`)
     );
   }
 
