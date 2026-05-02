@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import PageNotFound from './lib/PageNotFound';
@@ -11,6 +11,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PageTransition from '@/components/PageTransition';
 import { NavActionProvider } from '@/lib/NavActionContext';
 import RootChrome from '@/components/RootChrome';
+import { LogIn } from 'lucide-react';
 
 import Dashboard from '@/pages/Dashboard';
 import Onboarding from '@/pages/Onboarding';
@@ -58,7 +59,8 @@ const ScrollToTop = () => {
 };
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { user, isAuthenticated, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const location = useLocation();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
@@ -77,19 +79,51 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
+      return <LoginScreen onLogin={navigateToLogin} />;
     }
   }
+
+  if (!isAuthenticated) {
+    return <LoginScreen onLogin={navigateToLogin} error={authError?.message} />;
+  }
+
+  if (user?.onboarded === false && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  if (user?.onboarded !== false && location.pathname === '/onboarding') {
+    return <Navigate to="/" replace />;
+  }
+
+  const showChrome = location.pathname !== '/onboarding';
 
   return (
     <>
       <div className="aurora-bg" aria-hidden="true" />
       <AnimatedRoutes />
-      <RootChrome />
+      {showChrome && <RootChrome />}
     </>
   );
 };
+
+const LoginScreen = ({ onLogin, error }) => (
+  <div className="fixed inset-0 flex items-center justify-center bg-background px-6">
+    <div className="w-full max-w-sm text-center">
+      <p className="editorial-eyebrow mb-3">Est. MMXXVI</p>
+      <h1 className="font-display text-5xl tracking-wide text-foreground mb-1" style={{ fontWeight: 700 }}>SYNKIFY</h1>
+      <p className="editorial-italic text-sm text-muted-foreground mb-8">A Diary of Devotion</p>
+      <button
+        type="button"
+        onClick={onLogin}
+        className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-heading font-bold text-background shadow-lg transition-transform active:scale-[0.98]"
+      >
+        <LogIn className="h-4 w-4" />
+        Continue with Google
+      </button>
+      {error && <p className="mt-4 text-xs text-red-500">{error}</p>}
+    </div>
+  </div>
+);
 
 function App() {
   return (
