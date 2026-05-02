@@ -120,6 +120,14 @@ const sortRecords = (records, sort = '-created_date') => {
   });
 };
 
+const blobToDataUrl = (blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error('Could not read file'));
+    reader.readAsDataURL(blob);
+  });
+
 const defaultUserProfile = (firebaseUser) => {
   const email = firebaseUser.email || '';
   const name = firebaseUser.displayName || email.split('@')[0] || 'Member';
@@ -169,21 +177,24 @@ const applyFilters = (records, filters = {}) =>
 
 const buildListQuery = (name, sort, limit) => {
   const pieces = [collection(db, name)];
+  const shouldSortClientSide = USER_SCOPED_ENTITIES.has(name);
+
   if (USER_SCOPED_ENTITIES.has(name)) {
     pieces.push(where('created_by', '==', currentUserEmail()));
   }
-  if (sort) {
+
+  if (sort && !shouldSortClientSide) {
     const desc = sort.startsWith('-');
     pieces.push(orderBy(desc ? sort.slice(1) : sort, desc ? 'desc' : 'asc'));
   }
-  if (limit) pieces.push(limitQuery(limit));
+  if (limit && !shouldSortClientSide) pieces.push(limitQuery(limit));
   return query(...pieces);
 };
 
 const entityApi = (name) => ({
   list: async (sort, limit) => {
     const snapshot = await getDocs(buildListQuery(name, sort, limit));
-    return snapshot.docs.map(normalizeDoc).filter(Boolean);
+    return sortRecords(snapshot.docs.map(normalizeDoc).filter(Boolean), sort).slice(0, limit || undefined);
   },
 
   filter: async (filters = {}, sort, limit) => {
@@ -244,7 +255,7 @@ const resizeImageFile = (file) =>
     const objectUrl = URL.createObjectURL(file);
     image.onload = () => {
       try {
-        const maxSide = 1800;
+        const maxSide = 1400;
         const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
         const width = Math.max(1, Math.round(image.naturalWidth * scale));
         const height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -262,7 +273,7 @@ const resizeImageFile = (file) =>
             resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
           },
           'image/jpeg',
-          0.84
+          0.78
         );
       } catch (error) {
         URL.revokeObjectURL(objectUrl);
@@ -281,10 +292,23 @@ const uploadFile = async ({ file }) => {
   const uploadable = await resizeImageFile(file);
   const safeName = uploadable.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
   const path = `uploads/${firebaseUser.uid}/${Date.now()}-${safeName}`;
-  const snapshot = await uploadBytes(ref(storage, path), uploadable, {
-    contentType: uploadable.type || 'application/octet-stream',
-  });
-  return { file_url: await getDownloadURL(snapshot.ref), storage_path: path };
+
+  try {
+    const snapshot = await withTimeout(
+      uploadBytes(ref(storage, path), uploadable, {
+        contentType: uploadable.type || 'application/octet-stream',
+      }),
+      'Firebase Storage upload timed out. Check that Storage is enabled and rules are published.',
+      20000
+    );
+    return { file_url: await getDownloadURL(snapshot.ref), storage_path: path };
+  } catch (error) {
+    console.warn('Firebase Storage upload failed; using compressed inline image fallback.', error);
+    if (uploadable?.type?.startsWith('image/')) {
+      return { file_url: await blobToDataUrl(uploadable), storage_path: null };
+    }
+    throw error;
+  }
 };
 
 const invokeFunction = async (name, payload = {}) => {
