@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import GlassButton from '@/components/ui/GlassButton';
-import { Target, ArrowRight } from 'lucide-react';
+import { Loader2, Minus, Target, ArrowRight } from 'lucide-react';
 
 const GOAL_SUGGESTIONS = [
   'Exercise every day',
@@ -17,13 +17,13 @@ const GOAL_SUGGESTIONS = [
 
 const TIMELINE_UNITS = ['days', 'weeks', 'months'];
 
-export default function OnboardingGoal({ idolData, onComplete, onBack }) {
+export default function OnboardingGoal({ idolData, onComplete, onBack, isSaving = false, error = '' }) {
   const [goal, setGoal] = useState('');
   const [timelineValue, setTimelineValue] = useState(7);
   const [timelineUnit, setTimelineUnit] = useState('days');
 
   const handleComplete = () => {
-    if (!goal.trim()) return;
+    if (!goal.trim() || isSaving) return;
     onComplete({
       title: goal.trim(),
       idol_name: idolData.idol_name,
@@ -89,6 +89,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
       <div className="flex flex-wrap gap-2 mb-6">
         {GOAL_SUGGESTIONS.map((s, i) => (
           <motion.button
+            type="button"
             key={s}
             className={`glass-subtle rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
               goal === s ? 'bg-violet-300/30 text-violet-600 ring-1 ring-violet-300/50' : 'text-muted-foreground hover:bg-white/50'
@@ -110,11 +111,15 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
         <div className="flex items-center gap-4">
           <div className="glass-subtle rounded-xl px-4 py-2 flex items-center gap-2">
             <button
+              type="button"
               className="w-8 h-8 rounded-full glass flex items-center justify-center text-foreground font-bold"
               onClick={() => setTimelineValue(Math.max(1, timelineValue - 1))}
-            >−</button>
+            >
+              <Minus className="w-4 h-4" />
+            </button>
             <span className="font-heading font-bold text-2xl w-10 text-center">{timelineValue}</span>
             <button
+              type="button"
               className="w-8 h-8 rounded-full glass flex items-center justify-center text-foreground font-bold"
               onClick={() => setTimelineValue(timelineValue + 1)}
             >+</button>
@@ -122,6 +127,7 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
           <div className="flex gap-2 flex-1">
             {TIMELINE_UNITS.map(unit => (
               <button
+                type="button"
                 key={unit}
                 className={`flex-1 rounded-xl py-2 text-xs font-heading font-medium capitalize transition-all ${
                   timelineUnit === unit
@@ -138,16 +144,30 @@ export default function OnboardingGoal({ idolData, onComplete, onBack }) {
       </GlassCard>
 
       <div className="flex gap-3">
-        <GlassButton variant="ghost" onClick={onBack} className="flex-1">Back</GlassButton>
+        <GlassButton variant="ghost" onClick={onBack} disabled={isSaving} className="flex-1">Back</GlassButton>
         <GlassButton
           variant="primary"
           onClick={handleComplete}
-          disabled={!goal.trim()}
+          disabled={!goal.trim() || isSaving}
           className="flex-1 flex items-center justify-center gap-2"
         >
-          Begin Journey <ArrowRight className="w-4 h-4" />
+          {isSaving ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Synkifying
+            </>
+          ) : (
+            <>
+              Synkify <ArrowRight className="w-4 h-4" />
+            </>
+          )}
         </GlassButton>
       </div>
+      {error && (
+        <p className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </motion.div>
   );
 }
