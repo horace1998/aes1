@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import ThreeBackground from '@/components/ThreeBackground';
 import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome';
 import OnboardingIdol from '@/components/onboarding/OnboardingIdol';
@@ -8,8 +9,11 @@ import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 
 export default function Onboarding() {
+  const queryClient = useQueryClient();
   const [phase, setPhase] = useState(0);
   const [idolData, setIdolData] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const handleIdolSelect = (data) => {
     setIdolData(data);
@@ -17,25 +21,35 @@ export default function Onboarding() {
   };
 
   const handleGoalComplete = async (goalData) => {
-    // Create the first goal
-    await base44.entities.Goal.create({
-      ...goalData,
-      start_date: format(new Date(), 'yyyy-MM-dd'),
-      status: 'active',
-      progress: 0,
-      daily_checkins: [],
-    });
+    if (isSaving) return;
+    setIsSaving(true);
+    setSaveError('');
 
-    // Save onboarding data on user via User entity
-    const me = await base44.auth.me();
-    await base44.entities.User.update(me.id, {
-      onboarded: true,
-      favorite_idol: goalData.idol_name,
-      favorite_group: goalData.idol_group,
-    });
+    try {
+      // Save profile first so app-level routing can leave onboarding immediately after success.
+      await base44.auth.updateMe({
+        onboarded: true,
+        favorite_idol: goalData.idol_name,
+        favorite_group: goalData.idol_group,
+      });
 
-    // Navigate to dashboard
-    window.location.href = '/';
+      await base44.entities.Goal.create({
+        ...goalData,
+        start_date: format(new Date(), 'yyyy-MM-dd'),
+        status: 'active',
+        progress: 0,
+        daily_checkins: [],
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      window.location.replace('/');
+    } catch (error) {
+      console.error('Onboarding save failed:', error);
+      setSaveError(error.message || 'Could not finish onboarding. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -56,6 +70,8 @@ export default function Onboarding() {
             idolData={idolData}
             onComplete={handleGoalComplete}
             onBack={() => setPhase(1)}
+            isSaving={isSaving}
+            error={saveError}
           />
         )}
       </AnimatePresence>
