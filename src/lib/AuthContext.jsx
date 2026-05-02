@@ -15,6 +15,39 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
 
   useEffect(() => {
+    if (base44.isFirebase && base44.auth.onAuthStateChanged) {
+      setIsLoadingPublicSettings(false);
+      setAppPublicSettings({ id: 'firebase', public_settings: {} });
+      const unsubscribe = base44.auth.onAuthStateChanged(async (firebaseUser) => {
+        setIsLoadingAuth(true);
+        setAuthError(null);
+        if (!firebaseUser) {
+          setUser(null);
+          setIsAuthenticated(false);
+          setAuthChecked(true);
+          setIsLoadingAuth(false);
+          return;
+        }
+        try {
+          const currentUser = await base44.auth.me();
+          setUser(currentUser);
+          setIsAuthenticated(true);
+          setAuthChecked(true);
+        } catch (error) {
+          console.error('Firebase user profile check failed:', error);
+          setAuthError({
+            type: 'unknown',
+            message: error.message || 'Failed to load user profile',
+          });
+          setIsAuthenticated(false);
+          setAuthChecked(true);
+        } finally {
+          setIsLoadingAuth(false);
+        }
+      });
+      return unsubscribe;
+    }
+
     checkAppState();
   }, []);
 
@@ -125,9 +158,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = (shouldRedirect = true) => {
+  const logout = async (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
+
+    if (base44.isFirebase) {
+      await base44.auth.logout();
+      return;
+    }
     
     if (shouldRedirect) {
       // Use the SDK's logout method which handles token cleanup and redirect
@@ -138,9 +176,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const navigateToLogin = () => {
+  const navigateToLogin = async () => {
     // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    try {
+      await base44.auth.redirectToLogin(window.location.href);
+      if (base44.isFirebase) return;
+      await checkUserAuth();
+    } catch (error) {
+      console.error('Login failed:', error);
+      setAuthError({
+        type: 'login_failed',
+        message: error.message || 'Login failed',
+      });
+    }
   };
 
   return (
