@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import useLockBodyScroll from '@/lib/useLockBodyScroll';
 
 /**
- * ModalPortal - renders children into document.body so they escape
+ * ModalPortal — renders children into document.body so they escape
  * any transformed ancestor (e.g. PageTransition's motion.div) and
  * `position: fixed` is anchored to the actual viewport.
  *
