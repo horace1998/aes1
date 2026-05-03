@@ -10,7 +10,7 @@ import { Users, Flame, TrendingUp } from 'lucide-react';
 
 export default function Missions() {
   const [filterGroup, setFilterGroup] = useState('all');
-  const [tab, setTab] = useState('trending'); // trending | new | mine
+  const [tab, setTab] = useState('mine'); // mine | trending | new
 
   // Scroll to top on mount
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
@@ -81,9 +81,9 @@ export default function Missions() {
           {/* Tabs */}
           <div className="flex gap-2 mb-4">
             {[
+              { id: 'mine', label: 'Mine', icon: Users },
               { id: 'trending', label: 'Trending', icon: Flame },
               { id: 'new', label: 'New', icon: TrendingUp },
-              { id: 'mine', label: 'Mine', icon: Users },
             ].map(t => {
               const Icon = t.icon;
               return (

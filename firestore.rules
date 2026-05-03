@@ -14,6 +14,15 @@ service cloud.firestore {
       return signedIn() && request.resource.data.created_by == request.auth.token.email;
     }
 
+    function isNotificationRecipient() {
+      return signedIn() && resource.data.user_email == request.auth.token.email;
+    }
+
+    function onlyFeedPostReactionChanged() {
+      return signedIn()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['cheers', 'updated_date']);
+    }
+
     match /User/{userId} {
       allow read: if signedIn();
       allow create: if signedIn() && userId == request.auth.uid;
@@ -41,14 +50,15 @@ service cloud.firestore {
     }
 
     match /Notification/{docId} {
-      allow read, update, delete: if isOwnerByCreatedBy();
+      allow read, update, delete: if isOwnerByCreatedBy() || isNotificationRecipient();
       allow create: if createsOwnRecord();
     }
 
     match /FeedPost/{docId} {
       allow read: if signedIn();
       allow create: if createsOwnRecord();
-      allow update, delete: if isOwnerByCreatedBy();
+      allow update: if isOwnerByCreatedBy() || onlyFeedPostReactionChanged();
+      allow delete: if isOwnerByCreatedBy();
     }
 
     match /Comment/{docId} {

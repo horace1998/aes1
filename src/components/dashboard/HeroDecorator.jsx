@@ -129,13 +129,14 @@ export default function HeroDecorator({ user, totalCheckins = 0, milestoneCount 
             <img
               src={bgUrl}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover grayscale brightness-50 opacity-45"
+              className="absolute inset-0 w-full h-full object-cover grayscale brightness-50 opacity-80"
             />
+            <div className="absolute inset-0 bg-black/45" />
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  'linear-gradient(90deg, rgba(3,10,40,0.9), rgba(15,35,116,0.68) 52%, rgba(43,78,185,0.52)), linear-gradient(180deg, rgba(4,12,48,0.18), rgba(4,12,48,0.82))',
+                  'linear-gradient(90deg, rgba(0,0,0,0.82), rgba(3,10,34,0.62) 52%, rgba(6,18,70,0.5)), linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.78))',
               }}
             />
           </>

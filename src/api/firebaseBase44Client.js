@@ -352,9 +352,11 @@ const invokeFunction = async (name, payload = {}) => {
     const mission = await entityApi('Mission').get(payload.mission_id);
     if (!mission) return { data: { success: false, error: 'Mission not found' } };
 
-    const activeGoals = (await entityApi('Goal').list('-created_date', 100)).filter((goal) => goal.status === 'active');
-    if (activeGoals.length >= 3) {
-      return { data: { success: false, error: 'Max 3 active goals' } };
+    const activeMissionGoals = (await entityApi('Goal').list('-created_date', 100)).filter(
+      (goal) => goal.status === 'active' && goal.mission_id
+    );
+    if (activeMissionGoals.length >= 3) {
+      return { data: { success: false, error: 'Max 3 active missions' } };
     }
 
     const members = mission.members || [];

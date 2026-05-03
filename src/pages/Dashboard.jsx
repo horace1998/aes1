@@ -9,14 +9,13 @@ import NewGoalModal from '@/components/dashboard/NewGoalModal';
 import PageShell from '@/components/PageShell';
 import NotificationBell from '@/components/NotificationBell';
 import FanRankBadge from '@/components/dashboard/FanRankBadge';
-import TrendsSection from '@/components/dashboard/TrendsSection';
 import EditorialHeader from '@/components/dashboard/EditorialHeader';
 import LevelUpModal from '@/components/LevelUpModal';
 import CheerInbox from '@/components/circle/CheerInbox';
 import HomeSplash from '@/components/dashboard/HomeSplash';
 import { leaveGoal } from '@/lib/leaveGoal';
 import { getFanRank, getRankScore } from '@/lib/fanRank';
-import { format, parseISO, isSameDay } from 'date-fns';
+import { addDays, addMonths, addWeeks, differenceInCalendarDays, format, parseISO, isSameDay } from 'date-fns';
 import { Calendar, Clock, CheckCircle2, Circle, Share2, Settings } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import CalendarWidget from '@/components/dashboard/CalendarWidget';
@@ -108,6 +107,19 @@ export default function Dashboard() {
   const milestoneCount = milestones.length;
   const currentRank = getFanRank(totalCheckins, milestoneCount);
   const canAddGoal = activeGoals.length < 3;
+  const activeMissionGoals = activeGoals.filter((goal) => goal.mission_id);
+
+  const { data: activeMissions = [] } = useQuery({
+    queryKey: ['active-missions', activeMissionGoals.map((goal) => goal.mission_id).sort().join(',')],
+    queryFn: async () => {
+      const ids = [...new Set(activeMissionGoals.map((goal) => goal.mission_id).filter(Boolean))];
+      const records = await Promise.all(ids.map((id) => base44.entities.Mission.get(id).catch(() => null)));
+      return records.filter(Boolean);
+    },
+    enabled: activeMissionGoals.length > 0,
+  });
+
+  const missionById = new Map(activeMissions.map((mission) => [mission.id, mission]));
 
   const handleCheckin = (goal) => {
     checkinMutation.mutate({ goal, prevRankId: currentRank.id });
@@ -179,11 +191,8 @@ export default function Dashboard() {
           )}
         </motion.div>
 
-        {/* Cheers received from circle members */}
-        <CheerInbox user={user} />
-
-        {/* Current Goal Quick View */}
-        {activeGoals.length > 0 && (
+        {/* Active Missions */}
+        {activeMissionGoals.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -200,12 +209,55 @@ export default function Dashboard() {
                 Active Mission
               </span>
             </div>
-            <GlassCard variant="strong" className="p-4" animate={false}>
-              <p className="text-xs text-muted-foreground mb-1">{activeGoals[0].idol_group || activeGoals[0].idol_name}</p>
-              <p className="font-heading text-sm font-bold text-foreground">{activeGoals[0].title}</p>
-            </GlassCard>
+            <div className="space-y-3">
+              {activeMissionGoals.map((goal, index) => {
+                const mission = missionById.get(goal.mission_id);
+                const timelineValue = Number(goal.timeline_value || mission?.timeline_value || 0);
+                const timelineUnit = (goal.timeline_unit || mission?.timeline_unit || 'days').toLowerCase();
+                const startDate = goal.created_date ? new Date(goal.created_date) : new Date();
+                const endDate = timelineValue
+                  ? timelineUnit.startsWith('month')
+                    ? addMonths(startDate, timelineValue)
+                    : timelineUnit.startsWith('week')
+                      ? addWeeks(startDate, timelineValue)
+                      : addDays(startDate, timelineValue)
+                  : null;
+                const daysRemaining = endDate ? Math.max(0, differenceInCalendarDays(endDate, new Date())) : null;
+
+                return (
+                  <div key={goal.id} className="rounded-2xl border border-foreground/10 bg-white/95 p-3 shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/support-circle/${goal.mission_id}`)}
+                      className="mb-3 grid w-full grid-cols-3 gap-2 text-left"
+                    >
+                      {[
+                        { label: 'Duration', value: timelineValue ? `${timelineValue} ${timelineUnit}` : 'Open' },
+                        { label: 'Remaining', value: daysRemaining === null ? '--' : `${daysRemaining}d` },
+                        { label: 'Fans', value: mission?.member_count || 1 },
+                      ].map((item) => (
+                        <div key={item.label} className="rounded-xl border border-foreground/10 bg-foreground/[0.03] px-2 py-2 text-center">
+                          <p className="font-display text-xl leading-none text-foreground">{item.value}</p>
+                          <p className="mt-1 text-[8px] font-heading font-bold uppercase tracking-[0.18em] text-foreground/40">{item.label}</p>
+                        </div>
+                      ))}
+                    </button>
+                    <GoalCard
+                      goal={goal}
+                      index={index}
+                      onCheckin={handleCheckin}
+                      onComplete={(g) => completeMutation.mutate(g)}
+                      onDelete={() => handleDeleteGoal(goal)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </motion.div>
         )}
+
+        {/* Cheers received from circle members */}
+        <CheerInbox user={user} />
 
         {/* Stats — filmstrip style */}
         <div className="grid grid-cols-3 mb-8" style={{ gap: 8 }}>
@@ -244,9 +296,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Trends */}
-        {goals.length > 0 && <TrendsSection goals={goals} />}
-
         {/* Calendar Widget */}
          {/* Import from PageShell context */}
          <motion.div
@@ -257,6 +306,8 @@ export default function Dashboard() {
          >
            <CalendarWidget
              tasks={tasks}
+             goals={goals}
+             milestones={milestones}
              selectedDate={selectedDate}
              onDateSelect={setSelectedDate}
              onNewTask={() => {
@@ -268,7 +319,7 @@ export default function Dashboard() {
          </motion.div>
 
         {/* Milestones grid */}
-        {milestones.length > 0 && (
+        {false && milestones.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -298,6 +349,7 @@ export default function Dashboard() {
         )}
 
         {/* Active Goals */}
+        {false && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -375,6 +427,7 @@ export default function Dashboard() {
             </>
           )}
         </motion.div>
+        )}
       </div>
 
       </PageShell>

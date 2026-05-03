@@ -27,7 +27,7 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
   // True membership = creator OR has active linked goal
   const isMember = isCreator || hasActiveLinkedGoal;
 
-  // Stale: in members list but no active goal — auto-cleanup so user can rejoin
+  // Stale: in members list but no active goal ??auto-cleanup so user can rejoin
   useEffect(() => {
     if (!currentUser || isCreator) return;
     if (isInMembersList && !hasActiveLinkedGoal) {
@@ -37,14 +37,14 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
     }
   }, [currentUser?.email, mission.id, isInMembersList, hasActiveLinkedGoal, isCreator]);
 
-  // Count ALL active goals (not just mission-linked)
-  const activeGoals = userGoals.filter(g => g.status === 'active');
-  const canJoin = activeGoals.length < 3;
+  // Personal goals should not block joining a circle mission.
+  const activeMissionGoals = userGoals.filter(g => g.status === 'active' && g.mission_id);
+  const canJoin = activeMissionGoals.length < 3;
 
   const handleJoin = async () => {
     if (!currentUser || isMember || isCreator) return;
     if (!canJoin) {
-      toast.error('Max 3 active missions — complete one to join another');
+      toast.error('Max 3 active missions. Complete or leave one to join another.');
       return;
     }
     setJoining(true);
@@ -130,7 +130,7 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
              onClick={handleJoin} 
              disabled={joining || !canJoin} 
              className="w-full py-2 text-xs"
-             title={!canJoin ? 'Max 3 active missions — complete one to join another' : ''}
+             title={!canJoin ? 'Max 3 active missions. Complete or leave one to join another.' : ''}
            >
              {joining ? <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" /> : !canJoin ? 'Max 3 missions' : 'Join Mission'}
            </GlassButton>
@@ -143,7 +143,7 @@ export default function MissionCard({ mission, currentUser, userGoals = [], inde
         onClose={() => setReportOpen(false)}
         targetType="mission"
         targetId={mission.id}
-        snapshot={`${mission.title} — ${mission.description || ''}`}
+        snapshot={`${mission.title} ??${mission.description || ''}`}
       />
     </>
   );

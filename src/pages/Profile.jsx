@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PageShell from '@/components/PageShell';
-import { ArrowLeft, MoreVertical, LogOut, Check } from 'lucide-react';
+import { LogOut, Trophy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import FanRankBadge from '@/components/dashboard/FanRankBadge';
 import BadgeGrid from '@/components/profile/BadgeGrid';
 import PhotoWall from '@/components/profile/PhotoWall';
 import { evaluateBadges, buildStats } from '@/lib/badges';
+import { getFanRank, getRankScore } from '@/lib/fanRank';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function Profile() {
@@ -54,6 +54,8 @@ export default function Profile() {
   const completedGoals = goals.filter(g => g.status === 'completed').length;
   const stats = buildStats({ goals, milestones, missions, userEmail: user?.email });
   const badges = evaluateBadges(stats);
+  const fanRank = getFanRank(totalCheckins, milestones.length);
+  const fanScore = getRankScore(totalCheckins, milestones.length);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -74,17 +76,7 @@ export default function Profile() {
     <div className="min-h-screen pb-28" style={{ background: '#ffffff' }}>
       <PageShell goals={goals} user={user}>
         <div className="relative z-10">
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-4 pt-6 pb-4 sticky top-0 z-20 bg-white">
-            <button onClick={() => navigate(-1)} className="p-2 -ml-2">
-              <ArrowLeft className="w-5 h-5" style={{ color: '#000' }} />
-            </button>
-            <button onClick={() => setSelectedPost(null)} className="p-2 -mr-2">
-              <MoreVertical className="w-5 h-5" style={{ color: '#000' }} />
-            </button>
-          </div>
-
-          <div className="px-5 relative">
+          <div className="px-5 pt-7 relative">
             {/* Avatar */}
             <div className="flex justify-center mb-4">
               <div
@@ -103,6 +95,15 @@ export default function Profile() {
               <h1 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 48, color: '#000', fontWeight: 700, lineHeight: 1, marginBottom: 2 }}>
                 {user.full_name || 'Station'}
               </h1>
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] px-3 py-1.5">
+                <Trophy className="h-3.5 w-3.5" style={{ color: '#1a3aad' }} />
+                <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#0d1117' }}>
+                  {fanRank.label}
+                </span>
+                <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.42)' }}>
+                  {String(fanScore).padStart(3, '0')} pts
+                </span>
+              </div>
               <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 13, color: 'rgba(0,0,0,0.6)', marginBottom: 12 }}>
                 @{user.email.split('@')[0]}
               </p>
@@ -130,9 +131,6 @@ export default function Profile() {
                 Dedicated K-pop fan on a journey of growth
               </p>
             </div>
-
-            {/* Fan Rank */}
-            <FanRankBadge totalCheckins={totalCheckins} milestoneCount={milestones.length} />
 
             {/* Achievements */}
             <div className="mb-8">

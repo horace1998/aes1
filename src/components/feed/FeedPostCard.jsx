@@ -39,6 +39,7 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
   const userReaction = (post.cheers || []).find(c => c.user_email === userEmail)?.reaction;
 
   const handleReact = async (id) => {
+    if (!userEmail) return;
     setShowPicker(false);
     setAnimatingReaction(id);
     setTimeout(() => setAnimatingReaction(null), 800);
@@ -48,7 +49,19 @@ export default function FeedPostCard({ post, userEmail, currentUser, index = 0 }
       ? existing
       : [...existing, { user_email: userEmail, reaction: id }];
     await base44.entities.FeedPost.update(post.id, { cheers: newCheers });
+    if (userReaction !== id && post.user_email && post.user_email !== userEmail) {
+      await base44.entities.Notification.create({
+        user_email: post.user_email,
+        idol_name: post.idol_name || 'Synkify',
+        message: `${currentUser?.full_name || userEmail.split('@')[0]} cheered your post.`,
+        is_read: false,
+        sent_date: new Date().toISOString(),
+        type: 'cheer',
+        post_id: post.id,
+      }).catch(() => null);
+    }
     queryClient.invalidateQueries({ queryKey: ['feedposts'] });
+    queryClient.invalidateQueries({ queryKey: ['notifications'] });
   };
 
   const handleDelete = async () => {

@@ -1,43 +1,49 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { format, subDays } from 'date-fns';
+import { format, subDays, isSameDay } from 'date-fns';
 
-function buildLast14(goals) {
-  const days = [];
-  for (let i = 13; i >= 0; i--) {
-    const d = format(subDays(new Date(), i), 'yyyy-MM-dd');
-    const label = format(subDays(new Date(), i), 'EEE').charAt(0);
-    let count = 0;
-    goals.forEach(g => {
-      if (g.daily_checkins?.some(c => c.date === d && c.completed)) count++;
-    });
-    days.push({ date: d, label, count });
-  }
-  return days;
+function buildLast14({ goals = [], milestones = [], tasks = [] }) {
+  return Array.from({ length: 14 }, (_, index) => {
+    const date = subDays(new Date(), 13 - index);
+    const goalCount = goals.filter((goal) => goal.created_date && isSameDay(new Date(goal.created_date), date)).length;
+    const captureCount = milestones.filter((milestone) => milestone.created_date && isSameDay(new Date(milestone.created_date), date)).length;
+    const taskCount = tasks.filter((task) => {
+      const taskDate = task.created_date || task.due_date;
+      return taskDate && isSameDay(new Date(taskDate), date);
+    }).length;
+
+    return {
+      date,
+      goalCount,
+      captureCount,
+      taskCount,
+      total: goalCount + captureCount + taskCount,
+    };
+  });
 }
 
-const CustomTooltip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{
-      background: 'rgba(13, 31, 107, 0.95)', border: '1px solid rgba(77,127,255,0.4)',
-      borderRadius: 8, padding: '6px 10px',
-    }}>
-      <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 11, color: '#fff', fontWeight: 600 }}>
-        {payload[0].value} check-in{payload[0].value !== 1 ? 's' : ''}
-      </p>
-    </div>
-  );
-};
+function heatColor(total) {
+  if (total >= 6) return '#0d1117';
+  if (total >= 4) return '#1a3aad';
+  if (total >= 2) return '#4d7fff';
+  if (total >= 1) return '#a9c0ff';
+  return 'rgba(0,0,0,0.055)';
+}
 
-export default function TrendsSection({ goals }) {
-  const data = buildLast14(goals);
-  const maxCount = Math.max(...data.map(d => d.count), 1);
-  const activeDays = data.filter(d => d.count > 0).length;
-  const consistency = Math.round((activeDays / 14) * 100);
-  const bestDay = data.reduce((best, d) => d.count > best.count ? d : best, data[0]);
-  const bestLabel = bestDay?.count > 0 ? format(new Date(bestDay.date), 'EEE').toUpperCase() : '—';
+export default function TrendsSection({ goals = [], milestones = [], tasks = [] }) {
+  const data = buildLast14({ goals, milestones, tasks });
+  const stats = data.reduce(
+    (acc, day) => {
+      acc.goals += day.goalCount;
+      acc.captures += day.captureCount;
+      acc.tasks += day.taskCount;
+      acc.total += day.total;
+      if (day.total > 0) acc.activeDays += 1;
+      return acc;
+    },
+    { goals: 0, captures: 0, tasks: 0, total: 0, activeDays: 0 }
+  );
+  const consistency = Math.round((stats.activeDays / 14) * 100);
 
   return (
     <motion.div
@@ -46,93 +52,128 @@ export default function TrendsSection({ goals }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.15 }}
     >
-      {/* Section header */}
       <div className="flex items-center gap-3 mb-5">
-        <span style={{
-          fontFamily: 'Space Grotesk, sans-serif',
-          fontSize: 9, fontWeight: 700, letterSpacing: '0.35em',
-          textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
-        }}>
-          Almanac — Last Fortnight
+        <span
+          style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: '0.35em',
+            textTransform: 'uppercase',
+            color: 'rgba(0,0,0,0.35)',
+          }}
+        >
+          Almanac / Last Fortnight
         </span>
         <div style={{ flex: 1, height: 1, background: 'rgba(0,0,0,0.1)' }} />
       </div>
 
-      <div style={{
-        borderRadius: 16,
-        background: 'rgba(0,0,0,0.02)',
-        border: '1px solid rgba(0,0,0,0.07)',
-        padding: '18px 18px 14px',
-      }}>
-        {/* Stats row */}
-        <div className="flex items-end justify-between mb-5">
+      <div
+        style={{
+          borderRadius: 16,
+          background: 'rgba(0,0,0,0.02)',
+          border: '1px solid rgba(0,0,0,0.07)',
+          padding: '18px 18px 16px',
+        }}
+      >
+        <div className="flex items-end justify-between gap-4 mb-5">
           <div>
-            <p style={{
-              fontFamily: 'Bebas Neue, Impact, sans-serif',
-              fontSize: 44, color: '#0d1117', lineHeight: 1, letterSpacing: '0.02em',
-            }}>
-              {consistency}<span style={{ fontSize: 18, color: 'rgba(0,0,0,0.3)' }}>%</span>
+            <p
+              style={{
+                fontFamily: 'Bebas Neue, Impact, sans-serif',
+                fontSize: 44,
+                color: '#0d1117',
+                lineHeight: 1,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {String(stats.total).padStart(2, '0')}
             </p>
-            <p style={{
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginTop: 2,
-            }}>
-              Consistency
+            <p
+              style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: 'rgba(0,0,0,0.35)',
+                marginTop: 2,
+              }}
+            >
+              Total Uses
             </p>
           </div>
           <div className="text-right">
-            <p style={{
-              fontFamily: 'Bebas Neue, Impact, sans-serif',
-              fontSize: 44, color: '#1a3aad', lineHeight: 1, letterSpacing: '0.02em',
-            }}>
-              {bestLabel}
+            <p
+              style={{
+                fontFamily: 'Bebas Neue, Impact, sans-serif',
+                fontSize: 44,
+                color: '#1a3aad',
+                lineHeight: 1,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {consistency}<span style={{ fontSize: 18, color: 'rgba(0,0,0,0.3)' }}>%</span>
             </p>
-            <p style={{
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.3em',
-              textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginTop: 2,
-            }}>
-              Most Productive
+            <p
+              style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: 'rgba(0,0,0,0.35)',
+                marginTop: 2,
+              }}
+            >
+              Active Days
             </p>
           </div>
         </div>
 
-        {/* Bar chart */}
-        <div style={{ height: 64 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} barSize={12} barGap={3}>
-              <Tooltip content={<CustomTooltip />} cursor={false} />
-              <Bar dataKey="count" radius={[4, 4, 2, 2]}>
-                {data.map((entry, i) => (
-                  <Cell
-                    key={i}
-                    fill={
-                      entry.count === 0
-                        ? 'rgba(0,0,0,0.07)'
-                        : entry.count === maxCount
-                          ? '#1a3aad'
-                          : 'rgba(26, 58, 173, 0.45)'
-                    }
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="grid grid-cols-7 gap-2">
+          {data.map((day) => (
+            <div key={day.date.toISOString()} className="min-w-0">
+              <div
+                title={`${format(day.date, 'MMM d')}: ${day.total} uses, ${day.goalCount} goals, ${day.captureCount} captures, ${day.taskCount} tasks`}
+                className="aspect-square rounded-md border"
+                style={{
+                  background: heatColor(day.total),
+                  borderColor: day.total ? 'rgba(26,58,173,0.24)' : 'rgba(0,0,0,0.06)',
+                  boxShadow: day.total ? 'inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none',
+                }}
+              />
+              <p className="mt-1 text-center text-[9px] font-heading font-bold text-foreground/35">
+                {format(day.date, 'd')}
+              </p>
+            </div>
+          ))}
         </div>
 
-        {/* Day labels */}
-        <div className="flex justify-between mt-2 px-0.5">
-          {data.map((d, i) => (
-            (i % 2 === 0) && (
-              <span key={d.date} style={{
-                fontFamily: 'Space Grotesk, sans-serif',
-                fontSize: 8, fontWeight: 600, letterSpacing: '0.1em',
-                color: 'rgba(0,0,0,0.25)', textTransform: 'uppercase',
-              }}>
-                {d.label}
-              </span>
-            )
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-[9px] font-heading font-bold uppercase tracking-[0.22em] text-foreground/30">Less</span>
+          <div className="flex items-center gap-1.5">
+            {[0, 1, 2, 4, 6].map((level) => (
+              <span
+                key={level}
+                className="block rounded-[3px]"
+                style={{ width: 11, height: 11, background: heatColor(level), border: '1px solid rgba(0,0,0,0.06)' }}
+              />
+            ))}
+          </div>
+          <span className="text-[9px] font-heading font-bold uppercase tracking-[0.22em] text-foreground/30">More</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mt-5">
+          {[
+            { label: 'Goals', value: stats.goals },
+            { label: 'Captures', value: stats.captures },
+            { label: 'Tasks', value: stats.tasks },
+          ].map((item) => (
+            <div key={item.label} className="rounded-xl border border-foreground/10 bg-white/70 px-3 py-2 text-center">
+              <p className="font-display text-xl leading-none text-foreground">{String(item.value).padStart(2, '0')}</p>
+              <p className="mt-1 text-[8px] font-heading font-bold uppercase tracking-[0.22em] text-foreground/40">{item.label}</p>
+            </div>
           ))}
         </div>
       </div>

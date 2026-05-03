@@ -12,7 +12,7 @@ import { Newspaper } from 'lucide-react';
  * NOTE: Posts created in this circle (post_type === 'circle_story') are
  * excluded here — they're already shown by CircleStoriesFeed above.
  */
-export default function CircleMembersFeed({ members = [] }) {
+export default function CircleMembersFeed({ members = [], limit, compact = false }) {
   const memberEmails = members.map(m => m.user_email).filter(Boolean);
 
   const { data: allPosts = [], isLoading } = useQuery({
@@ -40,7 +40,8 @@ export default function CircleMembersFeed({ members = [] }) {
     .filter(p => p.post_type !== 'circle_story')
     .filter(p => p.moderation_status !== 'blocked')
     .filter(p => new Date(p.created_date).getTime() >= sevenDaysAgo)
-    .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
+    .slice(0, limit || undefined);
 
   if (isLoading) {
     return (
@@ -77,7 +78,7 @@ export default function CircleMembersFeed({ members = [] }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="p-4 rounded-2xl"
+            className={`${compact ? 'p-3' : 'p-4'} rounded-2xl`}
             style={{
               background: 'rgba(255,255,255,0.95)',
               border: '1px solid rgba(0,0,0,0.07)',
@@ -116,7 +117,7 @@ export default function CircleMembersFeed({ members = [] }) {
 
             {p.caption && (
               <p style={{
-                fontFamily: 'Space Grotesk, sans-serif', fontSize: 14,
+              fontFamily: 'Space Grotesk, sans-serif', fontSize: compact ? 12 : 14,
                 color: '#0d1117', lineHeight: 1.5,
               }} className="whitespace-pre-wrap">{p.caption}</p>
             )}

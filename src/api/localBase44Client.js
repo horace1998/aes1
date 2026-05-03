@@ -192,6 +192,13 @@ const invokeFunction = async (name, payload = {}) => {
     if (!mission) return { data: { success: false, error: 'Mission not found' } };
 
     const currentUser = state.currentUser;
+    const activeMissionGoals = state.collections.Goal.filter(
+      (goal) => goal.created_by === currentUser.email && goal.status === 'active' && goal.mission_id
+    );
+    if (activeMissionGoals.length >= 3) {
+      return { data: { success: false, error: 'Max 3 active missions' } };
+    }
+
     const alreadyMember = (mission.members || []).some((member) => member.user_email === currentUser.email);
     if (!alreadyMember) {
       mission.members = [

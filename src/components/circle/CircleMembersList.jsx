@@ -9,65 +9,72 @@ export default function CircleMembersList({ members = [], currentUser, circleId 
   return (
     <>
       <div className="mb-6">
-        <p style={{
-          fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
-          fontWeight: 700, letterSpacing: '0.35em', textTransform: 'uppercase',
-          color: 'rgba(0,0,0,0.4)', marginBottom: 12,
-        }}>Circle · {members.length} {members.length === 1 ? 'fan' : 'fans'}</p>
+        <div className="flex items-center justify-between mb-3">
+          <p
+            style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '0.35em',
+              textTransform: 'uppercase',
+              color: 'rgba(0,0,0,0.4)',
+            }}
+          >
+            Circle
+          </p>
+          <p className="text-[10px] font-heading font-bold uppercase tracking-[0.22em] text-foreground/35">
+            {members.length} {members.length === 1 ? 'fan' : 'fans'}
+          </p>
+        </div>
 
-        <div className="space-y-2">
-          {members.map((m, i) => {
-            const isMe = m.user_email === currentUser?.email;
-            const initial = (m.user_name || m.user_email || '?').charAt(0).toUpperCase();
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+          {members.map((member, index) => {
+            const isMe = member.user_email === currentUser?.email;
+            const initial = (member.user_name || member.user_email || '?').charAt(0).toUpperCase();
             return (
               <motion.div
-                key={m.user_email}
+                key={member.user_email || index}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="flex items-center gap-3 p-3 rounded-2xl"
+                transition={{ delay: index * 0.04 }}
+                className="w-28 flex-shrink-0 rounded-2xl p-3 text-center"
                 style={{
                   background: 'rgba(255,255,255,0.9)',
                   border: '1px solid rgba(0,0,0,0.06)',
                 }}
               >
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full"
                   style={{
                     background: 'linear-gradient(135deg, #1a3aad, #4d7fff)',
                     color: '#fff',
                     fontFamily: 'Bebas Neue, Impact, sans-serif',
-                    fontSize: 16, letterSpacing: '0.04em',
+                    fontSize: 18,
+                    letterSpacing: '0.04em',
                   }}
-                >{initial}</div>
-                <div className="flex-1 min-w-0">
-                  <p style={{
-                    fontFamily: 'Space Grotesk, sans-serif', fontSize: 13,
-                    fontWeight: 600, color: '#0d1117',
-                  }} className="truncate">
-                    {m.user_name || m.user_email?.split('@')[0]}
-                    {isMe && <span style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontSize: 11, color: 'rgba(0,0,0,0.35)', marginLeft: 6 }}>· you</span>}
-                  </p>
-                  <p style={{
-                    fontFamily: 'Space Grotesk, sans-serif', fontSize: 9,
-                    fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase',
-                    color: 'rgba(0,0,0,0.35)',
-                  }}>
-                    Joined {new Date(m.joined_date).toLocaleDateString()}
-                  </p>
+                >
+                  {initial}
                 </div>
+                <p
+                  className="truncate"
+                  style={{
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: '#0d1117',
+                  }}
+                >
+                  {member.user_name || member.user_email?.split('@')[0]}
+                </p>
+                <p className="mt-1 text-[8px] font-heading font-bold uppercase tracking-[0.18em] text-foreground/35">
+                  {isMe ? 'You' : 'Member'}
+                </p>
                 {!isMe && (
                   <button
-                    onClick={() => setTarget(m)}
-                    className="flex items-center gap-1.5"
-                    style={{
-                      fontFamily: 'Space Grotesk, sans-serif', fontSize: 10,
-                      fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
-                      background: 'linear-gradient(135deg, #1a3aad, #0d1f6b)',
-                      color: '#fff', borderRadius: 10, padding: '7px 12px',
-                    }}
+                    onClick={() => setTarget(member)}
+                    className="mt-2 inline-flex items-center gap-1 text-[8px] font-heading font-bold uppercase tracking-[0.16em] text-primary"
                   >
-                    <Heart className="w-3 h-3" /> Cheer
+                    <Heart className="h-3 w-3" /> Cheer
                   </button>
                 )}
               </motion.div>
