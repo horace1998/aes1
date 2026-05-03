@@ -83,9 +83,43 @@ export default function Dashboard() {
 
   const deleteGoalMutation = useMutation({
     mutationFn: (goal) => leaveGoal(goal, user?.email),
+    onMutate: async (goal) => {
+      await queryClient.cancelQueries({ queryKey: ['goals'] });
+      await queryClient.cancelQueries({ queryKey: ['missions'] });
+      await queryClient.cancelQueries({ queryKey: ['active-missions'] });
+
+      const previousGoals = queryClient.getQueryData(['goals']);
+      const previousMissions = queryClient.getQueryData(['missions']);
+
+      queryClient.setQueryData(['goals'], (current = []) =>
+        current.map((item) =>
+          item.id === goal.id ? { ...item, status: 'abandoned', updated_date: new Date().toISOString() } : item
+        )
+      );
+
+      if (goal.mission_id && user?.email) {
+        queryClient.setQueryData(['missions'], (current = []) =>
+          current
+            .map((mission) => {
+              if (mission.id !== goal.mission_id) return mission;
+              const members = (mission.members || []).filter((member) => member.user_email !== user.email);
+              const shouldClose = mission.creator_email === user.email || members.length === 0;
+              return { ...mission, members, member_count: members.length, status: shouldClose ? 'closed' : mission.status };
+            })
+            .filter((mission) => mission.status === 'active')
+        );
+      }
+
+      return { previousGoals, previousMissions };
+    },
+    onError: (_error, _goal, context) => {
+      if (context?.previousGoals) queryClient.setQueryData(['goals'], context.previousGoals);
+      if (context?.previousMissions) queryClient.setQueryData(['missions'], context.previousMissions);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       queryClient.invalidateQueries({ queryKey: ['missions'] });
+      queryClient.invalidateQueries({ queryKey: ['active-missions'] });
     },
   });
 

@@ -387,7 +387,12 @@ const invokeFunction = async (name, payload = {}) => {
     const mission = await entityApi('Mission').get(payload.mission_id);
     if (mission) {
       const members = (mission.members || []).filter((member) => member.user_email !== user.email);
-      await entityApi('Mission').update(mission.id, { members, member_count: members.length || 1 });
+      const shouldClose = mission.creator_email === user.email || members.length === 0;
+      await entityApi('Mission').update(mission.id, {
+        members,
+        member_count: members.length,
+        ...(shouldClose ? { status: 'closed' } : {}),
+      });
     }
     if (payload.goal_id) {
       await entityApi('Goal').update(payload.goal_id, { status: 'abandoned' });

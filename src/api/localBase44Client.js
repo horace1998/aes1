@@ -234,7 +234,10 @@ const invokeFunction = async (name, payload = {}) => {
     const mission = state.collections.Mission.find((item) => item.id === payload.mission_id);
     if (mission) {
       mission.members = (mission.members || []).filter((member) => member.user_email !== currentUser.email);
-      mission.member_count = mission.members.length || 1;
+      mission.member_count = mission.members.length;
+      if (mission.creator_email === currentUser.email || mission.members.length === 0) {
+        mission.status = 'closed';
+      }
       mission.updated_date = nowIso();
     }
     state.collections.Goal = state.collections.Goal.map((goal) =>
